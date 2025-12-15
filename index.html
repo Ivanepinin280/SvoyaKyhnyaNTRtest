@@ -5,28 +5,128 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SvoyaKyhnya</title>
   <style>
-    /* Minimal styles so the page is usable */
-    body { font-family: Inter, system-ui, Arial, sans-serif; margin:0; padding:16px; background:#f7f7f7; color:#222; }
-    #menu { display:flex; flex-wrap:wrap; gap:12px; }
-    .product { width:220px; background:#fff; border-radius:8px; padding:10px; position:relative; box-shadow:0 6px 14px rgba(0,0,0,.06);}
-    .product.unavailable { opacity:.5; }
-    .product-img { width:100%; height:120px; object-fit:cover; border-radius:6px; cursor:pointer; }
-    .product-name { font-weight:600; margin-top:8px; }
-    .product-desc { font-size:13px; color:#666; margin:6px 0; min-height:36px; }
-    .product-price { color:#2a6b2a; font-weight:700; margin-bottom:8px; }
-    .controls { display:flex; align-items:center; gap:8px; justify-content:center; }
-    .add-btn, .remove-btn, .order-btn, .delivery-btn { cursor:pointer; padding:6px 10px; border-radius:6px; border:1px solid #ccc; background:#fff; }
-    .order-btn { background:#2a6b2a; color:#fff; border:0; }
+    /* Base / Desktop-first */
+    :root {
+      --gap: 12px;
+      --bg: #f7f7f7;
+      --card-bg: #fff;
+      --accent: #2a6b2a;
+      --muted: #666;
+      --shadow: 0 6px 14px rgba(0,0,0,.06);
+      --radius: 8px;
+      --touch: 44px;
+    }
+
+    html,body { height:100%; }
+    body { font-family: Inter, system-ui, Arial, sans-serif; margin:0; padding:16px; background:var(--bg); color:#222; -webkit-tap-highlight-color: transparent; }
+    /* Menu: responsive grid */
+    #menu { display:grid; gap:var(--gap); grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); align-items:start; }
+
+    /* Product cards: fluid sizing */
+    .product { background:var(--card-bg); border-radius:var(--radius); padding:10px; position:relative; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:8px; min-height:170px; }
+    .product.unavailable { opacity:.55; }
+
+    .product-img { width:100%; height:140px; object-fit:cover; border-radius:6px; cursor:pointer; display:block; flex-shrink:0; }
+    .product-name { font-weight:600; margin-top:4px; font-size:15px; }
+    .product-desc { font-size:13px; color:var(--muted); margin:6px 0; min-height:36px; }
+    .product-price { color:var(--accent); font-weight:700; margin-bottom:8px; }
+
+    .controls { display:flex; align-items:center; gap:8px; justify-content:center; margin-top:auto; }
+    .add-btn, .remove-btn, .order-btn, .delivery-btn { cursor:pointer; padding:8px 12px; border-radius:8px; border:1px solid #ccc; background:#fff; min-height:var(--touch); min-width:44px; font-size:16px; }
+    .order-btn { background:var(--accent); color:#fff; border:0; }
+
     #menuLoader.visible { display:block; margin-bottom:12px; }
     #menuLoader { display:none; margin-bottom:12px; color:#555; }
-    /* cartFab */
-    #cartFab { display:flex; align-items:center; justify-content:center; gap:8px; position:fixed; right:18px; bottom:18px; width:56px; height:56px; border-radius:50%; background:#2a6b2a; color:#fff; z-index:150; box-shadow:0 6px 16px rgba(0,0,0,.2); border:0; }
-    #cartModalBg { display:none; position:fixed; inset:0; align-items:center; justify-content:center; background:rgba(0,0,0,.45); z-index:200; }
-    .cart-modal { background:#fff; border-radius:8px; padding:16px; min-width:280px; max-width:90%; max-height:90%; overflow:auto; }
+
+    /* Floating cart FAB */
+    #cartFab {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      min-width:56px;
+      height:56px;
+      padding:0 12px;
+      border-radius:999px;
+      background:var(--accent);
+      color:#fff;
+      z-index:500;
+      box-shadow:0 8px 20px rgba(0,0,0,.18);
+      border:0;
+      font-weight:600;
+      font-size:18px;
+    }
+    #cartFab span { font-weight:700; }
+
+    /* Cart modal backdrop */
+    #cartModalBg { display:none; position:fixed; inset:0; align-items:center; justify-content:center; background:rgba(0,0,0,.45); z-index:400; }
+    .cart-modal { background:#fff; border-radius:8px; padding:16px; min-width:280px; max-width:720px; width:calc(100% - 40px); max-height:90%; overflow:auto; box-shadow:0 10px 30px rgba(0,0,0,.2); position:relative; }
     .cart-title { font-weight:700; margin-bottom:8px; }
     .cart-list { list-style:none; padding:0; margin:8px 0; display:flex; flex-direction:column; gap:6px; }
     .cart-close { position:absolute; right:14px; top:10px; border:0; background:none; font-size:20px; cursor:pointer; }
+
     hr { border:none; border-top:1px solid #eee; margin:8px 0; }
+
+    /* miniCart */
+    .mini-cart { font-family:inherit; font-size:14px; }
+
+    /* Action bar: desktop positioned top-right, mobile bottom */
+    .action-bar {
+      position:fixed;
+      top:10px;
+      right:10px;
+      display:flex;
+      gap:8px;
+      z-index:300;
+    }
+    .action-bar .delivery-btn {
+      font-size:14px;
+      padding:8px 10px;
+      border-radius:8px;
+      min-height:var(--touch);
+      background:#fff;
+    }
+
+    /* Buttons touch target improvement on mobile */
+    button { -webkit-tap-highlight-color: transparent; }
+
+    /* Small screens - mobile optimizations */
+    @media (max-width: 720px) {
+      body { padding:12px; }
+      .product-img { height:150px; }
+      #menu { grid-template-columns: repeat(2, 1fr); gap:10px; }
+      .product { padding:12px; min-height:180px; }
+      .product-desc { font-size:13px; min-height:40px; }
+
+      /* make FAB a bit smaller and lifted above bottom bar if present */
+      #cartFab { right:14px; bottom:86px; min-width:52px; height:52px; font-size:16px; }
+
+      .action-bar {
+        left:0;
+        right:0;
+        bottom:0;
+        top:auto;
+        justify-content:space-around;
+        padding:8px;
+        background:rgba(255,255,255,0.98);
+        border-top:1px solid #eee;
+      }
+    }
+
+    @media (max-width: 380px) {
+      #menu { grid-template-columns: 1fr; gap:10px; }
+      .product-img { height:140px; }
+      .product-name { font-size:15px; }
+      .controls { gap:6px; }
+      .add-btn, .remove-btn { padding:8px 10px; font-size:18px; }
+      #cartFab { right:12px; bottom:90px; min-width:48px; height:48px; }
+    }
+
+    /* Accessibility: focus states */
+    button:focus { outline:3px solid rgba(42,107,42,.18); outline-offset:2px; }
   </style>
 </head>
 <body>
@@ -197,18 +297,18 @@ function renderMenu() {
     d.className = 'product' + (!item.available ? ' unavailable' : '');
     d.innerHTML = `
       <button onclick="toggleFavorite(${item.id})"
-        style="position:absolute;right:8px;top:8px;font-size:22px;background:none;border:none">
+        aria-label="Избранное" style="position:absolute;right:8px;top:8px;font-size:22px;background:none;border:none">
         ${fav ? '❤️' : '🤍'}
       </button>
       <img src="${esc(item.img)}" class="product-img"
-           onclick="zoomImage('${esc(item.img)}')">
+           onclick="zoomImage('${esc(item.img)}')" alt="${esc(item.name)}">
       <div class="product-name">${esc(item.name)}</div>
       <div class="product-desc">${esc(item.description)}</div>
       <div class="product-price">${VND.format(item.price)}</div>
       <div class="controls">
-        <button class="remove-btn" onclick="updateCart(${item.id},-1)">−</button>
-        <span id="qty-${item.id}">${q}</span>
-        <button class="add-btn" onclick="updateCart(${item.id},1)">+</button>
+        <button class="remove-btn" onclick="updateCart(${item.id},-1)" aria-label="Уменьшить">−</button>
+        <span id="qty-${item.id}" aria-live="polite">${q}</span>
+        <button class="add-btn" onclick="updateCart(${item.id},1)" aria-label="Добавить">+</button>
       </div>
     `;
     m.appendChild(d);
@@ -249,8 +349,8 @@ function updateCartFab() {
 function animateCart(){
   const f = document.getElementById('cartFab');
   if (!f) return;
-  f.style.transform = 'scale(1.2)';
-  setTimeout(()=>{ if (f) f.style.transform = ''; }, 200);
+  f.style.transform = 'scale(1.12)';
+  setTimeout(()=>{ if (f) f.style.transform = ''; }, 160);
 }
 
 /* =====================================================
@@ -492,14 +592,12 @@ document.addEventListener('input', e => {
 /* =====================================================
    INIT DOM-DEPENDENT ELEMENTS
    - run after DOM is ready to avoid null element errors
+   - adapt action bar class so CSS controls mobile vs desktop position
 ===================================================== */
 window.addEventListener('DOMContentLoaded', () => {
-  // create and append actionBar
+  // create and append actionBar (use class so CSS media queries can reposition)
   const actionBar = document.createElement('div');
-  actionBar.style = `
-    position:fixed;top:10px;right:10px;
-    display:flex;gap:8px;z-index:300;
-  `;
+  actionBar.className = 'action-bar';
   actionBar.innerHTML = `
     <button class="delivery-btn" onclick="showOrderHistory()">🧾 История</button>
     <button class="delivery-btn" onclick="orderFavorites()">❤️ Избранное</button>
@@ -509,6 +607,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // create miniCart
   const miniCart = document.createElement('div');
+  miniCart.className = 'mini-cart';
   miniCart.style = `
     position:fixed;bottom:90px;right:18px;
     background:#fff;border:2px solid #556B2F;
