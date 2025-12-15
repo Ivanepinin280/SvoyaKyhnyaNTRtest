@@ -262,6 +262,7 @@
       margin-bottom:10px; 
       font-weight:700; 
       letter-spacing:0.5px;
+      text-align:center;
     }
     .controls { 
       display:flex; 
@@ -551,295 +552,300 @@
       transform:rotate(90deg) scale(1.2);
       color:var(--accent);
     }
-    .order-form input, .order-form textarea, .order-form select {
-      width:100%; 
-      padding:8px; 
-      margin-bottom:8px; 
-      border-radius:8px; 
-      border:1px solid #ddd; 
-      font-size:1em;
-      background:#fff; 
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
-      transition:all 0.3s;
-    }
-    .order-form input:focus, .order-form textarea:focus, .order-form select:focus {
-      border-color:var(--brand-olive);
-      box-shadow:0 0 10px rgba(85,107,47,0.2);
-      outline:none;
-      transform:scale(1.02);
-    }
-    .order-btn {
-      background:var(--accent); 
-      color:#fff; 
-      border:none; 
-      border-radius:8px; 
-      padding:10px 18px; 
-      font-size:1.03em; 
-      font-weight:800; 
-      cursor:pointer; 
-      width:100%; 
-      margin-top:8px;
-      letter-spacing:1px;
-      transition:all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      position:relative;
-      overflow:hidden;
-    }
-    .order-btn::before {
-      content:'';
-      position:absolute;
-      top:50%;
-      left:50%;
-      width:0;
-      height:0;
-      border-radius:50%;
-      background:rgba(255,255,255,0.3);
-      transform:translate(-50%, -50%);
-      transition:width 0.6s, height 0.6s;
-    }
-    .order-btn:hover::before {
-      width:400px;
-      height:400px;
-    }
-    .order-btn:hover {
-      transform:translateY(-3px) scale(1.05);
-      box-shadow:0 8px 20px rgba(0,0,0,0.3);
-    }
-    .order-btn:active {
-      transform:translateY(0) scale(0.98);
-    }
-    .order-success { 
-      color:#2e7d32; 
-      font-size:1.05em; 
-      text-align:center; 
-      margin-top:10px;
-      animation: slideInUp 0.5s ease;
-    }
-    .order-processing {
-      text-align:center; 
-      padding:20px; 
-      color:var(--brand-olive);
-      animation: slideInUp 0.5s ease;
-    }
-    .order-processing .spinner-small {
-      width:36px; 
-      height:36px; 
-      border:4px solid rgba(0,0,0,0.08); 
-      border-top-color:var(--brand-olive);
-      border-radius:50%; 
-      animation:spin 1s linear infinite; 
-      margin:0 auto 12px;
-    }
-    .order-processing-text {
-      font-size:1.05em; 
-      font-weight:700; 
-      margin-bottom:8px;
-    }
-    .order-processing-subtext {
-      font-size:0.95em; 
-      color:var(--muted);
-    }
-    .delivery-info {
-      background:#fff;
-      border:2px solid var(--brand-olive);
-      border-radius:8px;
-      padding:10px;
-      margin:8px 0;
-      font-size:0.95em;
-      color:#333;
-      line-height:1.5;
-      transition:all 0.3s;
-    }
-    .delivery-info:hover {
-      box-shadow:0 5px 15px rgba(0,0,0,0.1);
-      transform:translateY(-2px);
-    }
-    .delivery-info strong {
-      color:var(--brand-olive);
-      display:block;
-      margin-bottom:6px;
-    }
-    .delivery-info-subtitle {
-      font-size:0.9em;
-    }
-    .delivery-info-list {
-      margin-top:4px;
-    }
-    .delivery-btn {
-      background:var(--brand-olive);
-      color:#fff;
-      border:none;
-      border-radius:8px;
-      padding:10px;
-      font-size:1em;
-      font-weight:700;
-      cursor:pointer;
-      width:100%;
-      margin:8px 0;
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
-      letter-spacing:0.5px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:6px;
-      transition:all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .delivery-btn:hover {
-      background:var(--brand-olive-light);
-      transform:translateY(-3px);
-      box-shadow:0 6px 15px rgba(0,0,0,0.2);
-    }
-    .delivery-modal {
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.5);
-      z-index:250;
-      align-items:center;
-      justify-content:center;
-      animation:modalFadeIn .3s;
-      backdrop-filter: blur(3px);
-    }
-    .delivery-modal.show {
-      display:flex;
-    }
-    .delivery-modal-content {
-      background:var(--bg-cream);
-      border-radius:16px;
-      padding:20px;
-      max-width:90vw;
-      width:400px;
-      border:2px solid var(--brand-olive);
-      box-shadow:0 15px 50px rgba(0,0,0,0.3);
-      position:relative;
-      max-height:80vh;
-      overflow-y:auto;
-      animation: modalSlideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .delivery-modal-close {
-      position:absolute;
-      right:10px;
-      top:10px;
-      font-size:24px;
-      color:var(--brand-olive);
-      background:none;
-      border:none;
-      cursor:pointer;
-      line-height:1;
-      transition:all 0.3s;
-    }
-    .delivery-modal-close:hover {
-      transform:rotate(90deg) scale(1.2);
-      color:var(--accent);
-    }
 
-    .saved-addresses {
-      margin-bottom:8px;
-    }
-    .saved-address-item {
-      background:#f5f5f5;
-      padding:8px;
-      border-radius:6px;
-      margin-bottom:4px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      cursor:pointer;
-      transition:all .3s;
-    }
-    .saved-address-item:hover {
-      background:#e8e8e8;
-      transform:translateX(5px);
-      box-shadow:0 3px 10px rgba(0,0,0,0.1);
-    }
-    .saved-address-delete {
-      background:#ff6b6b;
-      color:#fff;
-      border:none;
-      border-radius:4px;
-      padding:4px 8px;
-      cursor:pointer;
-      font-size:0.85em;
-      transition:all 0.3s;
-    }
-    .saved-address-delete:hover {
-      background:#ff5252;
-      transform:scale(1.1);
-    }
-
-    .history-modal {
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.5);
-      z-index:250;
-      align-items:flex-start;
-      justify-content:center;
-      animation:modalFadeIn .3s;
-      overflow-y:auto;
-      backdrop-filter: blur(3px);
-    }
-    .history-modal.show {
-      display:flex;
-    }
-    .history-modal-content {
-      background:var(--bg-cream);
-      border-radius:16px;
-      padding:20px;
-      max-width:90vw;
-      width:500px;
-      border:2px solid var(--brand-olive);
-      box-shadow:0 15px 50px rgba(0,0,0,0.3);
-      position:relative;
-      margin:36px auto;
-      animation: modalSlideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .history-item {
-      background:#fff;
-      border:1px solid #ddd;
-      border-radius:8px;
-      padding:12px;
-      margin-bottom:10px;
-      transition:all 0.3s;
-    }
-    .history-item:hover {
-      transform:translateY(-3px);
-      box-shadow:0 5px 15px rgba(0,0,0,0.15);
-      border-color:var(--brand-olive);
-    }
-    .history-item-header {
-      display:flex;
-      justify-content:space-between;
-      margin-bottom:8px;
-      font-weight:700;
-      color:var(--brand-olive);
-    }
-    .history-item-products {
-      font-size:0.9em;
-      color:#555;
-      margin-bottom:8px;
-    }
-    .history-item-footer {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-    }
-    .repeat-order-btn {
-      background:var(--accent);
-      color:#fff;
-      border:none;
-      border-radius:6px;
-      padding:6px 12px;
-      cursor:pointer;
-      font-size:0.9em;
-      font-weight:700;
-      transition:all 0.3s;
-    }
-    .repeat-order-btn:hover {
-      transform:scale(1.1);
-      box-shadow:0 4px 12px rgba(0,0,0,0.2);
-    }
-
+    /* minimal modal/image styles continuation */
     .image-modal {
       display:none;
       position:fixed;
       inset:0;
+      background:rgba(0,0,0,0.7);
+      z-index:300;
+      align-items:center;
+      justify-content:center;
+    }
+    .image-modal.show {
+      display:flex;
+    }
+    .image-modal-content {
+      max-width:90vw;
+      max-height:90vh;
+      border-radius:12px;
+      overflow:hidden;
+    }
+
+    footer {
+      text-align:center;
+      padding:18px 12px;
+      color:var(--muted);
+      font-size:0.9em;
+      border-top:1px solid rgba(0,0,0,0.05);
+      background:linear-gradient(180deg, transparent, rgba(0,0,0,0.02));
+    }
+
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo-wrap">
+      <img class="logo-img" src="https://via.placeholder.com/84" alt="Логотип">
+      <div>
+        <h1 class="header-title">СВОЯ КУХНЯ</h1>
+        <div class="header-desc">Доставка вкусной еды — теперь в донгах (VND)</div>
+      </div>
+    </div>
+
+    <div class="promo-banner" aria-hidden="true">
+      <span class="promo-star">★</span>
+      <span class="promo-text">Свежие блюда каждый день</span>
+      <span class="promo-star">★</span>
+    </div>
+  </header>
+
+  <div class="menu-controls" role="toolbar" aria-label="Меню">
+    <button class="active">Все</button>
+    <button>Супы</button>
+    <button>Салаты</button>
+    <button>Десерты</button>
+  </div>
+
+  <main>
+    <section class="menu" aria-label="Каталог блюд">
+      <!-- Примеры карточек продуктов.
+           Важно: data-price содержит цену в донгах (VND). -->
+      <article class="product" data-id="p1">
+        <button class="favorite-btn" aria-label="В избранное">♡</button>
+        <img class="product-img" src="https://via.placeholder.com/100" alt="Блюдо 1">
+        <div class="product-name">Фо Бо</div>
+        <div class="product-desc">Ароматный говяжий суп с рисовой лапшой</div>
+        <!-- Цены должны храниться в data-price (число - в донгах). -->
+        <div class="product-price" data-price="120000"></div>
+        <div class="controls">
+          <button class="add-btn" data-action="add" data-price="120000">Добавить</button>
+        </div>
+      </article>
+
+      <article class="product" data-id="p2">
+        <button class="favorite-btn" aria-label="В избранное">♡</button>
+        <img class="product-img" src="https://via.placeholder.com/100" alt="Блюдо 2">
+        <div class="product-name">Бань Ми</div>
+        <div class="product-desc">Хрустящий багет с начинкой</div>
+        <div class="product-price" data-price="75000"></div>
+        <div class="controls">
+          <button class="add-btn" data-action="add" data-price="75000">Добавить</button>
+        </div>
+      </article>
+
+      <article class="product" data-id="p3">
+        <button class="favorite-btn" aria-label="В избранное">♡</button>
+        <img class="product-img" src="https://via.placeholder.com/100" alt="Блюдо 3">
+        <div class="product-name">Салат из папайи</div>
+        <div class="product-desc">Освежающий салат с арахисом</div>
+        <div class="product-price" data-price="68000"></div>
+        <div class="controls">
+          <button class="add-btn" data-action="add" data-price="68000">Добавить</button>
+        </div>
+      </article>
+
+      <article class="product" data-id="p4">
+        <button class="favorite-btn" aria-label="В избранное">♡</button>
+        <img class="product-img" src="https://via.placeholder.com/100" alt="Блюдо 4">
+        <div class="product-name">Кофе по-вьетнамски</div>
+        <div class="product-desc">Крепкий кофе со сгущённым молоком</div>
+        <div class="product-price" data-price="45000"></div>
+        <div class="controls">
+          <button class="add-btn" data-action="add" data-price="45000">Добавить</button>
+        </div>
+      </article>
+
+      <article class="product" data-id="p5">
+        <button class="favorite-btn" aria-label="В избранное">♡</button>
+        <img class="product-img" src="https://via.placeholder.com/100" alt="Блюдо 5">
+        <div class="product-name">Рис с морепродуктами</div>
+        <div class="product-desc">Питательное блюдо с овощами</div>
+        <div class="product-price" data-price="98000"></div>
+        <div class="controls">
+          <button class="add-btn" data-action="add" data-price="98000">Добавить</button>
+        </div>
+      </article>
+
+      <article class="product" data-id="p6">
+        <button class="favorite-btn" aria-label="В избранное">♡</button>
+        <img class="product-img" src="https://via.placeholder.com/100" alt="Блюдо 6">
+        <div class="product-name">Чао</div>
+        <div class="product-desc">Рисовая каша с курицей</div>
+        <div class="product-price" data-price="54000"></div>
+        <div class="controls">
+          <button class="add-btn" data-action="add" data-price="54000">Добавить</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Кнопка корзины (FAB) -->
+  <button class="cart-fab" aria-label="Открыть корзину" id="cartFab">
+    <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">
+      <circle class="cart-fab-circle" cx="32" cy="32" r="30"></circle>
+      <g transform="translate(18,18)" fill="#fff">
+        <rect x="0" y="0" width="28" height="14" rx="2"></rect>
+        <circle cx="8" cy="34" r="4" fill="#fff"></circle>
+        <circle cx="22" cy="34" r="4" fill="#fff"></circle>
+      </g>
+    </svg>
+    <div class="cart-fab-count" id="cartCount">0</div>
+
+    <div class="cart-preview" id="cartPreview" aria-hidden="true">
+      <div class="cart-preview-title">В корзине</div>
+      <div id="cartPreviewItems">Пусто</div>
+      <div class="cart-preview-total" id="cartPreviewTotal"></div>
+    </div>
+  </button>
+
+  <footer>
+    &copy; СВОЯ КУХНЯ — цены в вьетнамских донгах (VND)
+  </footer>
+
+  <!-- Скрипт: форматирование цен в VND и минимальный пример использования -->
+  <script>
+  (function () {
+    'use strict';
+
+    // Форматирование цены в вьетнамский донг (VND)
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      maximumFractionDigits: 0
+    });
+
+    function parseNumberFromString(str) {
+      // Извлекаем только цифры и возможные точки/запятые, затем приводим к числу.
+      if (str == null) return 0;
+      const cleaned = String(str).replace(/[^\d.,-]/g, '').replace(/,/g, '');
+      const n = Number(cleaned);
+      return isNaN(n) ? 0 : n;
+    }
+
+    function formatPrice(value) {
+      const n = Number(value) || 0;
+      return formatter.format(Math.round(n));
+    }
+
+    function renderAllPrices(root = document) {
+      // 1) Все элементы с data-price — читаем атрибут и форматируем
+      const attrEls = root.querySelectorAll('[data-price]');
+      attrEls.forEach(el => {
+        const raw = el.getAttribute('data-price');
+        const num = parseNumberFromString(raw);
+        el.textContent = formatPrice(num);
+      });
+
+      // 2) Элементы с классом product-price, у которых нет data-price — пробуем извлечь число из текста
+      const priceEls = root.querySelectorAll('.product-price');
+      priceEls.forEach(el => {
+        if (!el.hasAttribute('data-price')) {
+          const num = parseNumberFromString(el.textContent);
+          if (num > 0) {
+            el.setAttribute('data-price', String(num));
+            el.textContent = formatPrice(num);
+          }
+        }
+      });
+    }
+
+    // expose to window for other scripts
+    window.currencyVND = {
+      formatPrice,
+      renderAllPrices,
+      parseNumberFromString
+    };
+
+    // Initial render
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => window.currencyVND.renderAllPrices());
+    } else {
+      window.currencyVND.renderAllPrices();
+    }
+
+    // Простой пример: минимальная логика добавления в корзину (демонстрация использования форматтера).
+    const cart = {
+      items: [], // { id, name, price, qty }
+      add(item) {
+        const found = this.items.find(i => i.id === item.id);
+        if (found) found.qty += item.qty;
+        else this.items.push(item);
+        this.render();
+      },
+      total() {
+        return this.items.reduce((s, it) => s + it.price * it.qty, 0);
+      },
+      render() {
+        const count = this.items.reduce((s, it) => s + it.qty, 0);
+        document.getElementById('cartCount').textContent = String(count);
+
+        const previewItems = document.getElementById('cartPreviewItems');
+        previewItems.innerHTML = '';
+        if (this.items.length === 0) {
+          previewItems.textContent = 'Пусто';
+        } else {
+          this.items.forEach(it => {
+            const div = document.createElement('div');
+            div.className = 'cart-preview-item';
+            div.innerHTML = '<div>' + escapeHtml(it.name) + (it.qty > 1 ? ' x' + it.qty : '') + '</div>' +
+                            '<div>' + formatPrice(it.price * it.qty) + '</div>';
+            previewItems.appendChild(div);
+          });
+        }
+
+        const previewTotal = document.getElementById('cartPreviewTotal');
+        previewTotal.textContent = this.items.length ? ('Итого: ' + formatPrice(this.total())) : '';
+      }
+    };
+
+    // Escape helper
+    function escapeHtml(text) {
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+      return String(text).replace(/[&<>"']/g, (m) => map[m]);
+    }
+
+    // Вешаем обработчики кнопок "Добавить"
+    document.addEventListener('click', function (e) {
+      const btn = e.target.closest('[data-action="add"]');
+      if (!btn) return;
+      const productEl = btn.closest('.product');
+      const id = productEl ? (productEl.getAttribute('data-id') || '') : '';
+      const nameEl = productEl ? productEl.querySelector('.product-name') : null;
+      const name = nameEl ? nameEl.textContent.trim() : 'Товар';
+      // price может быть в атрибуте кнопки или в карточке
+      let price = parseNumberFromString(btn.getAttribute('data-price') || '');
+      if (!price && productEl) {
+        price = parseNumberFromString(productEl.querySelector('[data-price]')?.getAttribute('data-price') || '');
+      }
+      if (!price) price = 0;
+      cart.add({ id, name, price: Math.round(price), qty: 1 });
+    });
+
+    // показываем preview при наведении на FAB
+    const cartFab = document.getElementById('cartFab');
+    const cartPreview = document.getElementById('cartPreview');
+    if (cartFab && cartPreview) {
+      cartFab.addEventListener('mouseenter', () => cartPreview.style.display = 'block');
+      cartFab.addEventListener('mouseleave', () => cartPreview.style.display = '');
+    }
+
+    // MutationObserver: автоматически форматируем динамически добавленные элементы
+    const mo = new MutationObserver(mutations => {
+      for (const m of mutations) {
+        if (m.addedNodes && m.addedNodes.length) {
+          m.addedNodes.forEach(node => {
+            if (node.nodeType === 1) { // Element
+              window.currencyVND.renderAllPrices(node);
+            }
+          });
+        }
+      }
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+
+  })();
+  </script>
+</body>
+</html>
