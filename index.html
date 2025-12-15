@@ -1,236 +1,459 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<title>СВОЯ КУХНЯ — доставка еды</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<link href="https://fonts.googleapis.com/css?family=PT+Sans+Narrow:700&display=swap" rel="stylesheet">
-
-<style>
-body{
-  margin:0;
-  font-family:'PT Sans Narrow',Arial,sans-serif;
-  background:#f7efe0;
-}
-.header{
-  background:#556B2F;
-  color:#fff;
-  text-align:center;
-  padding:20px;
-}
-.menu{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:16px;
-  padding:16px;
-  max-width:1000px;
-  margin:auto;
-}
-.product{
-  background:#fff;
-  border-radius:12px;
-  padding:12px;
-  border:2px solid #6b7a29;
-  text-align:center;
-}
-.product img{
-  width:100px;height:100px;
-  border-radius:10px;
-  object-fit:cover;
-}
-.controls{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:8px;
-}
-button{
-  cursor:pointer;
-  border-radius:6px;
-  border:none;
-  padding:6px 10px;
-}
-.add-btn{background:#556B2F;color:#fff;}
-.remove-btn{background:#eee;}
-.cart-fab{
-  position:fixed;
-  right:16px;
-  bottom:16px;
-  width:64px;
-  height:64px;
-  border-radius:50%;
-  background:#b3611f;
-  color:#fff;
-  font-size:24px;
-  display:none;
-}
-.cart-modal-bg{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.4);
-  display:none;
-  justify-content:center;
-  align-items:flex-start;
-}
-.cart-modal{
-  background:#fff;
-  margin-top:40px;
-  padding:16px;
-  border-radius:12px;
-  width:90%;
-  max-width:420px;
-}
-</style>
-</head>
-
-<body>
-
-<div class="header">
-  <h1>СВОЯ КУХНЯ</h1>
-  <div>Доставка еды</div>
-</div>
-
-<div id="menu" class="menu"></div>
-
-<button id="cartFab" class="cart-fab">🛒<span id="cartCount"></span></button>
-
-<div id="cartModalBg" class="cart-modal-bg"></div>
-
 <script>
-// ================= НАСТРОЙКИ API =================
+/* =====================================================
+   USER IDENTIFICATION (local user)
+===================================================== */
+const USER_ID = localStorage.getItem('USER_ID') ||
+  'user_' + Math.random().toString(36).slice(2);
+localStorage.setItem('USER_ID', USER_ID);
+
+/* =====================================================
+   STORAGE HELPERS
+===================================================== */
+function load(key, def) {
+  try { return JSON.parse(localStorage.getItem(key)) ?? def; }
+  catch { return def; }
+}
+function save(key, val) {
+  localStorage.setItem(key, JSON.stringify(val));
+}
+
+/* =====================================================
+   GLOBAL STATE
+===================================================== */
+let menuData = [];
+let cart = load('cart_' + USER_ID, {});
+let favorites = load('fav_' + USER_ID, []);
+let orderHistory = load('orders_' + USER_ID, []);
+let userProfile = load('profile_' + USER_ID, {
+  name: '',
+  phone: '',
+  addresses: []
+});
+
+/* =====================================================
+   FORMATTERS
+===================================================== */
+const VND = new Intl.NumberFormat('vi-VN', {
+  style: 'currency', currency: 'VND', maximumFractionDigits: 0
+});
+
+function toNumberSafe(v) {
+  if (!v) return 0;
+  return Number(String(v).replace(/[^\d]/g,'')) || 0;
+}
+
+function esc(s){
+  return String(s||'').replace(/[&<>"']/g,
+    m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+}
+
+/* =====================================================
+   SAVE STATE
+===================================================== */
+function persistAll() {
+  save('cart_' + USER_ID, cart);
+  save('fav_' + USER_ID, favorites);
+  save('orders_' + USER_ID, orderHistory);
+  save('profile_' + USER_ID, userProfile);
+}
+/* =====================================================
+   API SETTINGS
+===================================================== */
 const SHEET_API_URL =
   'https://sheets.googleapis.com/v4/spreadsheets/SPREADSHEET_ID/values/Sheet1?key=API_KEY';
 
 const SHEET_API_FALLBACK =
   'https://script.google.com/macros/s/AKfycbyytR-HwA0y-TnHS_7nygs-_ZkPHDYzQQWFgV3GJSVuvdn93oX0kP92Ti9bQVqW7C_gFg/exec';
 
-const TELEGRAM_BOT_TOKEN = '8543195311:AAGzpZwTaUAgw3qp6AeKQA_BbFX35jtbJIk';
-const TELEGRAM_CHAT_ID = '7567253745';
+/* =====================================================
+   LOADER
+===================================================== */
+function showLoader() {
+  document.getElementById('menuLoader')?.classList.add('visible');
+}
+function hideLoader() {
+  document.getElementById('menuLoader')?.classList.remove('visible');
+}
 
-// ================= ДАННЫЕ =================
-let menuData = [];
-let cart = {};
-
-const VND = new Intl.NumberFormat('vi-VN', {
-  style:'currency',
-  currency:'VND',
-  maximumFractionDigits:0
-});
-
-// ================= ЗАГРУЗКА МЕНЮ =================
-async function loadMenu(){
-  try{
-    const res = await fetch(SHEET_API_URL);
-    if(!res.ok) throw 1;
-    const json = await res.json();
-    const rows = json.values;
-    const headers = rows[0].map(h=>h.toLowerCase());
-    menuData = rows.slice(1).map((r,i)=>{
-      const o={}; headers.forEach((h,j)=>o[h]=r[j]);
-      return {
-        id:i+1,
-        name:o.name,
-        description:o.description||'',
-        img:o.img||'https://via.placeholder.com/100',
-        price:Number(o.price)||0,
-        available:String(o.available).toLowerCase()==='true'
-      };
-    });
-  }catch{
-    const res = await fetch(SHEET_API_FALLBACK);
-    const json = await res.json();
-    menuData = json.menu.map((i,idx)=>({
-      id:idx+1,
-      name:i.name,
-      description:i.description||'',
-      img:i.img||'https://via.placeholder.com/100',
-      price:Number(i.price)||0,
-      available:String(i.available).toLowerCase()==='true'
-    }));
+/* =====================================================
+   LOAD MENU
+===================================================== */
+async function loadMenu() {
+  showLoader();
+  try {
+    const r = await fetch(SHEET_API_URL);
+    if (!r.ok) throw 0;
+    const j = await r.json();
+    parseMenu(j.values);
+  } catch {
+    try {
+      const r2 = await fetch(SHEET_API_FALLBACK);
+      const j2 = await r2.json();
+      menuData = j2.menu.map((i,idx)=>({
+        id: idx+1,
+        name: i.name,
+        description: i.description,
+        img: i.img,
+        price: toNumberSafe(i.price),
+        available: String(i.available).toLowerCase()!=='false'
+      }));
+    } catch {
+      alert('Ошибка загрузки меню');
+    }
   }
+  hideLoader();
   renderMenu();
 }
 
-// ================= РЕНДЕР =================
-function renderMenu(){
-  const el = document.getElementById('menu');
-  el.innerHTML='';
-  menuData.forEach(i=>{
-    const d=document.createElement('div');
-    d.className='product';
-    d.innerHTML=`
-      <img src="${i.img}">
-      <div><b>${i.name}</b></div>
-      <div>${i.description}</div>
-      <div>${VND.format(i.price)}</div>
+/* =====================================================
+   PARSE GOOGLE SHEET
+===================================================== */
+function parseMenu(rows) {
+  const head = rows[0].map(h=>h.toLowerCase());
+  menuData = rows.slice(1).map((r,idx)=>{
+    const o={}; head.forEach((h,i)=>o[h]=r[i]);
+    return {
+      id: idx+1,
+      name: o.name,
+      description: o.description,
+      img: o.img,
+      price: toNumberSafe(o.price),
+      available: String(o.available).toLowerCase()!=='false'
+    };
+  });
+}
+
+/* =====================================================
+   RENDER MENU
+===================================================== */
+function renderMenu() {
+  const m = document.getElementById('menu');
+  m.innerHTML = '';
+
+  menuData.forEach(item=>{
+    const q = cart[item.id]?.qty || 0;
+    const fav = favorites.includes(item.id);
+
+    const d = document.createElement('div');
+    d.className = 'product' + (!item.available?' unavailable':'');
+    d.innerHTML = `
+      <button onclick="toggleFavorite(${item.id})"
+        style="position:absolute;right:8px;top:8px;font-size:22px;background:none;border:none">
+        ${fav?'❤️':'🤍'}
+      </button>
+      <img src="${item.img}" class="product-img"
+           onclick="zoomImage('${item.img}')">
+      <div class="product-name">${esc(item.name)}</div>
+      <div class="product-desc">${esc(item.description)}</div>
+      <div class="product-price">${VND.format(item.price)}</div>
       <div class="controls">
-        <button class="remove-btn" onclick="updateCart(${i.id},-1)">−</button>
-        <span id="q${i.id}">${cart[i.id]?.qty||0}</span>
-        <button class="add-btn" onclick="updateCart(${i.id},1)">+</button>
+        <button class="remove-btn" onclick="updateCart(${item.id},-1)">−</button>
+        <span id="qty-${item.id}">${q}</span>
+        <button class="add-btn" onclick="updateCart(${item.id},1)">+</button>
       </div>
     `;
-    el.appendChild(d);
+    m.appendChild(d);
   });
+
   updateCartFab();
 }
 
-// ================= КОРЗИНА =================
-function updateCart(id,d){
+/* =====================================================
+   CART
+===================================================== */
+function updateCart(id, d) {
   const item = menuData.find(i=>i.id===id);
-  if(!cart[id]) cart[id]={...item,qty:0};
-  cart[id].qty=Math.max(0,cart[id].qty+d);
-  if(cart[id].qty===0) delete cart[id];
-  document.getElementById('q'+id).textContent=cart[id]?.qty||0;
-  updateCartFab();
+  if (!item) return;
+
+  if (!cart[id]) cart[id]={...item,qty:0};
+  cart[id].qty+=d;
+  if (cart[id].qty<=0) delete cart[id];
+
+  persistAll();
+  renderMenu();
+  animateCart();
 }
 
-function updateCartFab(){
-  const c=Object.values(cart).reduce((s,i)=>s+i.qty,0);
-  const fab=document.getElementById('cartFab');
-  document.getElementById('cartCount').textContent=c||'';
-  fab.style.display=c?'block':'none';
+function updateCartFab() {
+  const c = Object.values(cart).reduce((s,i)=>s+i.qty,0);
+  const f = document.getElementById('cartFab');
+  const n = document.getElementById('cartFabCount');
+  if (c>0){ f.style.display='flex'; n.textContent=c; }
+  else f.style.display='none';
 }
 
-// ================= МОДАЛКА =================
-document.getElementById('cartFab').onclick=()=>{
+/* =====================================================
+   CART ANIMATION
+===================================================== */
+function animateCart(){
+  const f=document.getElementById('cartFab');
+  f.style.transform='scale(1.2)';
+  setTimeout(()=>f.style.transform='',200);
+}
+
+/* =====================================================
+   CART MODAL
+===================================================== */
+document.getElementById('cartFab').onclick=showCartModal;
+
+function showCartModal(){
   const bg=document.getElementById('cartModalBg');
   const items=Object.values(cart);
-  const total=items.reduce((s,i)=>s+i.qty*i.price,0);
+  const total=items.reduce((s,i)=>s+i.price*i.qty,0);
+
   bg.innerHTML=`
     <div class="cart-modal">
-      <button onclick="closeCart()">✖</button>
-      ${items.map(i=>`${i.name} x${i.qty}<br>`).join('')}
-      <hr>
-      <b>${VND.format(total)}</b>
-      <br><br>
-      <button onclick="sendOrder()">Отправить заказ</button>
+      <button class="cart-close" onclick="closeCartModal()">×</button>
+      <div class="cart-title">Корзина</div>
+      <ul class="cart-list">
+        ${items.map(i=>`
+          <li>
+            ${esc(i.name)} x${i.qty}
+            <b>${VND.format(i.price*i.qty)}</b>
+          </li>`).join('')}
+      </ul>
+      <div class="cart-total">Итого: ${VND.format(total)}</div>
+      <button class="order-btn" onclick="openOrder()">Оформить</button>
     </div>`;
   bg.style.display='flex';
-};
-function closeCart(){document.getElementById('cartModalBg').style.display='none';}
+}
 
-// ================= ОТПРАВКА =================
-async function sendOrder(){
-  const items=Object.values(cart);
-  if(!items.length) return;
-  const text=
-    '🛒 Новый заказ\n'+
-    items.map(i=>`${i.name} x${i.qty}`).join('\n');
-  await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({chat_id:TELEGRAM_CHAT_ID,text})
-  });
-  alert('Заказ отправлен');
-  cart={};
-  closeCart();
+function closeCartModal(){
+  document.getElementById('cartModalBg').style.display='none';
+}
+
+/* =====================================================
+   IMAGE ZOOM
+===================================================== */
+function zoomImage(src){
+  const z=document.createElement('div');
+  z.style=`position:fixed;inset:0;background:rgba(0,0,0,.7);
+           display:flex;align-items:center;justify-content:center;z-index:999`;
+  z.innerHTML=`<img src="${src}" style="max-width:90%;max-height:90%">`;
+  z.onclick=()=>z.remove();
+  document.body.appendChild(z);
+}
+
+/* =====================================================
+   FAVORITES
+===================================================== */
+function toggleFavorite(id){
+  favorites = favorites.includes(id)
+    ? favorites.filter(f=>f!==id)
+    : [...favorites,id];
+  persistAll();
   renderMenu();
 }
 
-// ================= INIT =================
-document.addEventListener('DOMContentLoaded',loadMenu);
-</script>
+/* =====================================================
+   INIT
+===================================================== */
+loadMenu();
+/* =====================================================
+   ORDER HISTORY
+===================================================== */
+function saveOrder(order) {
+  orderHistory.unshift(order);
+  orderHistory = orderHistory.slice(0, 20);
+  persistAll();
+}
 
-</body>
-</html>
+/* =====================================================
+   OPEN ORDER FORM
+===================================================== */
+function openOrder() {
+  const bg = document.getElementById('cartModalBg');
+  const items = Object.values(cart);
+  if (!items.length) return alert('Корзина пуста');
+
+  bg.innerHTML = `
+    <div class="cart-modal">
+      <button class="cart-close" onclick="closeCartModal()">×</button>
+      <div class="cart-title">Оформление заказа</div>
+
+      <input id="o-name" placeholder="Имя" value="${esc(userProfile.name)}">
+      <input id="o-phone" placeholder="Телефон" value="${esc(userProfile.phone)}">
+      <select id="o-address">
+        <option value="">Выберите адрес</option>
+        ${userProfile.addresses.map(a=>`<option>${esc(a)}</option>`).join('')}
+      </select>
+      <input id="o-address-new" placeholder="Новый адрес">
+
+      <textarea id="o-comment" placeholder="Комментарий"></textarea>
+
+      <button class="order-btn" onclick="confirmOrder()">Подтвердить</button>
+    </div>`;
+}
+
+/* =====================================================
+   CONFIRM ORDER
+===================================================== */
+function confirmOrder() {
+  const name = document.getElementById('o-name').value.trim();
+  const phone = document.getElementById('o-phone').value.trim();
+  const addrNew = document.getElementById('o-address-new').value.trim();
+  const addrSel = document.getElementById('o-address').value;
+
+  if (!name || !phone || !(addrNew || addrSel))
+    return alert('Заполните данные');
+
+  if (addrNew) userProfile.addresses.push(addrNew);
+
+  userProfile.name = name;
+  userProfile.phone = phone;
+
+  const items = Object.values(cart);
+  const total = items.reduce((s,i)=>s+i.price*i.qty,0);
+
+  saveOrder({
+    date: new Date().toLocaleString(),
+    items: JSON.parse(JSON.stringify(items)),
+    total
+  });
+
+  cart = {};
+  persistAll();
+  closeCartModal();
+  renderMenu();
+
+  alert('Заказ сохранён. История обновлена.');
+}
+
+/* =====================================================
+   ORDER HISTORY VIEW
+===================================================== */
+function showOrderHistory() {
+  const bg = document.getElementById('cartModalBg');
+  bg.innerHTML = `
+    <div class="cart-modal">
+      <button class="cart-close" onclick="closeCartModal()">×</button>
+      <div class="cart-title">История заказов</div>
+      <ul class="cart-list">
+        ${orderHistory.map((o,idx)=>`
+          <li style="flex-direction:column;align-items:flex-start">
+            <b>${o.date}</b>
+            <div>${VND.format(o.total)}</div>
+            <button class="remove-btn" onclick="repeatOrder(${idx})">
+              Повторить
+            </button>
+          </li>`).join('')}
+      </ul>
+    </div>`;
+  bg.style.display='flex';
+}
+
+/* =====================================================
+   REPEAT ORDER
+===================================================== */
+function repeatOrder(idx) {
+  cart = {};
+  orderHistory[idx].items.forEach(i=>{
+    cart[i.id] = {...i};
+  });
+  persistAll();
+  closeCartModal();
+  renderMenu();
+  alert('Заказ добавлен в корзину');
+}
+
+/* =====================================================
+   FAVORITES QUICK ORDER
+===================================================== */
+function orderFavorites() {
+  if (!favorites.length) return alert('Избранное пусто');
+  favorites.forEach(id=>{
+    const item = menuData.find(i=>i.id===id);
+    if (!item) return;
+    if (!cart[id]) cart[id]={...item,qty:0};
+    cart[id].qty++;
+  });
+  persistAll();
+  renderMenu();
+  alert('Избранное добавлено в корзину');
+}
+/* =====================================================
+   MINI CART PREVIEW (hover)
+===================================================== */
+const miniCart = document.createElement('div');
+miniCart.style = `
+  position:fixed;bottom:90px;right:18px;
+  background:#fff;border:2px solid #556B2F;
+  border-radius:12px;padding:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
+  display:none;z-index:200;min-width:200px;
+  font-family:inherit;font-size:14px;
+`;
+document.body.appendChild(miniCart);
+
+document.getElementById('cartFab').onmouseenter = () => {
+  const items = Object.values(cart);
+  if (!items.length) return;
+  miniCart.innerHTML = items.map(i =>
+    `<div>${esc(i.name)} ×${i.qty}</div>`
+  ).join('') +
+  `<hr><b>${VND.format(items.reduce((s,i)=>s+i.price*i.qty,0))}</b>`;
+  miniCart.style.display = 'block';
+};
+document.getElementById('cartFab').onmouseleave = () => {
+  miniCart.style.display = 'none';
+};
+
+/* =====================================================
+   GEOLOCATION ADDRESS
+===================================================== */
+function detectLocation() {
+  if (!navigator.geolocation)
+    return alert('Геолокация недоступна');
+
+  navigator.geolocation.getCurrentPosition(pos => {
+    const { latitude, longitude } = pos.coords;
+    const addr =
+      `Геолокация: ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+    userProfile.addresses.push(addr);
+    persistAll();
+    alert('Адрес по геолокации сохранён');
+  }, () => alert('Не удалось определить адрес'));
+}
+
+/* =====================================================
+   AUTO SAVE ORDER FORM
+===================================================== */
+document.addEventListener('input', e => {
+  if (e.target.id === 'o-name') userProfile.name = e.target.value;
+  if (e.target.id === 'o-phone') userProfile.phone = e.target.value;
+  persistAll();
+});
+
+/* =====================================================
+   TOP ACTION BUTTONS
+===================================================== */
+const actionBar = document.createElement('div');
+actionBar.style = `
+  position:fixed;top:10px;right:10px;
+  display:flex;gap:8px;z-index:300;
+`;
+actionBar.innerHTML = `
+  <button class="delivery-btn" onclick="showOrderHistory()">🧾 История</button>
+  <button class="delivery-btn" onclick="orderFavorites()">❤️ Избранное</button>
+  <button class="delivery-btn" onclick="detectLocation()">📍 Гео</button>
+`;
+document.body.appendChild(actionBar);
+
+/* =====================================================
+   RESTORE UI STATE
+===================================================== */
+window.addEventListener('load', () => {
+  renderMenu();
+  updateCartFab();
+});
+
+/* =====================================================
+   SAFETY: CLOSE MODALS ON ESC
+===================================================== */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeCartModal();
+    document.querySelectorAll('.delivery-modal.show')
+      .forEach(m=>m.classList.remove('show'));
+  }
+});
