@@ -262,7 +262,6 @@
       margin-bottom:10px; 
       font-weight:700; 
       letter-spacing:0.5px;
-      text-align:center;
     }
     .controls { 
       display:flex; 
@@ -552,300 +551,887 @@
       transform:rotate(90deg) scale(1.2);
       color:var(--accent);
     }
+    .order-form input, .order-form textarea, .order-form select {
+      width:100%; 
+      padding:8px; 
+      margin-bottom:8px; 
+      border-radius:8px; 
+      border:1px solid #ddd; 
+      font-size:1em;
+      background:#fff; 
+      font-family: 'PT Sans Narrow', Arial, sans-serif;
+      transition:all 0.3s;
+      box-sizing:border-box;
+    }
+    .order-form input:focus, .order-form textarea:focus, .order-form select:focus {
+      border-color:var(--brand-olive);
+      box-shadow:0 0 10px rgba(85,107,47,0.2);
+      outline:none;
+      transform:scale(1.02);
+    }
+    .order-btn {
+      background:var(--accent); 
+      color:#fff; 
+      border:none; 
+      border-radius:8px; 
+      padding:10px 18px; 
+      font-size:1.03em; 
+      font-weight:800; 
+      cursor:pointer; 
+      width:100%; 
+      margin-top:8px;
+      letter-spacing:1px;
+      transition:all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      position:relative;
+      overflow:hidden;
+    }
+    .order-btn::before {
+      content:'';
+      position:absolute;
+      top:50%;
+      left:50%;
+      width:0;
+      height:0;
+      border-radius:50%;
+      background:rgba(255,255,255,0.3);
+      transform:translate(-50%, -50%);
+      transition:width 0.6s, height 0.6s;
+    }
+    .order-btn:hover::before {
+      width:400px;
+      height:400px;
+    }
+    .order-btn:hover {
+      transform:translateY(-3px) scale(1.05);
+      box-shadow:0 8px 20px rgba(0,0,0,0.3);
+    }
+    .order-btn:active {
+      transform:translateY(0) scale(0.98);
+    }
+    .order-success { 
+      color:#2e7d32; 
+      font-size:1.05em; 
+      text-align:center; 
+      margin-top:10px;
+      animation: slideInUp 0.5s ease;
+    }
+    .order-processing {
+      text-align:center; 
+      padding:20px; 
+      color:var(--brand-olive);
+      animation: slideInUp 0.5s ease;
+    }
+    .order-processing .spinner-small {
+      width:36px; 
+      height:36px; 
+      border:4px solid rgba(0,0,0,0.08); 
+      border-top-color:var(--brand-olive);
+      border-radius:50%; 
+      animation:spin 1s linear infinite; 
+      margin:0 auto 12px;
+    }
+    .order-processing-text {
+      font-size:1.05em; 
+      font-weight:700; 
+      margin-bottom:8px;
+    }
+    .order-processing-subtext {
+      font-size:0.95em; 
+      color:var(--muted);
+    }
+    .delivery-info {
+      background:#fff;
+      border:2px solid var(--brand-olive);
+      border-radius:8px;
+      padding:10px;
+      margin:8px 0;
+      font-size:0.95em;
+      color:#333;
+      line-height:1.5;
+      transition:all 0.3s;
+    }
+    .delivery-info:hover {
+      box-shadow:0 5px 15px rgba(0,0,0,0.1);
+      transform:translateY(-2px);
+    }
+    .delivery-info strong {
+      color:var(--brand-olive);
+      display:block;
+      margin-bottom:6px;
+    }
+    .delivery-info-subtitle {
+      font-size:0.9em;
+    }
+    .delivery-info-list {
+      margin-top:4px;
+    }
+    .delivery-btn {
+      background:var(--brand-olive);
+      color:#fff;
+      border:none;
+      border-radius:8px;
+      padding:10px;
+      font-size:1em;
+      font-weight:700;
+      cursor:pointer;
+      width:100%;
+      margin:8px 0;
+      font-family: 'PT Sans Narrow', Arial, sans-serif;
+      letter-spacing:0.5px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      transition:all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .delivery-btn:hover {
+      background:var(--brand-olive-light);
+      transform:translateY(-3px);
+      box-shadow:0 6px 15px rgba(0,0,0,0.2);
+    }
+    .delivery-modal {
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.5);
+      z-index:250;
+      align-items:center;
+      justify-content:center;
+      animation:modalFadeIn .3s;
+      backdrop-filter: blur(3px);
+    }
+    .delivery-modal.show {
+      display:flex;
+    }
+    .delivery-modal-content {
+      background:var(--bg-cream);
+      border-radius:16px;
+      padding:20px;
+      max-width:90vw;
+      width:400px;
+      border:2px solid var(--brand-olive);
+      box-shadow:0 15px 50px rgba(0,0,0,0.3);
+      position:relative;
+      max-height:80vh;
+      overflow-y:auto;
+      animation: modalSlideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .delivery-modal-close {
+      position:absolute;
+      right:10px;
+      top:10px;
+      font-size:24px;
+      color:var(--brand-olive);
+      background:none;
+      border:none;
+      cursor:pointer;
+      line-height:1;
+      transition:all 0.3s;
+    }
+    .delivery-modal-close:hover {
+      transform:rotate(90deg) scale(1.2);
+      color:var(--accent);
+    }
 
-    /* minimal modal/image styles continuation */
+    .saved-addresses {
+      margin-bottom:8px;
+    }
+    .saved-address-item {
+      background:#f5f5f5;
+      padding:8px;
+      border-radius:6px;
+      margin-bottom:4px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      cursor:pointer;
+      transition:all .3s;
+    }
+    .saved-address-item:hover {
+      background:#e8e8e8;
+      transform:translateX(5px);
+      box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    }
+    .saved-address-delete {
+      background:#ff6b6b;
+      color:#fff;
+      border:none;
+      border-radius:4px;
+      padding:4px 8px;
+      cursor:pointer;
+      font-size:0.85em;
+      transition:all 0.3s;
+    }
+    .saved-address-delete:hover {
+      background:#ff5252;
+      transform:scale(1.1);
+    }
+
+    .history-modal {
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.5);
+      z-index:250;
+      align-items:flex-start;
+      justify-content:center;
+      animation:modalFadeIn .3s;
+      overflow-y:auto;
+      backdrop-filter: blur(3px);
+    }
+    .history-modal.show {
+      display:flex;
+    }
+    .history-modal-content {
+      background:var(--bg-cream);
+      border-radius:16px;
+      padding:20px;
+      max-width:90vw;
+      width:500px;
+      border:2px solid var(--brand-olive);
+      box-shadow:0 15px 50px rgba(0,0,0,0.3);
+      position:relative;
+      margin:36px auto;
+      animation: modalSlideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .history-item {
+      background:#fff;
+      border:1px solid #ddd;
+      border-radius:8px;
+      padding:12px;
+      margin-bottom:10px;
+      transition:all 0.3s;
+    }
+    .history-item:hover {
+      transform:translateY(-3px);
+      box-shadow:0 5px 15px rgba(0,0,0,0.15);
+      border-color:var(--brand-olive);
+    }
+    .history-item-header {
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:8px;
+      font-weight:700;
+      color:var(--brand-olive);
+    }
+    .history-item-products {
+      font-size:0.9em;
+      color:#555;
+      margin-bottom:8px;
+    }
+    .history-item-footer {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .repeat-order-btn {
+      background:var(--accent);
+      color:#fff;
+      border:none;
+      border-radius:6px;
+      padding:6px 12px;
+      cursor:pointer;
+      font-size:0.9em;
+      font-weight:700;
+      transition:all 0.3s;
+    }
+    .repeat-order-btn:hover {
+      transform:scale(1.1);
+      box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    }
+
     .image-modal {
       display:none;
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,0.7);
+      background:rgba(0,0,0,0.9);
       z-index:300;
       align-items:center;
       justify-content:center;
+      animation:modalFadeIn .3s;
+      cursor:pointer;
+      backdrop-filter: blur(5px);
     }
     .image-modal.show {
       display:flex;
     }
-    .image-modal-content {
+    
+    @keyframes imageZoomIn {
+      from { opacity:0; transform:scale(0.5) rotate(-5deg); }
+      to { opacity:1; transform:scale(1) rotate(0deg); }
+    }
+    
+    .image-modal img {
       max-width:90vw;
       max-height:90vh;
       border-radius:12px;
-      overflow:hidden;
+      box-shadow:0 15px 60px rgba(0,0,0,0.6);
+      animation: imageZoomIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
 
-    footer {
-      text-align:center;
-      padding:18px 12px;
-      color:var(--muted);
-      font-size:0.9em;
-      border-top:1px solid rgba(0,0,0,0.05);
-      background:linear-gradient(180deg, transparent, rgba(0,0,0,0.02));
+    .unavailable-label { display:none; }
+
+    .product .prod-unavailable {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      top: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-size: .95em;
+      border-radius: 10px;
+      padding: 6px 8px;
+      text-align: center;
+      letter-spacing: 1px;
+      z-index: 6;
+      pointer-events: none;
+      animation: slideInUp 0.5s ease;
     }
 
+    #menuLoader{
+      position:fixed; 
+      inset:0; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center;
+      background:rgba(247,239,224,0.95); 
+      z-index:300; 
+      opacity:0; 
+      pointer-events:none; 
+      transition:opacity .3s ease;
+      backdrop-filter: blur(5px);
+    }
+    #menuLoader.visible{ 
+      opacity:1; 
+      pointer-events:auto; 
+    }
+    .loader-box{ 
+      text-align:center; 
+      color:var(--brand-olive);
+      animation: slideInUp 0.5s ease;
+    }
+    .spinner{ 
+      width:48px; 
+      height:48px; 
+      border:5px solid rgba(0,0,0,0.08); 
+      border-top-color:var(--brand-olive); 
+      border-radius:50%; 
+      animation:spin 1s linear infinite; 
+      margin:0 auto 8px; 
+    }
+    @keyframes spin{ 
+      to{ transform:rotate(360deg); } 
+    }
+
+    @media (max-width:1000px) {
+      .menu { grid-template-columns: repeat(3, minmax(140px, 1fr)); max-width:900px; }
+    }
+    @media (max-width:600px) {
+      .menu { grid-template-columns: repeat(2, minmax(140px, 1fr)); gap:12px; max-width:720px; margin-bottom:120px; }
+      .product { width:100%; max-width:220px; padding:10px 8px; }
+      .product-img { width:72px; height:72px; }
+      .cart-modal { min-width:92vw; padding:12px 8px 10px 8px; border-radius:16px; margin-top:12vw;}
+      .cart-fab { width:56px; height:56px; bottom:12px; right:10px; top:auto !important;}
+      .cart-fab-count { min-width:18px; height:18px; font-size:.9em; right:2px; top:2px; }
+      .header-title { font-size:1.4em; }
+      .cart-preview { bottom:70px; right:-10px; max-width:250px; }
+    }
+    @media (max-width:420px) {
+      .menu { gap:10px; padding:0 8px; }
+      .header-title { font-size:1.1rem; }
+    }
   </style>
 </head>
 <body>
-  <header class="header">
+  <div class="header">
     <div class="logo-wrap">
-      <img class="logo-img" src="https://via.placeholder.com/84" alt="Логотип">
+      <img class="logo-img" src="logo.png" alt="СВОЯ КУХНЯ">
       <div>
-        <h1 class="header-title">СВОЯ КУХНЯ</h1>
-        <div class="header-desc">Доставка вкусной еды — теперь в донгах (VND)</div>
+        <div class="header-title">СВОЯ КУХНЯ</div>
+        <div class="header-desc">Доставка еды — вкусно, быстро, рядом</div>
       </div>
     </div>
-
-    <div class="promo-banner" aria-hidden="true">
+    <div class="promo-banner">
       <span class="promo-star">★</span>
-      <span class="promo-text">Свежие блюда каждый день</span>
+      <span class="promo-text">МЕНЮ</span>
       <span class="promo-star">★</span>
     </div>
-  </header>
-
-  <div class="menu-controls" role="toolbar" aria-label="Меню">
-    <button class="active">Все</button>
-    <button>Супы</button>
-    <button>Салаты</button>
-    <button>Десерты</button>
   </div>
 
-  <main>
-    <section class="menu" aria-label="Каталог блюд">
-      <!-- Примеры карточек продуктов.
-           Важно: data-price содержит цену в донгах (VND). -->
-      <article class="product" data-id="p1">
-        <button class="favorite-btn" aria-label="В избранное">♡</button>
-        <img class="product-img" src="https://via.placeholder.com/100" alt="Блюдо 1">
-        <div class="product-name">Фо Бо</div>
-        <div class="product-desc">Ароматный говяжий суп с рисовой лапшой</div>
-        <!-- Цены должны храниться в data-price (число - в донгах). -->
-        <div class="product-price" data-price="120000"></div>
-        <div class="controls">
-          <button class="add-btn" data-action="add" data-price="120000">Добавить</button>
-        </div>
-      </article>
+  <div class="menu-controls">
+    <button onclick="filterMenu('all')" class="active" id="filterAll">Все блюда</button>
+    <button onclick="filterMenu('favorites')" id="filterFavorites">⭐ Избранное</button>
+    <button onclick="showOrderHistory()">📋 История заказов</button>
+  </div>
 
-      <article class="product" data-id="p2">
-        <button class="favorite-btn" aria-label="В избранное">♡</button>
-        <img class="product-img" src="https://via.placeholder.com/100" alt="Блюдо 2">
-        <div class="product-name">Бань Ми</div>
-        <div class="product-desc">Хрустящий багет с начинкой</div>
-        <div class="product-price" data-price="75000"></div>
-        <div class="controls">
-          <button class="add-btn" data-action="add" data-price="75000">Добавить</button>
-        </div>
-      </article>
-
-      <article class="product" data-id="p3">
-        <button class="favorite-btn" aria-label="В избранное">♡</button>
-        <img class="product-img" src="https://via.placeholder.com/100" alt="Блюдо 3">
-        <div class="product-name">Салат из папайи</div>
-        <div class="product-desc">Освежающий салат с арахисом</div>
-        <div class="product-price" data-price="68000"></div>
-        <div class="controls">
-          <button class="add-btn" data-action="add" data-price="68000">Добавить</button>
-        </div>
-      </article>
-
-      <article class="product" data-id="p4">
-        <button class="favorite-btn" aria-label="В избранное">♡</button>
-        <img class="product-img" src="https://via.placeholder.com/100" alt="Блюдо 4">
-        <div class="product-name">Кофе по-вьетнамски</div>
-        <div class="product-desc">Крепкий кофе со сгущённым молоком</div>
-        <div class="product-price" data-price="45000"></div>
-        <div class="controls">
-          <button class="add-btn" data-action="add" data-price="45000">Добавить</button>
-        </div>
-      </article>
-
-      <article class="product" data-id="p5">
-        <button class="favorite-btn" aria-label="В избранное">♡</button>
-        <img class="product-img" src="https://via.placeholder.com/100" alt="Блюдо 5">
-        <div class="product-name">Рис с морепродуктами</div>
-        <div class="product-desc">Питательное блюдо с овощами</div>
-        <div class="product-price" data-price="98000"></div>
-        <div class="controls">
-          <button class="add-btn" data-action="add" data-price="98000">Добавить</button>
-        </div>
-      </article>
-
-      <article class="product" data-id="p6">
-        <button class="favorite-btn" aria-label="В избранное">♡</button>
-        <img class="product-img" src="https://via.placeholder.com/100" alt="Блюдо 6">
-        <div class="product-name">Чао</div>
-        <div class="product-desc">Рисовая каша с курицей</div>
-        <div class="product-price" data-price="54000"></div>
-        <div class="controls">
-          <button class="add-btn" data-action="add" data-price="54000">Добавить</button>
-        </div>
-      </article>
-    </section>
-  </main>
-
-  <!-- Кнопка корзины (FAB) -->
-  <button class="cart-fab" aria-label="Открыть корзину" id="cartFab">
-    <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">
-      <circle class="cart-fab-circle" cx="32" cy="32" r="30"></circle>
-      <g transform="translate(18,18)" fill="#fff">
-        <rect x="0" y="0" width="28" height="14" rx="2"></rect>
-        <circle cx="8" cy="34" r="4" fill="#fff"></circle>
-        <circle cx="22" cy="34" r="4" fill="#fff"></circle>
-      </g>
-    </svg>
-    <div class="cart-fab-count" id="cartCount">0</div>
-
-    <div class="cart-preview" id="cartPreview" aria-hidden="true">
-      <div class="cart-preview-title">В корзине</div>
-      <div id="cartPreviewItems">Пусто</div>
-      <div class="cart-preview-total" id="cartPreviewTotal"></div>
+  <div id="menuLoader" aria-hidden="true">
+    <div class="loader-box" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="loader-text">Загрузка меню…</div>
     </div>
+  </div>
+
+  <div class="menu" id="menu"></div>
+
+  <button id="cartFab" class="cart-fab" style="display:none;" title="Корзина" aria-label="Корзина">
+    <svg viewBox="0 0 48 48" width="56" height="56" style="display:block;margin:auto;">
+      <circle cx="24" cy="24" r="22" class="cart-fab-circle"/>
+      <path d="M16 18h16l-2 13a3 3 0 0 1-3 2h-6a3 3 0 0 1-3-2l-2-13zm3 0v-4a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v4" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="19" cy="36" r="2" fill="#fff"/>
+      <circle cx="29" cy="36" r="2" fill="#fff"/>
+    </svg>
+    <span id="cartFabCount" class="cart-fab-count" aria-hidden="true"></span>
+    <div class="cart-preview" id="cartPreview"></div>
   </button>
 
-  <footer>
-    &copy; СВОЯ КУХНЯ — цены в вьетнамских донгах (VND)
-  </footer>
+  <div id="cartModalBg" class="cart-modal-bg" style="display:none;"></div>
 
-  <!-- Скрипт: форматирование цен в VND и минимальный пример использования -->
+  <div id="deliveryModal" class="delivery-modal">
+    <div class="delivery-modal-content">
+      <button class="delivery-modal-close" onclick="closeDeliveryInfo()">&times;</button>
+      <div class="delivery-info">
+        <strong>🔸 Доставка:</strong>
+        <div class="delivery-info-subtitle">(До входа в отель, апартаменты)</div>
+        <div style="background:#e8f5e9;padding:6px;border-radius:6px;margin:6px 0;font-size:0.92em;color:#2e7d32;text-align:center;">
+          ⏱️ Заказ будет доставлен от 40 минут до 1,5 часа
+        </div>
+        <div class="delivery-info-list">
+          • Центр - Бесплатно от 150k VND<br>
+          &nbsp;&nbsp;(До 150k VND - 20k VND)<br>
+          • Север - от 40k VND<br>
+          • Район - coopmart, Луизиана, Z Beach - от 40k VND<br>
+          • Big C, за Coopmart (в сторону Юга) - от 45k VND<br>
+          • Юг, Анвьен - от 50k VND<br>
+          • За мостом после Coopmart, My gia, за Big C - от 60k VND
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="historyModal" class="history-modal">
+    <div class="history-modal-content">
+      <button class="delivery-modal-close" onclick="closeOrderHistory()">&times;</button>
+      <div class="cart-title">История заказов</div>
+      <div id="historyContent"></div>
+    </div>
+  </div>
+
+  <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <img id="imageModalImg" src="" alt="">
+  </div>
+
   <script>
-  (function () {
-    'use strict';
+    const SHEET_API_URL = 'https://sheets.googleapis.com/v4/spreadsheets/SPREADSHEET_ID/values/Sheet1?key=API_KEY';
+    const SHEET_API_FALLBACK = 'https://script.google.com/macros/s/AKfycbyytR-HwA0y-TnHS_7nygs-_ZkPHDYzQQWFgV3GJSVuvdn93oX0kP92Ti9bQVqW7C_gFg/exec';
 
-    // Форматирование цены в вьетнамский донг (VND)
-    const formatter = new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-      maximumFractionDigits: 0
-    });
+    const TELEGRAM_BOT_TOKEN = '8543195311:AAGzpZwTaUAgw3qp6AeKQA_BbFX35jtbJIk';
+    const TELEGRAM_CHAT_ID = '7567253745';
 
-    function parseNumberFromString(str) {
-      // Извлекаем только цифры и возможные точки/запятые, затем приводим к числу.
-      if (str == null) return 0;
-      const cleaned = String(str).replace(/[^\d.,-]/g, '').replace(/,/g, '');
-      const n = Number(cleaned);
+    let menuData = [];
+    let cart = JSON.parse(localStorage.getItem('cart') || '{}');
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    let orderHistory = JSON.parse(localStorage.getItem('orderHistory') || '[]');
+    let savedAddresses = JSON.parse(localStorage.getItem('savedAddresses') || '[]');
+    let savedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
+    let orderCounter = parseInt(localStorage.getItem('orderCounter') || '0');
+    let currentFilter = 'all';
+
+    const VND_FMT = new Intl.NumberFormat('vi-VN', { style: 'decimal', maximumFractionDigits: 0 });
+    
+    function formatVND(amount) {
+      return VND_FMT.format(amount) + ' ₫';
+    }
+
+    function toNumberSafe(v) {
+      if (typeof v === 'number') return v;
+      if (v == null) return 0;
+      let s = String(v).replace(/\u00A0/g, '').trim();
+      s = s.replace(/[^\d,.\-]/g, '');
+      if (!s) return 0;
+      s = s.replace(/,/g, '.');
+      const parts = s.split('.');
+      if (parts.length > 2) {
+        const frac = parts.pop();
+        s = parts.join('') + '.' + frac;
+      }
+      const n = parseFloat(s);
       return isNaN(n) ? 0 : n;
     }
 
-    function formatPrice(value) {
-      const n = Number(value) || 0;
-      return formatter.format(Math.round(n));
+    function escapeHtml(s){ return String(s || '').replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]); }
+
+    function saveCart() { localStorage.setItem('cart', JSON.stringify(cart)); }
+    function saveFavorites() { localStorage.setItem('favorites', JSON.stringify(favorites)); }
+    function saveOrderHistory() { localStorage.setItem('orderHistory', JSON.stringify(orderHistory)); }
+    function saveSavedAddresses() { localStorage.setItem('savedAddresses', JSON.stringify(savedAddresses)); }
+    function saveUserData() { localStorage.setItem('userData', JSON.stringify(savedUserData)); }
+
+    function showLoader(){
+      const l = document.getElementById('menuLoader');
+      if(!l) return;
+      l.classList.add('visible');
+      l.setAttribute('aria-hidden','false');
+    }
+    function hideLoader(){
+      const l = document.getElementById('menuLoader');
+      if(!l) return;
+      l.classList.remove('visible');
+      l.setAttribute('aria-hidden','true');
     }
 
-    function renderAllPrices(root = document) {
-      // 1) Все элементы с data-price — читаем атрибут и форматируем
-      const attrEls = root.querySelectorAll('[data-price]');
-      attrEls.forEach(el => {
-        const raw = el.getAttribute('data-price');
-        const num = parseNumberFromString(raw);
-        el.textContent = formatPrice(num);
-      });
+    async function loadMenu() {
+      showLoader();
+      const safetyTimeout = setTimeout(()=>{ hideLoader(); }, 20000);
+      try {
+        const res = await fetch(SHEET_API_URL);
+        if (!res.ok) throw new Error('Primary fetch failed: ' + res.status);
+        const json = await res.json();
+        
+        if (json && Array.isArray(json.values) && json.values.length > 0) {
+          const rows = json.values;
+          const headers = rows[0].map(h => String(h || '').trim().toLowerCase());
+          const dataRows = rows.slice(1);
+          menuData = dataRows.map((row, idx) => {
+            const obj = {};
+            headers.forEach((h, i) => obj[h] = row[i] !== undefined ? row[i] : '');
+            return {
+              id: idx + 1,
+              name: obj.name || obj.title || `Блюдо ${idx+1}`,
+              description: obj.description || obj.desc || '',
+              img: obj.img || obj.image || '',
+              price: toNumberSafe(obj.price || obj.cost || obj['цена']),
+              available: String(obj.available || obj.доступно || 'true').trim().toLowerCase() === 'true'
+            };
+          });
+          clearTimeout(safetyTimeout);
+          hideLoader();
+          renderMenu();
+          return;
+        }
 
-      // 2) Элементы с классом product-price, у которых нет data-price — пробуем извлечь число из текста
-      const priceEls = root.querySelectorAll('.product-price');
-      priceEls.forEach(el => {
-        if (!el.hasAttribute('data-price')) {
-          const num = parseNumberFromString(el.textContent);
-          if (num > 0) {
-            el.setAttribute('data-price', String(num));
-            el.textContent = formatPrice(num);
+        if (json && json.menu && Array.isArray(json.menu)) {
+          menuData = json.menu.map((item, idx) => ({
+            id: idx + 1,
+            name: item.name || item.title || `Блюдо ${idx+1}`,
+            description: item.description || item.desc || '',
+            img: item.img || item.image || '',
+            price: toNumberSafe(item.price),
+            available: String(item.available).trim().toLowerCase() === 'true'
+          }));
+          clearTimeout(safetyTimeout);
+          hideLoader();
+          renderMenu();
+          return;
+        }
+
+        if (Array.isArray(json) && json.length > 0 && typeof json[0] === 'object') {
+          menuData = json.map((item, idx) => ({
+            id: idx + 1,
+            name: item.name || item.title || `Блюдо ${idx+1}`,
+            description: item.description || item.desc || '',
+            img: item.img || item.image || '',
+            price: toNumberSafe(item.price),
+            available: String(item.available).trim().toLowerCase() === 'true'
+          }));
+          clearTimeout(safetyTimeout);
+          hideLoader();
+          renderMenu();
+          return;
+        }
+
+        throw new Error('Unknown sheet response format');
+      } catch (err) {
+        console.warn('Primary load failed, trying fallback...', err);
+        try {
+          const res2 = await fetch(SHEET_API_FALLBACK);
+          if (!res2.ok) throw new Error('Fallback fetch failed: ' + res2.status);
+          const j2 = await res2.json();
+          if (j2 && j2.menu && Array.isArray(j2.menu)) {
+            menuData = j2.menu.map((item, idx) => ({
+              id: idx + 1,
+              name: item.name || item.title || `Блюдо ${idx+1}`,
+              description: item.description || item.desc || '',
+              img: item.img || item.image || '',
+              price: toNumberSafe(item.price),
+              available: String(item.available).trim().toLowerCase() === 'true'
+            }));
+            clearTimeout(safetyTimeout);
+            hideLoader();
+            renderMenu();
+            return;
           }
+          throw new Error('Fallback returned unexpected format');
+        } catch (e) {
+          clearTimeout(safetyTimeout);
+          hideLoader();
+          document.getElementById('menu').innerHTML = '<div style="color:var(--brand-olive);font-size:1.1em;text-align:center;margin:40px auto;">Ошибка загрузки меню. Проверьте соединение или попробуйте позже.</div>';
         }
+      }
+    }
+
+    function filterMenu(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.menu-controls button').forEach(btn => btn.classList.remove('active'));
+      if (filter === 'all') document.getElementById('filterAll').classList.add('active');
+      if (filter === 'favorites') document.getElementById('filterFavorites').classList.add('active');
+      renderMenu();
+    }
+
+    function renderMenu() {
+      const menu = document.getElementById('menu');
+      menu.innerHTML = '';
+      
+      let itemsToShow = menuData;
+      if (currentFilter === 'favorites') {
+        itemsToShow = menuData.filter(item => favorites.includes(item.id));
+      }
+
+      if (!itemsToShow || itemsToShow.length === 0) {
+        menu.innerHTML = '<div style="color:var(--brand-olive);font-size:1.05em;text-align:center;margin:40px auto;">' + 
+          (currentFilter === 'favorites' ? 'Нет избранных блюд' : 'Меню пусто.') + '</div>';
+        updateCartFab();
+        return;
+      }
+
+      itemsToShow.forEach(item => {
+        const prod = document.createElement('div');
+        prod.className = 'product' + (!item.available ? ' unavailable' : '');
+        const priceText = formatVND(Number(item.price) || 0);
+        const isFavorite = favorites.includes(item.id);
+        prod.innerHTML = `
+          ${!item.available ? `<div class="prod-unavailable">Нет в наличии</div>` : ''}
+          <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})" title="Добавить в избранное">
+            ${isFavorite ? '❤️' : '🤍'}
+          </button>
+          <img class="product-img" src="${item.img || 'https://via.placeholder.com/100x100?text=Фото'}" alt="${escapeHtml(item.name)}" onclick="showImageModal('${item.img}')">
+          <div class="product-name">${escapeHtml(item.name)}</div>
+          <div class="product-desc">${escapeHtml(item.description || '')}</div>
+          <div class="product-price">${priceText}</div>
+          <div class="controls">
+            <button class="remove-btn" ${!item.available ? 'disabled' : ''} onclick="updateCart(${item.id},-1)">−</button>
+            <span id="qty-${item.id}">${cart[item.id]?.qty||0}</span>
+            <button class="add-btn" ${!item.available ? 'disabled' : ''} onclick="updateCart(${item.id},1)">+</button>
+          </div>
+        `;
+        menu.appendChild(prod);
       });
+      updateCartFab();
     }
 
-    // expose to window for other scripts
-    window.currencyVND = {
-      formatPrice,
-      renderAllPrices,
-      parseNumberFromString
+    window.toggleFavorite = function(id) {
+      const idx = favorites.indexOf(id);
+      if (idx > -1) {
+        favorites.splice(idx, 1);
+      } else {
+        favorites.push(id);
+      }
+      saveFavorites();
+      renderMenu();
     };
 
-    // Initial render
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => window.currencyVND.renderAllPrices());
-    } else {
-      window.currencyVND.renderAllPrices();
+    window.showImageModal = function(src) {
+      if (!src || src.includes('placeholder')) return;
+      document.getElementById('imageModalImg').src = src;
+      document.getElementById('imageModal').classList.add('show');
+    };
+
+    window.closeImageModal = function() {
+      document.getElementById('imageModal').classList.remove('show');
+    };
+
+    window.updateCart = function(id, delta) {
+      const item = menuData.find(i=>i.id===id);
+      if (!item || !item.available) return;
+      if (!cart[id]) cart[id] = { ...item, qty: 0 };
+      cart[id].qty = Math.max(0, cart[id].qty + delta);
+      if (cart[id].qty === 0) delete cart[id];
+      
+      if (delta > 0) {
+        const qtyEl = document.getElementById(`qty-${id}`);
+        if (qtyEl) qtyEl.parentElement.classList.add('adding-animation');
+        setTimeout(() => {
+          const el = document.getElementById(`qty-${id}`);
+          if (el) el.parentElement.classList.remove('adding-animation');
+        }, 500);
+      }
+      
+      const qtyEl = document.getElementById(`qty-${id}`);
+      if (qtyEl) qtyEl.textContent = cart[id]?.qty || 0;
+      saveCart();
+      updateCartFab();
+      updateCartPreview();
+      if (document.getElementById('cartModalBg').style.display === 'flex') showCartModal();
+    };
+
+    function updateCartPreview() {
+      const preview = document.getElementById('cartPreview');
+      const items = Object.values(cart).sort((a, b) => a.id - b.id);
+      if (items.length === 0) {
+        preview.innerHTML = '<div class="cart-preview-title">Корзина пуста</div>';
+        return;
+      }
+      const total = items.reduce((s,i)=>s + (i.price || 0) * i.qty, 0);
+      preview.innerHTML = `
+        <div class="cart-preview-title">Корзина</div>
+        ${items.slice(0, 3).map(it => `
+          <div class="cart-preview-item">
+            <span>${escapeHtml(it.name)} x${it.qty}</span>
+            <span>${formatVND((it.price||0) * it.qty)}</span>
+          </div>
+        `).join('')}
+        ${items.length > 3 ? `<div style="text-align:center;color:var(--muted);font-size:0.85em;margin-top:4px;">+ еще ${items.length - 3}</div>` : ''}
+        <div class="cart-preview-total">Итого: ${formatVND(total)}</div>
+      `;
     }
 
-    // Простой пример: минимальная логика добавления в корзину (демонстрация использования форматтера).
-    const cart = {
-      items: [], // { id, name, price, qty }
-      add(item) {
-        const found = this.items.find(i => i.id === item.id);
-        if (found) found.qty += item.qty;
-        else this.items.push(item);
-        this.render();
-      },
-      total() {
-        return this.items.reduce((s, it) => s + it.price * it.qty, 0);
-      },
-      render() {
-        const count = this.items.reduce((s, it) => s + it.qty, 0);
-        document.getElementById('cartCount').textContent = String(count);
+    function updateCartFab() {
+      const fab = document.getElementById('cartFab');
+      const count = Object.values(cart).reduce((s,i)=>s + (i.qty || 0), 0);
+      if (count > 0) {
+        fab.style.display = 'flex';
+        document.getElementById('cartFabCount').textContent = count;
+        updateCartPreview();
+      } else {
+        fab.style.display = 'none';
+        document.getElementById('cartFabCount').textContent = '';
+      }
+    }
 
-        const previewItems = document.getElementById('cartPreviewItems');
-        previewItems.innerHTML = '';
-        if (this.items.length === 0) {
-          previewItems.textContent = 'Пусто';
-        } else {
-          this.items.forEach(it => {
-            const div = document.createElement('div');
-            div.className = 'cart-preview-item';
-            div.innerHTML = '<div>' + escapeHtml(it.name) + (it.qty > 1 ? ' x' + it.qty : '') + '</div>' +
-                            '<div>' + formatPrice(it.price * it.qty) + '</div>';
-            previewItems.appendChild(div);
-          });
-        }
+    document.getElementById('cartFab').onclick = showCartModal;
 
-        const previewTotal = document.getElementById('cartPreviewTotal');
-        previewTotal.textContent = this.items.length ? ('Итого: ' + formatPrice(this.total())) : '';
+    function showCartModal() {
+      const modalBg = document.getElementById('cartModalBg');
+      const items = Object.values(cart).sort((a, b) => a.id - b.id);
+      const listHtml = items.length === 0
+        ? '<li style="color:var(--brand-olive);text-align:center;width:100%;">Корзина пуста</li>'
+        : items.map(it => `
+            <li>
+              <span>${escapeHtml(it.name)} x${it.qty}</span>
+              <span>
+                <button class="remove-btn" onclick="updateCart(${it.id},-1)">−</button>
+                <span style="margin:0 8px;">${formatVND((it.price||0) * it.qty)}</span>
+                <button class="add-btn" onclick="updateCart(${it.id},1)">+</button>
+              </span>
+            </li>
+          `).join('');
+      const total = items.reduce((s,i)=>s + (i.price || 0) * i.qty, 0);
+      
+      const savedAddressesHtml = savedAddresses.length > 0 ? `
+        <div class="saved-addresses">
+          <label style="font-size:0.9em;color:var(--brand-olive);margin-bottom:4px;display:block;">Сохраненные адреса:</label>
+          ${savedAddresses.map((addr, idx) => `
+            <div class="saved-address-item" onclick="selectAddress('${escapeHtml(addr)}')">
+              <span style="flex:1;">${escapeHtml(addr)}</span>
+              <button class="saved-address-delete" onclick="event.stopPropagation(); deleteAddress(${idx})">✕</button>
+            </div>
+          `).join('')}
+        </div>
+      ` : '';
+
+      modalBg.innerHTML = `
+        <div class="cart-modal" role="dialog" aria-modal="true" aria-label="Корзина">
+          <button class="cart-close" onclick="closeCartModal()" aria-label="Закрыть">&times;</button>
+          <div class="cart-title">Корзина</div>
+          <ul class="cart-list">${listHtml}</ul>
+          <div class="cart-total">Итого: ${formatVND(total)}</div>
+          <form class="order-form" id="orderForm">
+            <div style="background:#fff3cd;border:2px solid #ffc107;border-radius:8px;padding:8px;margin-bottom:10px;font-size:0.95em;color:#856404;text-align:center;">
+              ⚠️ <strong>Укажите точные данные для обратной связи</strong>
+            </div>
+            <input type="text" id="name" placeholder="Точный никнейм Telegram (например: @username)" value="${escapeHtml(savedUserData.name || '')}" required>
+            <input type="tel" id="phone" placeholder="Точный номер телефона" value="${escapeHtml(savedUserData.phone || '')}" required>
+            <select id="payment" required>
+              <option value="">Выберите способ оплаты</option>
+              <option value="qr" ${savedUserData.payment === 'qr' ? 'selected' : ''}>QR (оплатить через скан)</option>
+              <option value="cash" ${savedUserData.payment === 'cash' ? 'selected' : ''}>Наличные</option>
+            </select>
+            <button type="button" class="delivery-btn" onclick="showDeliveryInfo()">
+              🔸 Информация о доставке
+              <span style="font-size:0.9em;">▼</span>
+            </button>
+            ${savedAddressesHtml}
+            <input type="text" id="address" placeholder="Адрес доставки" value="${escapeHtml(savedUserData.address || '')}" required>
+            <label style="display:flex;align-items:center;gap:6px;margin:8px 0;font-size:0.9em;">
+              <input type="checkbox" id="saveAddress" ${savedAddresses.length > 0 ? 'checked' : ''}>
+              Сохранить адрес для будущих заказов
+            </label>
+            <textarea id="comment" placeholder="Комментарий к заказу (необязательно)" rows="2">${escapeHtml(savedUserData.comment || '')}</textarea>
+            <button type="submit" class="order-btn">Оформить заказ</button>
+            <div id="orderSuccess" class="order-success" style="display:none;"></div>
+          </form>
+        </div>
+      `;
+      modalBg.style.display = 'flex';
+      const orderForm = document.getElementById('orderForm');
+      if (orderForm) orderForm.onsubmit = sendOrder;
+      setTimeout(() => {
+        const modal = document.querySelector('.cart-modal');
+        if (modal) modal.scrollIntoView({behavior: "smooth", block: "start"});
+      }, 50);
+    }
+
+    window.selectAddress = function(addr) {
+      document.getElementById('address').value = addr;
+    };
+
+    window.deleteAddress = function(idx) {
+      if (confirm('Удалить этот адрес?')) {
+        savedAddresses.splice(idx, 1);
+        saveSavedAddresses();
+        showCartModal();
       }
     };
 
-    // Escape helper
-    function escapeHtml(text) {
-      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-      return String(text).replace(/[&<>"']/g, (m) => map[m]);
-    }
+    window.closeCartModal = function() {
+      document.getElementById('cartModalBg').style.display = 'none';
+    };
 
-    // Вешаем обработчики кнопок "Добавить"
-    document.addEventListener('click', function (e) {
-      const btn = e.target.closest('[data-action="add"]');
-      if (!btn) return;
-      const productEl = btn.closest('.product');
-      const id = productEl ? (productEl.getAttribute('data-id') || '') : '';
-      const nameEl = productEl ? productEl.querySelector('.product-name') : null;
-      const name = nameEl ? nameEl.textContent.trim() : 'Товар';
-      // price может быть в атрибуте кнопки или в карточке
-      let price = parseNumberFromString(btn.getAttribute('data-price') || '');
-      if (!price && productEl) {
-        price = parseNumberFromString(productEl.querySelector('[data-price]')?.getAttribute('data-price') || '');
+    window.showDeliveryInfo = function() {
+      document.getElementById('deliveryModal').classList.add('show');
+    };
+
+    window.closeDeliveryInfo = function() {
+      document.getElementById('deliveryModal').classList.remove('show');
+    };
+
+    document.getElementById('deliveryModal').onclick = function(e) {
+      if (e.target === this) closeDeliveryInfo();
+    };
+
+    window.showOrderHistory = function() {
+      const historyContent = document.getElementById('historyContent');
+      if (orderHistory.length === 0) {
+        historyContent.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px;">История заказов пуста</div>';
+      } else {
+        historyContent.innerHTML = orderHistory.slice().reverse().map(order => `
+          <div class="history-item">
+            <div class="history-item-header">
+              <span>Заказ #${order.number}</span>
+              <span>${new Date(order.date).toLocaleDateString('ru-RU')}</span>
+            </div>
+            <div class="history-item-products">
+              ${order.items.map(it => `${it.name} x${it.qty}`).join(', ')}
+            </div>
+            <div class="history-item-footer">
+              <strong>${formatVND(order.total)}</strong>
+              <button class="repeat-order-btn" onclick="repeatOrder(${order.number})">Повторить заказ</button>
+            </div>
+          </div>
+        `).join('');
       }
-      if (!price) price = 0;
-      cart.add({ id, name, price: Math.round(price), qty: 1 });
-    });
+      document.getElementById('historyModal').classList.add('show');
+    };
 
-    // показываем preview при наведении на FAB
-    const cartFab = document.getElementById('cartFab');
-    const cartPreview = document.getElementById('cartPreview');
-    if (cartFab && cartPreview) {
-      cartFab.addEventListener('mouseenter', () => cartPreview.style.display = 'block');
-      cartFab.addEventListener('mouseleave', () => cartPreview.style.display = '');
-    }
+    window.closeOrderHistory = function() {
+      document.getElementById('historyModal').classList.remove('show');
+    };
 
-    // MutationObserver: автоматически форматируем динамически добавленные элементы
-    const mo = new MutationObserver(mutations => {
-      for (const m of mutations) {
-        if (m.addedNodes && m.addedNodes.length) {
-          m.addedNodes.forEach(node => {
-            if (node.nodeType === 1) { // Element
-              window.currencyVND.renderAllPrices(node);
-            }
-          });
-        }
-      }
-    });
-    mo.observe(document.body, { childList: true, subtree: true });
-
-  })();
-  </script>
-</body>
-</html>
+    window.repeatOrder = function(orderNumber) {
+      const order = orderHistory.find(o => o.number === orderNumber);
+      if (!order) return;
+      
+      cart = {};
+      order.items.forEach(item => {
+        const menuItem = menuData.find(m => m.id === item.id);
+        if (menuItem && menuItem.available) {
+          cart[item.id] = { ...menuItem,
