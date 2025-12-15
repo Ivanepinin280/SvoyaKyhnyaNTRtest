@@ -1,1556 +1,236 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>СВОЯ КУХНЯ — доставка еды</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans+Narrow:700&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --brand-olive:#556B2F;
-      --brand-olive-light:#7B8A2F;
-      --bg-cream:#f7efe0;
-      --accent:#b3611f;
-      --muted:#7c6a5c;
-      --card-border:#6b7a29;
-    }
-    html,body{height:100%;}
-    body {
-      background: var(--bg-cream);
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
-      margin:0;
-      min-height:100vh;
-      color:#2b2b2b;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
+<meta charset="UTF-8">
+<title>СВОЯ КУХНЯ — доставка еды</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    @keyframes fadeInDown {
-      from { opacity:0; transform:translateY(-30px); }
-      to { opacity:1; transform:translateY(0); }
-    }
+<link href="https://fonts.googleapis.com/css?family=PT+Sans+Narrow:700&display=swap" rel="stylesheet">
 
-    .header {
-      text-align:center;
-      padding:28px 12px 10px 12px;
-      background: linear-gradient(90deg, var(--brand-olive) 0%, var(--brand-olive-light) 100%);
-      box-shadow:0 2px 10px rgba(0,0,0,0.08);
-      position:relative;
-      animation: fadeInDown 0.6s ease;
-    }
-    .logo-wrap {
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:14px;
-      flex-wrap:wrap;
-    }
-    @keyframes logoPop { 
-      0% {transform:scale(0.7) rotate(-10deg); opacity:0;} 
-      60% {transform:scale(1.1) rotate(5deg);}
-      100% {transform:scale(1) rotate(0deg); opacity:1;} 
-    }
-    .logo-img {
-      width:84px;
-      height:84px;
-      object-fit:cover;
-      border-radius:50%;
-      border: none;
-      background: transparent;
-      padding: 0;
-      box-shadow:0 6px 18px rgba(0,0,0,0.12);
-      animation:logoPop .6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .header-title {
-      font-size:2.0em;
-      color:#fff;
-      font-weight:800;
-      letter-spacing:1px;
-      text-shadow:0 1px 6px rgba(0,0,0,0.12);
-      margin-bottom:0;
-      animation: fadeInDown 0.6s ease 0.2s backwards;
-    }
-    .header-desc {
-      color:#fffbe6;
-      font-size:1.02em;
-      font-weight:700;
-      letter-spacing:0.5px;
-      margin-top:6px;
-      opacity:0.95;
-      animation: fadeInDown 0.6s ease 0.3s backwards;
-    }
-    
-    @keyframes starPulse {
-      0%, 100% { transform:scale(1) rotate(0deg); }
-      50% { transform:scale(1.2) rotate(180deg); }
-    }
-    .promo-banner {
-      text-align:center;
-      margin-top:10px;
-      margin-bottom:10px;
-      letter-spacing:1px;
-      animation: fadeInDown 0.6s ease 0.4s backwards;
-    }
-    .promo-star { 
-      color:var(--accent); 
-      font-size:1.6em; 
-      vertical-align:middle;
-      display:inline-block;
-      animation: starPulse 2s ease-in-out infinite;
-    }
-    .promo-star:first-child {
-      animation-delay: 0s;
-    }
-    .promo-star:last-child {
-      animation-delay: 1s;
-    }
-    .promo-text { color:#fffbe6; font-weight:700; margin:0 8px; }
-
-    @keyframes slideInUp {
-      from { opacity:0; transform:translateY(20px); }
-      to { opacity:1; transform:translateY(0); }
-    }
-
-    .menu-controls {
-      max-width:1100px;
-      margin:20px auto 10px;
-      padding:0 12px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:center;
-      animation: slideInUp 0.5s ease 0.3s backwards;
-    }
-    .menu-controls button {
-      background:var(--brand-olive);
-      color:#fff;
-      border:none;
-      border-radius:8px;
-      padding:8px 16px;
-      font-size:0.95em;
-      font-weight:700;
-      cursor:pointer;
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
-      transition:all .3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      position:relative;
-      overflow:hidden;
-    }
-    .menu-controls button::before {
-      content:'';
-      position:absolute;
-      top:50%;
-      left:50%;
-      width:0;
-      height:0;
-      border-radius:50%;
-      background:rgba(255,255,255,0.3);
-      transform:translate(-50%, -50%);
-      transition:width 0.6s, height 0.6s;
-    }
-    .menu-controls button:hover::before {
-      width:300px;
-      height:300px;
-    }
-    .menu-controls button:hover {
-      background:var(--brand-olive-light);
-      transform:translateY(-3px) scale(1.05);
-      box-shadow:0 5px 15px rgba(0,0,0,0.2);
-    }
-    .menu-controls button.active {
-      background:var(--accent);
-      transform:scale(1.1);
-    }
-
-    .menu {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap:18px;
-      justify-items:center;
-      align-items:start;
-      grid-auto-rows: 1fr;
-      max-width:1100px;
-      margin:26px auto 80px;
-      padding:0 12px;
-      box-sizing:border-box;
-    }
-
-    @keyframes cardFadeIn {
-      from { opacity:0; transform:translateY(30px) scale(0.9); }
-      to { opacity:1; transform:translateY(0) scale(1); }
-    }
-
-    .product {
-      background: #fff;
-      border-radius:14px;
-      box-shadow:0 4px 18px rgba(0,0,0,0.06);
-      width:100%;
-      max-width:220px;
-      padding:16px 12px 14px;
-      display:flex; 
-      flex-direction:column;
-      justify-content:space-between;
-      transition:all .3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      position:relative;
-      border:2px solid var(--card-border);
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
-      box-sizing:border-box;
-      height:100%;
-      animation: cardFadeIn 0.5s ease backwards;
-    }
-    .product:nth-child(1) { animation-delay: 0.1s; }
-    .product:nth-child(2) { animation-delay: 0.15s; }
-    .product:nth-child(3) { animation-delay: 0.2s; }
-    .product:nth-child(4) { animation-delay: 0.25s; }
-    .product:nth-child(5) { animation-delay: 0.3s; }
-    .product:nth-child(6) { animation-delay: 0.35s; }
-    
-    .product:not(.unavailable):hover {
-      transform:translateY(-8px) scale(1.03) rotate(1deg);
-      box-shadow:0 12px 35px rgba(0,0,0,0.15);
-      border-color:var(--brand-olive-light);
-    }
-    .product.unavailable { opacity:.6; pointer-events:none; }
-    
-    @keyframes imageZoom {
-      0% { transform:scale(1); }
-      100% { transform:scale(1.1); }
-    }
-    
-    .product-img {
-      width:100px; 
-      height:100px; 
-      object-fit:cover; 
-      border-radius:12px; 
-      margin-bottom:10px; 
-      background:#eee;
-      border:2px solid var(--brand-olive);
-      flex: 0 0 auto;
-      cursor:pointer;
-      transition:all 0.4s ease;
-    }
-    .product:hover .product-img {
-      transform:scale(1.1) rotate(3deg);
-      box-shadow:0 8px 20px rgba(0,0,0,0.2);
-    }
-    
-    .product-name {
-      font-size:1.05em; 
-      font-weight:700; 
-      color:var(--brand-olive); 
-      margin-bottom:6px; 
-      text-align:center;
-      letter-spacing:1px; 
-      text-transform:uppercase;
-      transition:color 0.3s;
-    }
-    .product:hover .product-name {
-      color:var(--accent);
-    }
-    
-    .product-desc {
-      color:var(--muted); 
-      font-size:.95em; 
-      margin-bottom:6px; 
-      text-align:center; 
-      min-height:36px;
-      flex: 1 1 auto;
-    }
-    .product-price {
-      font-size:1.05em; 
-      color:#222; 
-      margin-bottom:10px; 
-      font-weight:700; 
-      letter-spacing:0.5px;
-    }
-    .controls { 
-      display:flex; 
-      align-items:center; 
-      gap:8px; 
-      flex-wrap:wrap; 
-      justify-content:center; 
-    }
-    .add-btn, .remove-btn {
-      border:none; 
-      border-radius:8px; 
-      font-size:1em; 
-      padding:6px 12px; 
-      margin:0 4px; 
-      cursor:pointer; 
-      transition:all .3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
-      font-weight:700;
-    }
-    .add-btn { 
-      background:var(--brand-olive); 
-      color:#fff; 
-      box-shadow:0 2px 6px rgba(91,104,44,0.12); 
-    }
-    .add-btn:hover {
-      transform:translateY(-2px) scale(1.1);
-      box-shadow:0 4px 12px rgba(91,104,44,0.3);
-    }
-    .remove-btn { 
-      background:#fff; 
-      color:var(--brand-olive); 
-      border:1px solid var(--card-border); 
-    }
-    .remove-btn:hover {
-      transform:translateY(-2px) scale(1.1);
-      background:var(--brand-olive);
-      color:#fff;
-    }
-    .add-btn:active,.remove-btn:active{ 
-      transform:translateY(1px) scale(0.95); 
-    }
-
-    @keyframes heartBeat {
-      0%, 100% { transform:scale(1); }
-      25% { transform:scale(1.2); }
-      50% { transform:scale(0.95); }
-      75% { transform:scale(1.1); }
-    }
-
-    .favorite-btn {
-      position:absolute;
-      top:8px;
-      right:8px;
-      background:rgba(255,255,255,0.9);
-      border:none;
-      border-radius:50%;
-      width:32px;
-      height:32px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      font-size:1.2em;
-      transition:all .3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      z-index:10;
-    }
-    .favorite-btn:hover {
-      transform:scale(1.2) rotate(10deg);
-      background:#fff;
-      box-shadow:0 4px 15px rgba(0,0,0,0.2);
-    }
-    .favorite-btn.active {
-      color:#ff6b6b;
-      animation: heartBeat 0.6s ease;
-    }
-
-    @keyframes addToCart {
-      0% { transform:scale(1); }
-      30% { transform:scale(1.3) rotate(5deg); }
-      60% { transform:scale(0.9) rotate(-5deg); }
-      100% { transform:scale(1) rotate(0deg); }
-    }
-    .adding-animation {
-      animation:addToCart .5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-    @keyframes float {
-      0%, 100% { transform:translateY(0px); }
-      50% { transform:translateY(-10px); }
-    }
-
-    .cart-fab {
-      position:fixed; 
-      bottom:22px; 
-      right:18px; 
-      background:none; 
-      border:none; 
-      box-shadow:none;
-      width:72px; 
-      height:72px; 
-      display:flex; 
-      align-items:center; 
-      justify-content:center;
-      cursor:pointer; 
-      z-index:100; 
-      padding:0;
-      transition:transform .3s ease;
-      animation: float 3s ease-in-out infinite;
-    }
-    .cart-fab:hover {
-      transform:scale(1.15) rotate(5deg);
-      animation: none;
-    }
-    .cart-fab:hover .cart-preview {
-      display:block;
-    }
-    .cart-fab svg { 
-      display:block; 
-      filter: drop-shadow(0 6px 20px rgba(0,0,0,0.25));
-      transition:filter 0.3s;
-    }
-    .cart-fab:hover svg {
-      filter: drop-shadow(0 8px 25px rgba(0,0,0,0.35));
-    }
-    .cart-fab-circle { 
-      fill:var(--accent); 
-      stroke:#fff; 
-      stroke-width:2;
-      transition:all 0.3s;
-    }
-    .cart-fab:hover .cart-fab-circle {
-      fill:var(--brand-olive-light);
-    }
-    
-    @keyframes bounce {
-      0%, 100% { transform:scale(1); }
-      50% { transform:scale(1.2); }
-    }
-    
-    .cart-fab-count {
-      position:absolute; 
-      right:6px; 
-      top:6px; 
-      background:#fff; 
-      color:var(--accent); 
-      font-weight:700;
-      border-radius:50%; 
-      min-width:26px; 
-      height:26px; 
-      display:flex; 
-      align-items:center; 
-      justify-content:center;
-      font-size:1em; 
-      box-shadow:0 2px 8px rgba(0,0,0,0.12); 
-      border:2px solid var(--accent);
-      pointer-events:none;
-      animation: bounce 0.5s ease;
-    }
-
-    @keyframes slideInRight {
-      from { opacity:0; transform:translateX(20px); }
-      to { opacity:1; transform:translateX(0); }
-    }
-
-    .cart-preview {
-      display:none;
-      position:absolute;
-      bottom:80px;
-      right:0;
-      background:#fff;
-      border:2px solid var(--brand-olive);
-      border-radius:12px;
-      padding:12px;
-      min-width:200px;
-      max-width:300px;
-      box-shadow:0 8px 24px rgba(0,0,0,0.15);
-      font-size:0.9em;
-      animation: slideInRight 0.3s ease;
-    }
-    .cart-preview-title {
-      font-weight:700;
-      color:var(--brand-olive);
-      margin-bottom:8px;
-      border-bottom:1px solid #ddd;
-      padding-bottom:6px;
-    }
-    .cart-preview-item {
-      display:flex;
-      justify-content:space-between;
-      margin:4px 0;
-      color:#333;
-    }
-    .cart-preview-total {
-      margin-top:8px;
-      padding-top:8px;
-      border-top:1px solid #ddd;
-      font-weight:700;
-      text-align:right;
-    }
-
-    @keyframes modalFadeIn {
-      from { opacity:0; }
-      to { opacity:1; }
-    }
-    
-    @keyframes modalSlideUp {
-      from { opacity:0; transform:translateY(50px) scale(0.9); }
-      to { opacity:1; transform:translateY(0) scale(1); }
-    }
-
-    .cart-modal-bg {
-      position:fixed; 
-      left:0; 
-      top:0; 
-      width:100vw; 
-      height:100vh; 
-      background:rgba(0,0,0,0.5); 
-      z-index:200;
-      display:flex; 
-      align-items:flex-start; 
-      justify-content:center; 
-      animation:modalFadeIn .3s;
-      backdrop-filter: blur(3px);
-    }
-    
-    .cart-modal {
-      background: var(--bg-cream); 
-      border-radius:18px; 
-      padding:20px 16px 16px 16px; 
-      min-width:320px; 
-      max-width:95vw;
-      box-shadow:0 15px 50px rgba(0,0,0,0.3); 
-      position:relative;
-      border:2px solid var(--brand-olive);
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
-      max-height:86vh; 
-      overflow-y:auto;
-      display:flex; 
-      flex-direction:column;
-      margin-top:36px;
-      animation: modalSlideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .cart-title { 
-      font-size:1.2em; 
-      color:var(--brand-olive); 
-      margin-bottom:10px; 
-      letter-spacing:1px; 
-      font-weight:800; 
-    }
-    .cart-list { 
-      list-style:none; 
-      padding:0; 
-      margin:0 0 10px 0; 
-    }
-    .cart-list li { 
-      display:flex; 
-      justify-content:space-between; 
-      align-items:center; 
-      margin-bottom:8px; 
-      color:#333;
-      transition:all 0.3s;
-    }
-    .cart-list li:hover {
-      background:rgba(255,255,255,0.5);
-      padding:5px;
-      border-radius:8px;
-    }
-    .cart-total { 
-      font-size:1.05em; 
-      color:#222; 
-      margin-bottom:12px; 
-      text-align:right; 
-      font-weight:800; 
-    }
-    .cart-close { 
-      position:absolute; 
-      right:10px; 
-      top:8px; 
-      font-size:1.4em; 
-      color:var(--brand-olive); 
-      background:none; 
-      border:none; 
-      cursor:pointer;
-      transition:all 0.3s;
-    }
-    .cart-close:hover {
-      transform:rotate(90deg) scale(1.2);
-      color:var(--accent);
-    }
-    .order-form input, .order-form textarea, .order-form select {
-      width:100%; 
-      padding:8px; 
-      margin-bottom:8px; 
-      border-radius:8px; 
-      border:1px solid #ddd; 
-      font-size:1em;
-      background:#fff; 
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
-      transition:all 0.3s;
-      box-sizing:border-box;
-    }
-    .order-form input:focus, .order-form textarea:focus, .order-form select:focus {
-      border-color:var(--brand-olive);
-      box-shadow:0 0 10px rgba(85,107,47,0.2);
-      outline:none;
-      transform:scale(1.02);
-    }
-    .order-btn {
-      background:var(--accent); 
-      color:#fff; 
-      border:none; 
-      border-radius:8px; 
-      padding:10px 18px; 
-      font-size:1.03em; 
-      font-weight:800; 
-      cursor:pointer; 
-      width:100%; 
-      margin-top:8px;
-      letter-spacing:1px;
-      transition:all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      position:relative;
-      overflow:hidden;
-    }
-    .order-btn::before {
-      content:'';
-      position:absolute;
-      top:50%;
-      left:50%;
-      width:0;
-      height:0;
-      border-radius:50%;
-      background:rgba(255,255,255,0.3);
-      transform:translate(-50%, -50%);
-      transition:width 0.6s, height 0.6s;
-    }
-    .order-btn:hover::before {
-      width:400px;
-      height:400px;
-    }
-    .order-btn:hover {
-      transform:translateY(-3px) scale(1.05);
-      box-shadow:0 8px 20px rgba(0,0,0,0.3);
-    }
-    .order-btn:active {
-      transform:translateY(0) scale(0.98);
-    }
-    .order-success { 
-      color:#2e7d32; 
-      font-size:1.05em; 
-      text-align:center; 
-      margin-top:10px;
-      animation: slideInUp 0.5s ease;
-    }
-    .order-processing {
-      text-align:center; 
-      padding:20px; 
-      color:var(--brand-olive);
-      animation: slideInUp 0.5s ease;
-    }
-    .order-processing .spinner-small {
-      width:36px; 
-      height:36px; 
-      border:4px solid rgba(0,0,0,0.08); 
-      border-top-color:var(--brand-olive);
-      border-radius:50%; 
-      animation:spin 1s linear infinite; 
-      margin:0 auto 12px;
-    }
-    .order-processing-text {
-      font-size:1.05em; 
-      font-weight:700; 
-      margin-bottom:8px;
-    }
-    .order-processing-subtext {
-      font-size:0.95em; 
-      color:var(--muted);
-    }
-    .delivery-info {
-      background:#fff;
-      border:2px solid var(--brand-olive);
-      border-radius:8px;
-      padding:10px;
-      margin:8px 0;
-      font-size:0.95em;
-      color:#333;
-      line-height:1.5;
-      transition:all 0.3s;
-    }
-    .delivery-info:hover {
-      box-shadow:0 5px 15px rgba(0,0,0,0.1);
-      transform:translateY(-2px);
-    }
-    .delivery-info strong {
-      color:var(--brand-olive);
-      display:block;
-      margin-bottom:6px;
-    }
-    .delivery-info-subtitle {
-      font-size:0.9em;
-    }
-    .delivery-info-list {
-      margin-top:4px;
-    }
-    .delivery-btn {
-      background:var(--brand-olive);
-      color:#fff;
-      border:none;
-      border-radius:8px;
-      padding:10px;
-      font-size:1em;
-      font-weight:700;
-      cursor:pointer;
-      width:100%;
-      margin:8px 0;
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
-      letter-spacing:0.5px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:6px;
-      transition:all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .delivery-btn:hover {
-      background:var(--brand-olive-light);
-      transform:translateY(-3px);
-      box-shadow:0 6px 15px rgba(0,0,0,0.2);
-    }
-    .delivery-modal {
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.5);
-      z-index:250;
-      align-items:center;
-      justify-content:center;
-      animation:modalFadeIn .3s;
-      backdrop-filter: blur(3px);
-    }
-    .delivery-modal.show {
-      display:flex;
-    }
-    .delivery-modal-content {
-      background:var(--bg-cream);
-      border-radius:16px;
-      padding:20px;
-      max-width:90vw;
-      width:400px;
-      border:2px solid var(--brand-olive);
-      box-shadow:0 15px 50px rgba(0,0,0,0.3);
-      position:relative;
-      max-height:80vh;
-      overflow-y:auto;
-      animation: modalSlideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .delivery-modal-close {
-      position:absolute;
-      right:10px;
-      top:10px;
-      font-size:24px;
-      color:var(--brand-olive);
-      background:none;
-      border:none;
-      cursor:pointer;
-      line-height:1;
-      transition:all 0.3s;
-    }
-    .delivery-modal-close:hover {
-      transform:rotate(90deg) scale(1.2);
-      color:var(--accent);
-    }
-
-    .saved-addresses {
-      margin-bottom:8px;
-    }
-    .saved-address-item {
-      background:#f5f5f5;
-      padding:8px;
-      border-radius:6px;
-      margin-bottom:4px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      cursor:pointer;
-      transition:all .3s;
-    }
-    .saved-address-item:hover {
-      background:#e8e8e8;
-      transform:translateX(5px);
-      box-shadow:0 3px 10px rgba(0,0,0,0.1);
-    }
-    .saved-address-delete {
-      background:#ff6b6b;
-      color:#fff;
-      border:none;
-      border-radius:4px;
-      padding:4px 8px;
-      cursor:pointer;
-      font-size:0.85em;
-      transition:all 0.3s;
-    }
-    .saved-address-delete:hover {
-      background:#ff5252;
-      transform:scale(1.1);
-    }
-
-    .history-modal {
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.5);
-      z-index:250;
-      align-items:flex-start;
-      justify-content:center;
-      animation:modalFadeIn .3s;
-      overflow-y:auto;
-      backdrop-filter: blur(3px);
-    }
-    .history-modal.show {
-      display:flex;
-    }
-    .history-modal-content {
-      background:var(--bg-cream);
-      border-radius:16px;
-      padding:20px;
-      max-width:90vw;
-      width:500px;
-      border:2px solid var(--brand-olive);
-      box-shadow:0 15px 50px rgba(0,0,0,0.3);
-      position:relative;
-      margin:36px auto;
-      animation: modalSlideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-    .history-item {
-      background:#fff;
-      border:1px solid #ddd;
-      border-radius:8px;
-      padding:12px;
-      margin-bottom:10px;
-      transition:all 0.3s;
-    }
-    .history-item:hover {
-      transform:translateY(-3px);
-      box-shadow:0 5px 15px rgba(0,0,0,0.15);
-      border-color:var(--brand-olive);
-    }
-    .history-item-header {
-      display:flex;
-      justify-content:space-between;
-      margin-bottom:8px;
-      font-weight:700;
-      color:var(--brand-olive);
-    }
-    .history-item-products {
-      font-size:0.9em;
-      color:#555;
-      margin-bottom:8px;
-    }
-    .history-item-footer {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-    }
-    .repeat-order-btn {
-      background:var(--accent);
-      color:#fff;
-      border:none;
-      border-radius:6px;
-      padding:6px 12px;
-      cursor:pointer;
-      font-size:0.9em;
-      font-weight:700;
-      transition:all 0.3s;
-    }
-    .repeat-order-btn:hover {
-      transform:scale(1.1);
-      box-shadow:0 4px 12px rgba(0,0,0,0.2);
-    }
-
-    .image-modal {
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.9);
-      z-index:300;
-      align-items:center;
-      justify-content:center;
-      animation:modalFadeIn .3s;
-      cursor:pointer;
-      backdrop-filter: blur(5px);
-    }
-    .image-modal.show {
-      display:flex;
-    }
-    
-    @keyframes imageZoomIn {
-      from { opacity:0; transform:scale(0.5) rotate(-5deg); }
-      to { opacity:1; transform:scale(1) rotate(0deg); }
-    }
-    
-    .image-modal img {
-      max-width:90vw;
-      max-height:90vh;
-      border-radius:12px;
-      box-shadow:0 15px 60px rgba(0,0,0,0.6);
-      animation: imageZoomIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-    .unavailable-label { display:none; }
-
-    .product .prod-unavailable {
-      position: absolute;
-      left: 8px;
-      right: 8px;
-      top: 8px;
-      background: var(--accent);
-      color: #fff;
-      font-size: .95em;
-      border-radius: 10px;
-      padding: 6px 8px;
-      text-align: center;
-      letter-spacing: 1px;
-      z-index: 6;
-      pointer-events: none;
-      animation: slideInUp 0.5s ease;
-    }
-
-    #menuLoader{
-      position:fixed; 
-      inset:0; 
-      display:flex; 
-      align-items:center; 
-      justify-content:center;
-      background:rgba(247,239,224,0.95); 
-      z-index:300; 
-      opacity:0; 
-      pointer-events:none; 
-      transition:opacity .3s ease;
-      backdrop-filter: blur(5px);
-    }
-    #menuLoader.visible{ 
-      opacity:1; 
-      pointer-events:auto; 
-    }
-    .loader-box{ 
-      text-align:center; 
-      color:var(--brand-olive);
-      animation: slideInUp 0.5s ease;
-    }
-    .spinner{ 
-      width:48px; 
-      height:48px; 
-      border:5px solid rgba(0,0,0,0.08); 
-      border-top-color:var(--brand-olive); 
-      border-radius:50%; 
-      animation:spin 1s linear infinite; 
-      margin:0 auto 8px; 
-    }
-    @keyframes spin{ 
-      to{ transform:rotate(360deg); } 
-    }
-
-    @media (max-width:1000px) {
-      .menu { grid-template-columns: repeat(3, minmax(140px, 1fr)); max-width:900px; }
-    }
-    @media (max-width:600px) {
-      .menu { grid-template-columns: repeat(2, minmax(140px, 1fr)); gap:12px; max-width:720px; margin-bottom:120px; }
-      .product { width:100%; max-width:220px; padding:10px 8px; }
-      .product-img { width:72px; height:72px; }
-      .cart-modal { min-width:92vw; padding:12px 8px 10px 8px; border-radius:16px; margin-top:12vw;}
-      .cart-fab { width:56px; height:56px; bottom:12px; right:10px; top:auto !important;}
-      .cart-fab-count { min-width:18px; height:18px; font-size:.9em; right:2px; top:2px; }
-      .header-title { font-size:1.4em; }
-      .cart-preview { bottom:70px; right:-10px; max-width:250px; }
-    }
-    @media (max-width:420px) {
-      .menu { gap:10px; padding:0 8px; }
-      .header-title { font-size:1.1rem; }
-    }
-  </style>
+<style>
+body{
+  margin:0;
+  font-family:'PT Sans Narrow',Arial,sans-serif;
+  background:#f7efe0;
+}
+.header{
+  background:#556B2F;
+  color:#fff;
+  text-align:center;
+  padding:20px;
+}
+.menu{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:16px;
+  padding:16px;
+  max-width:1000px;
+  margin:auto;
+}
+.product{
+  background:#fff;
+  border-radius:12px;
+  padding:12px;
+  border:2px solid #6b7a29;
+  text-align:center;
+}
+.product img{
+  width:100px;height:100px;
+  border-radius:10px;
+  object-fit:cover;
+}
+.controls{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+}
+button{
+  cursor:pointer;
+  border-radius:6px;
+  border:none;
+  padding:6px 10px;
+}
+.add-btn{background:#556B2F;color:#fff;}
+.remove-btn{background:#eee;}
+.cart-fab{
+  position:fixed;
+  right:16px;
+  bottom:16px;
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  background:#b3611f;
+  color:#fff;
+  font-size:24px;
+  display:none;
+}
+.cart-modal-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:none;
+  justify-content:center;
+  align-items:flex-start;
+}
+.cart-modal{
+  background:#fff;
+  margin-top:40px;
+  padding:16px;
+  border-radius:12px;
+  width:90%;
+  max-width:420px;
+}
+</style>
 </head>
+
 <body>
-  <div class="header">
-    <div class="logo-wrap">
-      <img class="logo-img" src="logo.png" alt="СВОЯ КУХНЯ">
-      <div>
-        <div class="header-title">СВОЯ КУХНЯ</div>
-        <div class="header-desc">Доставка еды — вкусно, быстро, рядом</div>
-      </div>
-    </div>
-    <div class="promo-banner">
-      <span class="promo-star">★</span>
-      <span class="promo-text">МЕНЮ</span>
-      <span class="promo-star">★</span>
-    </div>
-  </div>
 
-  <div class="menu-controls">
-    <button onclick="filterMenu('all')" class="active" id="filterAll">Все блюда</button>
-    <button onclick="filterMenu('favorites')" id="filterFavorites">⭐ Избранное</button>
-    <button onclick="showOrderHistory()">📋 История заказов</button>
-  </div>
+<div class="header">
+  <h1>СВОЯ КУХНЯ</h1>
+  <div>Доставка еды</div>
+</div>
 
-  <div id="menuLoader" aria-hidden="true">
-    <div class="loader-box" role="status" aria-live="polite">
-      <div class="spinner" aria-hidden="true"></div>
-      <div class="loader-text">Загрузка меню…</div>
-    </div>
-  </div>
+<div id="menu" class="menu"></div>
 
-  <div class="menu" id="menu"></div>
+<button id="cartFab" class="cart-fab">🛒<span id="cartCount"></span></button>
 
-  <button id="cartFab" class="cart-fab" style="display:none;" title="Корзина" aria-label="Корзина">
-    <svg viewBox="0 0 48 48" width="56" height="56" style="display:block;margin:auto;">
-      <circle cx="24" cy="24" r="22" class="cart-fab-circle"/>
-      <path d="M16 18h16l-2 13a3 3 0 0 1-3 2h-6a3 3 0 0 1-3-2l-2-13zm3 0v-4a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v4" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
-      <circle cx="19" cy="36" r="2" fill="#fff"/>
-      <circle cx="29" cy="36" r="2" fill="#fff"/>
-    </svg>
-    <span id="cartFabCount" class="cart-fab-count" aria-hidden="true"></span>
-    <div class="cart-preview" id="cartPreview"></div>
-  </button>
+<div id="cartModalBg" class="cart-modal-bg"></div>
 
-  <div id="cartModalBg" class="cart-modal-bg" style="display:none;"></div>
+<script>
+// ================= НАСТРОЙКИ API =================
+const SHEET_API_URL =
+  'https://sheets.googleapis.com/v4/spreadsheets/SPREADSHEET_ID/values/Sheet1?key=API_KEY';
 
-  <div id="deliveryModal" class="delivery-modal">
-    <div class="delivery-modal-content">
-      <button class="delivery-modal-close" onclick="closeDeliveryInfo()">&times;</button>
-      <div class="delivery-info">
-        <strong>🔸 Доставка:</strong>
-        <div class="delivery-info-subtitle">(До входа в отель, апартаменты)</div>
-        <div style="background:#e8f5e9;padding:6px;border-radius:6px;margin:6px 0;font-size:0.92em;color:#2e7d32;text-align:center;">
-          ⏱️ Заказ будет доставлен от 40 минут до 1,5 часа
-        </div>
-        <div class="delivery-info-list">
-          • Центр - Бесплатно от 150k VND<br>
-          &nbsp;&nbsp;(До 150k VND - 20k VND)<br>
-          • Север - от 40k VND<br>
-          • Район - coopmart, Луизиана, Z Beach - от 40k VND<br>
-          • Big C, за Coopmart (в сторону Юга) - от 45k VND<br>
-          • Юг, Анвьен - от 50k VND<br>
-          • За мостом после Coopmart, My gia, за Big C - от 60k VND
-        </div>
-      </div>
-    </div>
-  </div>
+const SHEET_API_FALLBACK =
+  'https://script.google.com/macros/s/AKfycbyytR-HwA0y-TnHS_7nygs-_ZkPHDYzQQWFgV3GJSVuvdn93oX0kP92Ti9bQVqW7C_gFg/exec';
 
-  <div id="historyModal" class="history-modal">
-    <div class="history-modal-content">
-      <button class="delivery-modal-close" onclick="closeOrderHistory()">&times;</button>
-      <div class="cart-title">История заказов</div>
-      <div id="historyContent"></div>
-    </div>
-  </div>
+const TELEGRAM_BOT_TOKEN = '8543195311:AAGzpZwTaUAgw3qp6AeKQA_BbFX35jtbJIk';
+const TELEGRAM_CHAT_ID = '7567253745';
 
-  <div id="imageModal" class="image-modal" onclick="closeImageModal()">
-    <img id="imageModalImg" src="" alt="">
-  </div>
+// ================= ДАННЫЕ =================
+let menuData = [];
+let cart = {};
 
-  <script>
-    const SHEET_API_URL = 'https://sheets.googleapis.com/v4/spreadsheets/SPREADSHEET_ID/values/Sheet1?key=API_KEY';
-    const SHEET_API_FALLBACK = 'https://script.google.com/macros/s/AKfycbyytR-HwA0y-TnHS_7nygs-_ZkPHDYzQQWFgV3GJSVuvdn93oX0kP92Ti9bQVqW7C_gFg/exec';
+const VND = new Intl.NumberFormat('vi-VN', {
+  style:'currency',
+  currency:'VND',
+  maximumFractionDigits:0
+});
 
-    const TELEGRAM_BOT_TOKEN = '8543195311:AAGzpZwTaUAgw3qp6AeKQA_BbFX35jtbJIk';
-    const TELEGRAM_CHAT_ID = '7567253745';
-
-    let menuData = [];
-    let cart = JSON.parse(localStorage.getItem('cart') || '{}');
-    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    let orderHistory = JSON.parse(localStorage.getItem('orderHistory') || '[]');
-    let savedAddresses = JSON.parse(localStorage.getItem('savedAddresses') || '[]');
-    let savedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
-    let orderCounter = parseInt(localStorage.getItem('orderCounter') || '0');
-    let currentFilter = 'all';
-
-    const VND_FMT = new Intl.NumberFormat('vi-VN', { style: 'decimal', maximumFractionDigits: 0 });
-    
-    function formatVND(amount) {
-      return VND_FMT.format(amount) + ' ₫';
-    }
-
-    function toNumberSafe(v) {
-      if (typeof v === 'number') return v;
-      if (v == null) return 0;
-      let s = String(v).replace(/\u00A0/g, '').trim();
-      s = s.replace(/[^\d,.\-]/g, '');
-      if (!s) return 0;
-      s = s.replace(/,/g, '.');
-      const parts = s.split('.');
-      if (parts.length > 2) {
-        const frac = parts.pop();
-        s = parts.join('') + '.' + frac;
-      }
-      const n = parseFloat(s);
-      return isNaN(n) ? 0 : n;
-    }
-
-    function escapeHtml(s){ return String(s || '').replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]); }
-
-    function saveCart() { localStorage.setItem('cart', JSON.stringify(cart)); }
-    function saveFavorites() { localStorage.setItem('favorites', JSON.stringify(favorites)); }
-    function saveOrderHistory() { localStorage.setItem('orderHistory', JSON.stringify(orderHistory)); }
-    function saveSavedAddresses() { localStorage.setItem('savedAddresses', JSON.stringify(savedAddresses)); }
-    function saveUserData() { localStorage.setItem('userData', JSON.stringify(savedUserData)); }
-
-    function showLoader(){
-      const l = document.getElementById('menuLoader');
-      if(!l) return;
-      l.classList.add('visible');
-      l.setAttribute('aria-hidden','false');
-    }
-    function hideLoader(){
-      const l = document.getElementById('menuLoader');
-      if(!l) return;
-      l.classList.remove('visible');
-      l.setAttribute('aria-hidden','true');
-    }
-
-    async function loadMenu() {
-      showLoader();
-      const safetyTimeout = setTimeout(()=>{ hideLoader(); }, 20000);
-      try {
-        const res = await fetch(SHEET_API_URL);
-        if (!res.ok) throw new Error('Primary fetch failed: ' + res.status);
-        const json = await res.json();
-        
-        if (json && Array.isArray(json.values) && json.values.length > 0) {
-          const rows = json.values;
-          const headers = rows[0].map(h => String(h || '').trim().toLowerCase());
-          const dataRows = rows.slice(1);
-          menuData = dataRows.map((row, idx) => {
-            const obj = {};
-            headers.forEach((h, i) => obj[h] = row[i] !== undefined ? row[i] : '');
-            return {
-              id: idx + 1,
-              name: obj.name || obj.title || `Блюдо ${idx+1}`,
-              description: obj.description || obj.desc || '',
-              img: obj.img || obj.image || '',
-              price: toNumberSafe(obj.price || obj.cost || obj['цена']),
-              available: String(obj.available || obj.доступно || 'true').trim().toLowerCase() === 'true'
-            };
-          });
-          clearTimeout(safetyTimeout);
-          hideLoader();
-          renderMenu();
-          return;
-        }
-
-        if (json && json.menu && Array.isArray(json.menu)) {
-          menuData = json.menu.map((item, idx) => ({
-            id: idx + 1,
-            name: item.name || item.title || `Блюдо ${idx+1}`,
-            description: item.description || item.desc || '',
-            img: item.img || item.image || '',
-            price: toNumberSafe(item.price),
-            available: String(item.available).trim().toLowerCase() === 'true'
-          }));
-          clearTimeout(safetyTimeout);
-          hideLoader();
-          renderMenu();
-          return;
-        }
-
-        if (Array.isArray(json) && json.length > 0 && typeof json[0] === 'object') {
-          menuData = json.map((item, idx) => ({
-            id: idx + 1,
-            name: item.name || item.title || `Блюдо ${idx+1}`,
-            description: item.description || item.desc || '',
-            img: item.img || item.image || '',
-            price: toNumberSafe(item.price),
-            available: String(item.available).trim().toLowerCase() === 'true'
-          }));
-          clearTimeout(safetyTimeout);
-          hideLoader();
-          renderMenu();
-          return;
-        }
-
-        throw new Error('Unknown sheet response format');
-      } catch (err) {
-        console.warn('Primary load failed, trying fallback...', err);
-        try {
-          const res2 = await fetch(SHEET_API_FALLBACK);
-          if (!res2.ok) throw new Error('Fallback fetch failed: ' + res2.status);
-          const j2 = await res2.json();
-          if (j2 && j2.menu && Array.isArray(j2.menu)) {
-            menuData = j2.menu.map((item, idx) => ({
-              id: idx + 1,
-              name: item.name || item.title || `Блюдо ${idx+1}`,
-              description: item.description || item.desc || '',
-              img: item.img || item.image || '',
-              price: toNumberSafe(item.price),
-              available: String(item.available).trim().toLowerCase() === 'true'
-            }));
-            clearTimeout(safetyTimeout);
-            hideLoader();
-            renderMenu();
-            return;
-          }
-          throw new Error('Fallback returned unexpected format');
-        } catch (e) {
-          clearTimeout(safetyTimeout);
-          hideLoader();
-          document.getElementById('menu').innerHTML = '<div style="color:var(--brand-olive);font-size:1.1em;text-align:center;margin:40px auto;">Ошибка загрузки меню. Проверьте соединение или попробуйте позже.</div>';
-        }
-      }
-    }
-
-    function filterMenu(filter) {
-      currentFilter = filter;
-      document.querySelectorAll('.menu-controls button').forEach(btn => btn.classList.remove('active'));
-      if (filter === 'all') document.getElementById('filterAll').classList.add('active');
-      if (filter === 'favorites') document.getElementById('filterFavorites').classList.add('active');
-      renderMenu();
-    }
-
-    function renderMenu() {
-      const menu = document.getElementById('menu');
-      menu.innerHTML = '';
-      
-      let itemsToShow = menuData;
-      if (currentFilter === 'favorites') {
-        itemsToShow = menuData.filter(item => favorites.includes(item.id));
-      }
-
-      if (!itemsToShow || itemsToShow.length === 0) {
-        menu.innerHTML = '<div style="color:var(--brand-olive);font-size:1.05em;text-align:center;margin:40px auto;">' + 
-          (currentFilter === 'favorites' ? 'Нет избранных блюд' : 'Меню пусто.') + '</div>';
-        updateCartFab();
-        return;
-      }
-
-      itemsToShow.forEach(item => {
-        const prod = document.createElement('div');
-        prod.className = 'product' + (!item.available ? ' unavailable' : '');
-        const priceText = formatVND(Number(item.price) || 0);
-        const isFavorite = favorites.includes(item.id);
-        prod.innerHTML = `
-          ${!item.available ? `<div class="prod-unavailable">Нет в наличии</div>` : ''}
-          <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})" title="Добавить в избранное">
-            ${isFavorite ? '❤️' : '🤍'}
-          </button>
-          <img class="product-img" src="${item.img || 'https://via.placeholder.com/100x100?text=Фото'}" alt="${escapeHtml(item.name)}" onclick="showImageModal('${item.img}')">
-          <div class="product-name">${escapeHtml(item.name)}</div>
-          <div class="product-desc">${escapeHtml(item.description || '')}</div>
-          <div class="product-price">${priceText}</div>
-          <div class="controls">
-            <button class="remove-btn" ${!item.available ? 'disabled' : ''} onclick="updateCart(${item.id},-1)">−</button>
-            <span id="qty-${item.id}">${cart[item.id]?.qty||0}</span>
-            <button class="add-btn" ${!item.available ? 'disabled' : ''} onclick="updateCart(${item.id},1)">+</button>
-          </div>
-        `;
-        menu.appendChild(prod);
-      });
-      updateCartFab();
-    }
-
-    window.toggleFavorite = function(id) {
-      const idx = favorites.indexOf(id);
-      if (idx > -1) {
-        favorites.splice(idx, 1);
-      } else {
-        favorites.push(id);
-      }
-      saveFavorites();
-      renderMenu();
-    };
-
-    window.showImageModal = function(src) {
-      if (!src || src.includes('placeholder')) return;
-      document.getElementById('imageModalImg').src = src;
-      document.getElementById('imageModal').classList.add('show');
-    };
-
-    window.closeImageModal = function() {
-      document.getElementById('imageModal').classList.remove('show');
-    };
-
-    window.updateCart = function(id, delta) {
-      const item = menuData.find(i=>i.id===id);
-      if (!item || !item.available) return;
-      if (!cart[id]) cart[id] = { ...item, qty: 0 };
-      cart[id].qty = Math.max(0, cart[id].qty + delta);
-      if (cart[id].qty === 0) delete cart[id];
-      
-      if (delta > 0) {
-        const qtyEl = document.getElementById(`qty-${id}`);
-        if (qtyEl) qtyEl.parentElement.classList.add('adding-animation');
-        setTimeout(() => {
-          const el = document.getElementById(`qty-${id}`);
-          if (el) el.parentElement.classList.remove('adding-animation');
-        }, 500);
-      }
-      
-      const qtyEl = document.getElementById(`qty-${id}`);
-      if (qtyEl) qtyEl.textContent = cart[id]?.qty || 0;
-      saveCart();
-      updateCartFab();
-      updateCartPreview();
-      if (document.getElementById('cartModalBg').style.display === 'flex') showCartModal();
-    };
-
-    function updateCartPreview() {
-      const preview = document.getElementById('cartPreview');
-      const items = Object.values(cart).sort((a, b) => a.id - b.id);
-      if (items.length === 0) {
-        preview.innerHTML = '<div class="cart-preview-title">Корзина пуста</div>';
-        return;
-      }
-      const total = items.reduce((s,i)=>s + (i.price || 0) * i.qty, 0);
-      preview.innerHTML = `
-        <div class="cart-preview-title">Корзина</div>
-        ${items.slice(0, 3).map(it => `
-          <div class="cart-preview-item">
-            <span>${escapeHtml(it.name)} x${it.qty}</span>
-            <span>${formatVND((it.price||0) * it.qty)}</span>
-          </div>
-        `).join('')}
-        ${items.length > 3 ? `<div style="text-align:center;color:var(--muted);font-size:0.85em;margin-top:4px;">+ еще ${items.length - 3}</div>` : ''}
-        <div class="cart-preview-total">Итого: ${formatVND(total)}</div>
-      `;
-    }
-
-    function updateCartFab() {
-      const fab = document.getElementById('cartFab');
-      const count = Object.values(cart).reduce((s,i)=>s + (i.qty || 0), 0);
-      if (count > 0) {
-        fab.style.display = 'flex';
-        document.getElementById('cartFabCount').textContent = count;
-        updateCartPreview();
-      } else {
-        fab.style.display = 'none';
-        document.getElementById('cartFabCount').textContent = '';
-      }
-    }
-
-    document.getElementById('cartFab').onclick = showCartModal;
-
-    function showCartModal() {
-      const modalBg = document.getElementById('cartModalBg');
-      const items = Object.values(cart).sort((a, b) => a.id - b.id);
-      const listHtml = items.length === 0
-        ? '<li style="color:var(--brand-olive);text-align:center;width:100%;">Корзина пуста</li>'
-        : items.map(it => `
-            <li>
-              <span>${escapeHtml(it.name)} x${it.qty}</span>
-              <span>
-                <button class="remove-btn" onclick="updateCart(${it.id},-1)">−</button>
-                <span style="margin:0 8px;">${formatVND((it.price||0) * it.qty)}</span>
-                <button class="add-btn" onclick="updateCart(${it.id},1)">+</button>
-              </span>
-            </li>
-          `).join('');
-      const total = items.reduce((s,i)=>s + (i.price || 0) * i.qty, 0);
-      
-      const savedAddressesHtml = savedAddresses.length > 0 ? `
-        <div class="saved-addresses">
-          <label style="font-size:0.9em;color:var(--brand-olive);margin-bottom:4px;display:block;">Сохраненные адреса:</label>
-          ${savedAddresses.map((addr, idx) => `
-            <div class="saved-address-item" onclick="selectAddress('${escapeHtml(addr)}')">
-              <span style="flex:1;">${escapeHtml(addr)}</span>
-              <button class="saved-address-delete" onclick="event.stopPropagation(); deleteAddress(${idx})">✕</button>
-            </div>
-          `).join('')}
-        </div>
-      ` : '';
-
-      modalBg.innerHTML = `
-        <div class="cart-modal" role="dialog" aria-modal="true" aria-label="Корзина">
-          <button class="cart-close" onclick="closeCartModal()" aria-label="Закрыть">&times;</button>
-          <div class="cart-title">Корзина</div>
-          <ul class="cart-list">${listHtml}</ul>
-          <div class="cart-total">Итого: ${formatVND(total)}</div>
-          <form class="order-form" id="orderForm">
-            <div style="background:#fff3cd;border:2px solid #ffc107;border-radius:8px;padding:8px;margin-bottom:10px;font-size:0.95em;color:#856404;text-align:center;">
-              ⚠️ <strong>Укажите точные данные для обратной связи</strong>
-            </div>
-            <input type="text" id="name" placeholder="Точный никнейм Telegram (например: @username)" value="${escapeHtml(savedUserData.name || '')}" required>
-            <input type="tel" id="phone" placeholder="Точный номер телефона" value="${escapeHtml(savedUserData.phone || '')}" required>
-            <select id="payment" required>
-              <option value="">Выберите способ оплаты</option>
-              <option value="qr" ${savedUserData.payment === 'qr' ? 'selected' : ''}>QR (оплатить через скан)</option>
-              <option value="cash" ${savedUserData.payment === 'cash' ? 'selected' : ''}>Наличные</option>
-            </select>
-            <button type="button" class="delivery-btn" onclick="showDeliveryInfo()">
-              🔸 Информация о доставке
-              <span style="font-size:0.9em;">▼</span>
-            </button>
-            ${savedAddressesHtml}
-            <input type="text" id="address" placeholder="Адрес доставки" value="${escapeHtml(savedUserData.address || '')}" required>
-            <label style="display:flex;align-items:center;gap:6px;margin:8px 0;font-size:0.9em;">
-              <input type="checkbox" id="saveAddress" ${savedAddresses.length > 0 ? 'checked' : ''}>
-              Сохранить адрес для будущих заказов
-            </label>
-            <textarea id="comment" placeholder="Комментарий к заказу (необязательно)" rows="2">${escapeHtml(savedUserData.comment || '')}</textarea>
-            <button type="submit" class="order-btn">Оформить заказ</button>
-            <div id="orderSuccess" class="order-success" style="display:none;"></div>
-          </form>
-        </div>
-      `;
-      modalBg.style.display = 'flex';
-      const orderForm = document.getElementById('orderForm');
-      if (orderForm) orderForm.onsubmit = sendOrder;
-      setTimeout(() => {
-        const modal = document.querySelector('.cart-modal');
-        if (modal) modal.scrollIntoView({behavior: "smooth", block: "start"});
-      }, 50);
-    }
-
-    window.selectAddress = function(addr) {
-      document.getElementById('address').value = addr;
-    };
-
-    window.deleteAddress = function(idx) {
-      if (confirm('Удалить этот адрес?')) {
-        savedAddresses.splice(idx, 1);
-        saveSavedAddresses();
-        showCartModal();
-      }
-    };
-
-    window.closeCartModal = function() {
-      document.getElementById('cartModalBg').style.display = 'none';
-    };
-
-    window.showDeliveryInfo = function() {
-      document.getElementById('deliveryModal').classList.add('show');
-    };
-
-    window.closeDeliveryInfo = function() {
-      document.getElementById('deliveryModal').classList.remove('show');
-    };
-
-    document.getElementById('deliveryModal').onclick = function(e) {
-      if (e.target === this) closeDeliveryInfo();
-    };
-
-    window.showOrderHistory = function() {
-      const historyContent = document.getElementById('historyContent');
-      if (orderHistory.length === 0) {
-        historyContent.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px;">История заказов пуста</div>';
-      } else {
-        historyContent.innerHTML = orderHistory.slice().reverse().map(order => `
-          <div class="history-item">
-            <div class="history-item-header">
-              <span>Заказ #${order.number}</span>
-              <span>${new Date(order.date).toLocaleDateString('ru-RU')}</span>
-            </div>
-            <div class="history-item-products">
-              ${order.items.map(it => `${it.name} x${it.qty}`).join(', ')}
-            </div>
-            <div class="history-item-footer">
-              <strong>${formatVND(order.total)}</strong>
-              <button class="repeat-order-btn" onclick="repeatOrder(${order.number})">Повторить заказ</button>
-            </div>
-          </div>
-        `).join('');
-      }
-      document.getElementById('historyModal').classList.add('show');
-    };
-
-    window.closeOrderHistory = function() {
-      document.getElementById('historyModal').classList.remove('show');
-    };
-
-    window.repeatOrder = function(orderNumber) {
-      const order = orderHistory.find(o => o.number === orderNumber);
-      if (!order) return;
-      
-      cart = {};
-      order.items.forEach(item => {
-        const menuItem = menuData.find(m => m.id === item.id);
-        if (menuItem && menuItem.available) {
-          cart[item.id] = { ...menuItem,        qty: item.qty
+// ================= ЗАГРУЗКА МЕНЮ =================
+async function loadMenu(){
+  try{
+    const res = await fetch(SHEET_API_URL);
+    if(!res.ok) throw 1;
+    const json = await res.json();
+    const rows = json.values;
+    const headers = rows[0].map(h=>h.toLowerCase());
+    menuData = rows.slice(1).map((r,i)=>{
+      const o={}; headers.forEach((h,j)=>o[h]=r[j]);
+      return {
+        id:i+1,
+        name:o.name,
+        description:o.description||'',
+        img:o.img||'https://via.placeholder.com/100',
+        price:Number(o.price)||0,
+        available:String(o.available).toLowerCase()==='true'
       };
-    }
-  });
-  saveCart();
-  updateCartFab();
-  closeOrderHistory();
-  showCartModal();
-};
-
-async function sendOrder(e) {
-  e.preventDefault();
-
-  const btn = document.querySelector('.order-btn');
-  btn.disabled = true;
-  btn.textContent = 'Отправка...';
-
-  const name = document.getElementById('name').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const address = document.getElementById('address').value.trim();
-  const payment = document.getElementById('payment').value;
-  const comment = document.getElementById('comment').value.trim();
-  const saveAddress = document.getElementById('saveAddress')?.checked;
-
-  if (!name || !phone || !address || !payment) {
-    alert('Пожалуйста, заполните все обязательные поля');
-    btn.disabled = false;
-    btn.textContent = 'Оформить заказ';
-    return;
-  }
-
-  const itemsArr = Object.values(cart);
-  if (itemsArr.length === 0) {
-    alert('Корзина пуста');
-    btn.disabled = false;
-    btn.textContent = 'Оформить заказ';
-    return;
-  }
-
-  const total = itemsArr.reduce((s,i)=>s + (i.price||0)*i.qty,0);
-
-  // сохраняем данные пользователя
-  savedUserData = { name, phone, address, payment, comment };
-  saveUserData();
-
-  if (saveAddress && !savedAddresses.includes(address)) {
-    savedAddresses.push(address);
-    saveSavedAddresses();
-  }
-
-  orderCounter++;
-  localStorage.setItem('orderCounter', orderCounter);
-
-  orderHistory.push({
-    number: orderCounter,
-    date: new Date().toISOString(),
-    items: itemsArr.map(i => ({ id:i.id, name:i.name, qty:i.qty })),
-    total
-  });
-  saveOrderHistory();
-
-  const orderLines = itemsArr
-    .map(i => `${i.name} x${i.qty} — ${formatVND(i.price * i.qty)}`)
-    .join('\n');
-
-  const paymentText = payment === 'cash'
-    ? 'Оплата: Наличные'
-    : 'Оплата: QR';
-
-  const text =
-`🛒 Новый заказ (СВОЯ КУХНЯ)
-Никнейм Telegram: ${name}
-Телефон: ${phone}
-Адрес: ${address}
-${paymentText}
-${comment ? `Комментарий: ${comment}\n` : ''}
-Заказ:
-${orderLines}
-
-Сумма: ${formatVND(total)}`;
-
-  try {
-    const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text
-      })
     });
-
-    const result = await response.json();
-    if (!result.ok) throw result;
-
-    btn.style.display = 'none';
-    const success = document.getElementById('orderSuccess');
-    success.style.display = 'block';
-    success.textContent = 'Спасибо! Заказ успешно отправлен 🚀';
-
-    cart = {};
-    saveCart();
-
-    setTimeout(() => {
-      closeCartModal();
-      renderMenu();
-      updateCartFab();
-    }, 1500);
-
-  } catch (err) {
-    console.error(err);
-    alert('Ошибка отправки заказа. Попробуйте позже.');
-    btn.disabled = false;
-    btn.textContent = 'Оформить заказ';
+  }catch{
+    const res = await fetch(SHEET_API_FALLBACK);
+    const json = await res.json();
+    menuData = json.menu.map((i,idx)=>({
+      id:idx+1,
+      name:i.name,
+      description:i.description||'',
+      img:i.img||'https://via.placeholder.com/100',
+      price:Number(i.price)||0,
+      available:String(i.available).toLowerCase()==='true'
+    }));
   }
+  renderMenu();
 }
 
-// init
-loadMenu();
-updateCartFab();
+// ================= РЕНДЕР =================
+function renderMenu(){
+  const el = document.getElementById('menu');
+  el.innerHTML='';
+  menuData.forEach(i=>{
+    const d=document.createElement('div');
+    d.className='product';
+    d.innerHTML=`
+      <img src="${i.img}">
+      <div><b>${i.name}</b></div>
+      <div>${i.description}</div>
+      <div>${VND.format(i.price)}</div>
+      <div class="controls">
+        <button class="remove-btn" onclick="updateCart(${i.id},-1)">−</button>
+        <span id="q${i.id}">${cart[i.id]?.qty||0}</span>
+        <button class="add-btn" onclick="updateCart(${i.id},1)">+</button>
+      </div>
+    `;
+    el.appendChild(d);
+  });
+  updateCartFab();
+}
 
+// ================= КОРЗИНА =================
+function updateCart(id,d){
+  const item = menuData.find(i=>i.id===id);
+  if(!cart[id]) cart[id]={...item,qty:0};
+  cart[id].qty=Math.max(0,cart[id].qty+d);
+  if(cart[id].qty===0) delete cart[id];
+  document.getElementById('q'+id).textContent=cart[id]?.qty||0;
+  updateCartFab();
+}
+
+function updateCartFab(){
+  const c=Object.values(cart).reduce((s,i)=>s+i.qty,0);
+  const fab=document.getElementById('cartFab');
+  document.getElementById('cartCount').textContent=c||'';
+  fab.style.display=c?'block':'none';
+}
+
+// ================= МОДАЛКА =================
+document.getElementById('cartFab').onclick=()=>{
+  const bg=document.getElementById('cartModalBg');
+  const items=Object.values(cart);
+  const total=items.reduce((s,i)=>s+i.qty*i.price,0);
+  bg.innerHTML=`
+    <div class="cart-modal">
+      <button onclick="closeCart()">✖</button>
+      ${items.map(i=>`${i.name} x${i.qty}<br>`).join('')}
+      <hr>
+      <b>${VND.format(total)}</b>
+      <br><br>
+      <button onclick="sendOrder()">Отправить заказ</button>
+    </div>`;
+  bg.style.display='flex';
+};
+function closeCart(){document.getElementById('cartModalBg').style.display='none';}
+
+// ================= ОТПРАВКА =================
+async function sendOrder(){
+  const items=Object.values(cart);
+  if(!items.length) return;
+  const text=
+    '🛒 Новый заказ\n'+
+    items.map(i=>`${i.name} x${i.qty}`).join('\n');
+  await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({chat_id:TELEGRAM_CHAT_ID,text})
+  });
+  alert('Заказ отправлен');
+  cart={};
+  closeCart();
+  renderMenu();
+}
+
+// ================= INIT =================
+document.addEventListener('DOMContentLoaded',loadMenu);
+</script>
+
+</body>
+</html>
