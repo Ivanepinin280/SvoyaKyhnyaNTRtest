@@ -998,440 +998,427 @@
         <div class="delivery-info-list">
           • Центр - Бесплатно от 150k VND<br>
           &nbsp;&nbsp;(До 150k VND - 20k VND)<br>
-          • Север - от 40k VND<br>
-          • Район - coopmart, Луизиана, Z Beach - от 40k VND<br>
-          • Big C, за Coopmart (в сторону Юга) - от 45k VND<br>
-          • Юг, Анвьен - от 50k VND<br>
-          • За мостом после Coopmart, My gia, за Big C - от 60k VND
+          • Пригород - Бесплатно от 300k VND<br>
+          &nbsp;&nbsp;(До 300k VND - 40k VND)<br>
+          • Экспресс (доставка в течение 30-40 минут) - дополнительно 30k VND<br>
         </div>
+        <button class="delivery-btn" onclick="closeDeliveryInfo()">Понятно</button>
       </div>
     </div>
   </div>
 
-  <div id="historyModal" class="history-modal">
+  <!-- История заказов -->
+  <div id="historyModal" class="history-modal" aria-hidden="true">
     <div class="history-modal-content">
-      <button class="delivery-modal-close" onclick="closeOrderHistory()">&times;</button>
-      <div class="cart-title">История заказов</div>
-      <div id="historyContent"></div>
+      <button class="delivery-modal-close" onclick="closeHistory()" aria-label="Закрыть">&times;</button>
+      <h3 style="margin-top:0;color:var(--brand-olive);">История заказов</h3>
+      <div id="historyList"></div>
+      <div style="text-align:right;">
+        <button class="delivery-btn" onclick="closeHistory()">Закрыть</button>
+      </div>
     </div>
   </div>
 
-  <div id="imageModal" class="image-modal" onclick="closeImageModal()">
-    <img id="imageModalImg" src="" alt="">
+  <!-- Модал просмотра изображения -->
+  <div id="imageModal" class="image-modal" onclick="closeImageModal()" aria-hidden="true">
+    <img id="imageModalImg" src="" alt="Изображение товара">
   </div>
 
   <script>
-    const SHEET_API_URL = 'https://sheets.googleapis.com/v4/spreadsheets/SPREADSHEET_ID/values/Sheet1?key=API_KEY';
-    const SHEET_API_FALLBACK = 'https://script.google.com/macros/s/AKfycbyytR-HwA0y-TnHS_7nygs-_ZkPHDYzQQWFgV3GJSVuvdn93oX0kP92Ti9bQVqW7C_gFg/exec';
+    // Локальное хранилище ключи
+    const STORAGE_KEYS = {
+      CART: 'svoya_cart_v1',
+      FAVORITES: 'svoya_favs_v1',
+      HISTORY: 'svoya_history_v1'
+    };
 
-    const TELEGRAM_BOT_TOKEN = '8543195311:AAGzpZwTaUAgw3qp6AeKQA_BbFX35jtbJIk';
-    const TELEGRAM_CHAT_ID = '7567253745';
+    const menuEl = document.getElementById('menu');
+    const cartFab = document.getElementById('cartFab');
+    const cartFabCount = document.getElementById('cartFabCount');
+    const cartPreview = document.getElementById('cartPreview');
+    const cartModalBg = document.getElementById('cartModalBg');
+    const menuLoader = document.getElementById('menuLoader');
+    const historyModal = document.getElementById('historyModal');
+    const historyList = document.getElementById('historyList');
+    const imageModal = document.getElementById('imageModal');
+    const imageModalImg = document.getElementById('imageModalImg');
 
-    let menuData = [];
-    let cart = JSON.parse(localStorage.getItem('cart') || '{}');
-    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    let orderHistory = JSON.parse(localStorage.getItem('orderHistory') || '[]');
-    let savedAddresses = JSON.parse(localStorage.getItem('savedAddresses') || '[]');
-    let savedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
-    let orderCounter = parseInt(localStorage.getItem('orderCounter') || '0');
-    let currentFilter = 'all';
+    // Пример меню — можно заменить загрузкой с сервера
+    const PRODUCTS = [
+      { id: 'p1', name: 'Фо Бо', desc: 'Ароматный говяжий суп с рисовой лапшой', price: 95000, img: 'pho.jpg', available: true },
+      { id: 'p2', name: 'Бун Ча', desc: 'Свинина на гриле с рисовой вермишелью', price: 120000, img: 'bun_cha.jpg', available: true },
+      { id: 'p3', name: 'Нем Ран', desc: 'Хрустящие жареные роллы', price: 75000, img: 'nem_ran.jpg', available: false },
+      { id: 'p4', name: 'Салат с манго', desc: 'Свежий салат с манго и орехами', price: 80000, img: 'mango_salad.jpg', available: true },
+      { id: 'p5', name: 'Курица в соусе карамель', desc: 'Нежная курица с карамельной глазурью', price: 110000, img: 'chicken_caramel.jpg', available: true },
+      { id: 'p6', name: 'Вегетарианская тарелка', desc: 'Овощи на пару, рис и соусы', price: 68000, img: 'veggie.jpg', available: true }
+    ];
 
-    const VND_FMT = new Intl.NumberFormat('vi-VN', { style: 'decimal', maximumFractionDigits: 0 });
-    
-    function formatVND(amount) {
-      return VND_FMT.format(amount) + ' ₫';
-    }
-
-    function toNumberSafe(v) {
-      if (typeof v === 'number') return v;
-      if (v == null) return 0;
-      let s = String(v).replace(/\u00A0/g, '').trim();
-      s = s.replace(/[^\d,.\-]/g, '');
-      if (!s) return 0;
-      s = s.replace(/,/g, '.');
-      const parts = s.split('.');
-      if (parts.length > 2) {
-        const frac = parts.pop();
-        s = parts.join('') + '.' + frac;
-      }
-      const n = parseFloat(s);
-      return isNaN(n) ? 0 : n;
-    }
-
-    function escapeHtml(s){ return String(s || '').replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]); }
-
-    function saveCart() { localStorage.setItem('cart', JSON.stringify(cart)); }
-    function saveFavorites() { localStorage.setItem('favorites', JSON.stringify(favorites)); }
-    function saveOrderHistory() { localStorage.setItem('orderHistory', JSON.stringify(orderHistory)); }
-    function saveSavedAddresses() { localStorage.setItem('savedAddresses', JSON.stringify(savedAddresses)); }
-    function saveUserData() { localStorage.setItem('userData', JSON.stringify(savedUserData)); }
-
-    function showLoader(){
-      const l = document.getElementById('menuLoader');
-      if(!l) return;
-      l.classList.add('visible');
-      l.setAttribute('aria-hidden','false');
-    }
-    function hideLoader(){
-      const l = document.getElementById('menuLoader');
-      if(!l) return;
-      l.classList.remove('visible');
-      l.setAttribute('aria-hidden','true');
-    }
-
-    async function loadMenu() {
-      showLoader();
-      const safetyTimeout = setTimeout(()=>{ hideLoader(); }, 20000);
+    // Загрузить состояние из localStorage
+    function loadState(key, defaultValue) {
       try {
-        const res = await fetch(SHEET_API_URL);
-        if (!res.ok) throw new Error('Primary fetch failed: ' + res.status);
-        const json = await res.json();
-        
-        if (json && Array.isArray(json.values) && json.values.length > 0) {
-          const rows = json.values;
-          const headers = rows[0].map(h => String(h || '').trim().toLowerCase());
-          const dataRows = rows.slice(1);
-          menuData = dataRows.map((row, idx) => {
-            const obj = {};
-            headers.forEach((h, i) => obj[h] = row[i] !== undefined ? row[i] : '');
-            return {
-              id: idx + 1,
-              name: obj.name || obj.title || `Блюдо ${idx+1}`,
-              description: obj.description || obj.desc || '',
-              img: obj.img || obj.image || '',
-              price: toNumberSafe(obj.price || obj.cost || obj['цена']),
-              available: String(obj.available || obj.доступно || 'true').trim().toLowerCase() === 'true'
-            };
-          });
-          clearTimeout(safetyTimeout);
-          hideLoader();
-          renderMenu();
-          return;
-        }
-
-        if (json && json.menu && Array.isArray(json.menu)) {
-          menuData = json.menu.map((item, idx) => ({
-            id: idx + 1,
-            name: item.name || item.title || `Блюдо ${idx+1}`,
-            description: item.description || item.desc || '',
-            img: item.img || item.image || '',
-            price: toNumberSafe(item.price),
-            available: String(item.available).trim().toLowerCase() === 'true'
-          }));
-          clearTimeout(safetyTimeout);
-          hideLoader();
-          renderMenu();
-          return;
-        }
-
-        if (Array.isArray(json) && json.length > 0 && typeof json[0] === 'object') {
-          menuData = json.map((item, idx) => ({
-            id: idx + 1,
-            name: item.name || item.title || `Блюдо ${idx+1}`,
-            description: item.description || item.desc || '',
-            img: item.img || item.image || '',
-            price: toNumberSafe(item.price),
-            available: String(item.available).trim().toLowerCase() === 'true'
-          }));
-          clearTimeout(safetyTimeout);
-          hideLoader();
-          renderMenu();
-          return;
-        }
-
-        throw new Error('Unknown sheet response format');
-      } catch (err) {
-        console.warn('Primary load failed, trying fallback...', err);
-        try {
-          const res2 = await fetch(SHEET_API_FALLBACK);
-          if (!res2.ok) throw new Error('Fallback fetch failed: ' + res2.status);
-          const j2 = await res2.json();
-          if (j2 && j2.menu && Array.isArray(j2.menu)) {
-            menuData = j2.menu.map((item, idx) => ({
-              id: idx + 1,
-              name: item.name || item.title || `Блюдо ${idx+1}`,
-              description: item.description || item.desc || '',
-              img: item.img || item.image || '',
-              price: toNumberSafe(item.price),
-              available: String(item.available).trim().toLowerCase() === 'true'
-            }));
-            clearTimeout(safetyTimeout);
-            hideLoader();
-            renderMenu();
-            return;
-          }
-          throw new Error('Fallback returned unexpected format');
-        } catch (e) {
-          clearTimeout(safetyTimeout);
-          hideLoader();
-          document.getElementById('menu').innerHTML = '<div style="color:var(--brand-olive);font-size:1.1em;text-align:center;margin:40px auto;">Ошибка загрузки меню. Проверьте соединение или попробуйте позже.</div>';
-        }
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : defaultValue;
+      } catch (e) {
+        return defaultValue;
+      }
+    }
+    function saveState(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (e) {
+        // ignore
       }
     }
 
-    function filterMenu(filter) {
-      currentFilter = filter;
-      document.querySelectorAll('.menu-controls button').forEach(btn => btn.classList.remove('active'));
-      if (filter === 'all') document.getElementById('filterAll').classList.add('active');
-      if (filter === 'favorites') document.getElementById('filterFavorites').classList.add('active');
-      renderMenu();
+    let cart = loadState(STORAGE_KEYS.CART, {}); // { productId: qty }
+    let favorites = loadState(STORAGE_KEYS.FAVORITES, {}); // { productId: true }
+    let history = loadState(STORAGE_KEYS.HISTORY, []); // array of orders
+
+    // Показать лоадер меню и симулировать загрузку
+    function showMenuLoader(show = true) {
+      menuLoader.classList.toggle('visible', show);
+      menuLoader.setAttribute('aria-hidden', !show);
     }
 
-    function renderMenu() {
-      const menu = document.getElementById('menu');
-      menu.innerHTML = '';
-      
-      let itemsToShow = menuData;
-      if (currentFilter === 'favorites') {
-        itemsToShow = menuData.filter(item => favorites.includes(item.id));
-      }
+    function formatPrice(vnd) {
+      return String(vnd).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' VND';
+    }
 
-      if (!itemsToShow || itemsToShow.length === 0) {
-        menu.innerHTML = '<div style="color:var(--brand-olive);font-size:1.05em;text-align:center;margin:40px auto;">' + 
-          (currentFilter === 'favorites' ? 'Нет избранных блюд' : 'Меню пусто.') + '</div>';
-        updateCartFab();
+    function renderMenu(filter = 'all') {
+      menuEl.innerHTML = '';
+      const list = PRODUCTS.filter(p => {
+        if (filter === 'favorites') return !!favorites[p.id];
+        return true;
+      });
+      if (list.length === 0) {
+        menuEl.innerHTML = '<p style="text-align:center;color:var(--muted);width:100%;">Нет блюд для отображения</p>';
         return;
       }
-
-      itemsToShow.forEach(item => {
-        const prod = document.createElement('div');
-        prod.className = 'product' + (!item.available ? ' unavailable' : '');
-        const priceText = formatVND(Number(item.price) || 0);
-        const isFavorite = favorites.includes(item.id);
+      list.forEach(p => {
+        const prod = document.createElement('article');
+        prod.className = 'product' + (p.available ? '' : ' unavailable');
+        prod.setAttribute('data-id', p.id);
         prod.innerHTML = `
-          ${!item.available ? `<div class="prod-unavailable">Нет в наличии</div>` : ''}
-          <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})" title="Добавить в избранное">
-            ${isFavorite ? '❤️' : '🤍'}
-          </button>
-          <img class="product-img" src="${item.img || 'https://via.placeholder.com/100x100?text=Фото'}" alt="${escapeHtml(item.name)}" onclick="showImageModal('${item.img}')">
-          <div class="product-name">${escapeHtml(item.name)}</div>
-          <div class="product-desc">${escapeHtml(item.description || '')}</div>
-          <div class="product-price">${priceText}</div>
+          ${p.available ? '' : '<div class="prod-unavailable">НЕТ В НАЛИЧИИ</div>'}
+          <button class="favorite-btn ${favorites[p.id] ? 'active' : ''}" title="Добавить в избранное" aria-label="Избранное" onclick="toggleFavorite('${p.id}', event)">${favorites[p.id] ? '♥' : '♡'}</button>
+          <img class="product-img" src="${p.img}" alt="${p.name}" onclick="showImageModal('${p.img}')" />
+          <div class="product-name">${p.name}</div>
+          <div class="product-desc">${p.desc}</div>
+          <div class="product-price">${formatPrice(p.price)}</div>
           <div class="controls">
-            <button class="remove-btn" ${!item.available ? 'disabled' : ''} onclick="updateCart(${item.id},-1)">−</button>
-            <span id="qty-${item.id}">${cart[item.id]?.qty||0}</span>
-            <button class="add-btn" ${!item.available ? 'disabled' : ''} onclick="updateCart(${item.id},1)">+</button>
+            <button class="remove-btn" onclick="removeFromCart('${p.id}')">−</button>
+            <div style="min-width:28px;text-align:center;font-weight:800;" id="qty-${p.id}">${cart[p.id] || 0}</div>
+            <button class="add-btn" onclick="addToCart('${p.id}', event)">+</button>
           </div>
         `;
-        menu.appendChild(prod);
+        menuEl.appendChild(prod);
       });
-      updateCartFab();
     }
 
-    window.toggleFavorite = function(id) {
-      const idx = favorites.indexOf(id);
-      if (idx > -1) {
-        favorites.splice(idx, 1);
-      } else {
-        favorites.push(id);
-      }
-      saveFavorites();
-      renderMenu();
-    };
-
-    window.showImageModal = function(src) {
-      if (!src || src.includes('placeholder')) return;
-      document.getElementById('imageModalImg').src = src;
-      document.getElementById('imageModal').classList.add('show');
-    };
-
-    window.closeImageModal = function() {
-      document.getElementById('imageModal').classList.remove('show');
-    };
-
-    window.updateCart = function(id, delta) {
-      const item = menuData.find(i=>i.id===id);
-      if (!item || !item.available) return;
-      if (!cart[id]) cart[id] = { ...item, qty: 0 };
-      cart[id].qty = Math.max(0, cart[id].qty + delta);
-      if (cart[id].qty === 0) delete cart[id];
-      
-      if (delta > 0) {
-        const qtyEl = document.getElementById(`qty-${id}`);
-        if (qtyEl) qtyEl.parentElement.classList.add('adding-animation');
-        setTimeout(() => {
-          const el = document.getElementById(`qty-${id}`);
-          if (el) el.parentElement.classList.remove('adding-animation');
-        }, 500);
-      }
-      
-      const qtyEl = document.getElementById(`qty-${id}`);
-      if (qtyEl) qtyEl.textContent = cart[id]?.qty || 0;
-      saveCart();
+    // Управление корзиной
+    function addToCart(id, evt) {
+      const product = PRODUCTS.find(p => p.id === id);
+      if (!product || !product.available) return;
+      cart[id] = (cart[id] || 0) + 1;
+      saveState(STORAGE_KEYS.CART, cart);
+      updateQtyUI(id);
       updateCartFab();
-      updateCartPreview();
-      if (document.getElementById('cartModalBg').style.display === 'flex') showCartModal();
-    };
-
-    function updateCartPreview() {
-      const preview = document.getElementById('cartPreview');
-      const items = Object.values(cart).sort((a, b) => a.id - b.id);
-      if (items.length === 0) {
-        preview.innerHTML = '<div class="cart-preview-title">Корзина пуста</div>';
-        return;
+      renderCartPreview();
+      if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add('adding-animation');
+        setTimeout(() => evt.currentTarget.classList.remove('adding-animation'), 500);
       }
-      const total = items.reduce((s,i)=>s + (i.price || 0) * i.qty, 0);
-      preview.innerHTML = `
-        <div class="cart-preview-title">Корзина</div>
-        ${items.slice(0, 3).map(it => `
-          <div class="cart-preview-item">
-            <span>${escapeHtml(it.name)} x${it.qty}</span>
-            <span>${formatVND((it.price||0) * it.qty)}</span>
-          </div>
-        `).join('')}
-        ${items.length > 3 ? `<div style="text-align:center;color:var(--muted);font-size:0.85em;margin-top:4px;">+ еще ${items.length - 3}</div>` : ''}
-        <div class="cart-preview-total">Итого: ${formatVND(total)}</div>
-      `;
+    }
+
+    function removeFromCart(id) {
+      if (!cart[id]) return;
+      cart[id]--;
+      if (cart[id] <= 0) delete cart[id];
+      saveState(STORAGE_KEYS.CART, cart);
+      updateQtyUI(id);
+      updateCartFab();
+      renderCartPreview();
+    }
+
+    function updateQtyUI(id) {
+      const el = document.getElementById('qty-' + id);
+      if (el) el.textContent = cart[id] || 0;
     }
 
     function updateCartFab() {
-      const fab = document.getElementById('cartFab');
-      const count = Object.values(cart).reduce((s,i)=>s + (i.qty || 0), 0);
-      if (count > 0) {
-        fab.style.display = 'flex';
-        document.getElementById('cartFabCount').textContent = count;
-        updateCartPreview();
+      const totalCount = Object.values(cart).reduce((s, v) => s + v, 0);
+      if (totalCount > 0) {
+        cartFab.style.display = 'flex';
+        cartFabCount.textContent = totalCount;
+        cartFab.setAttribute('aria-hidden', 'false');
       } else {
-        fab.style.display = 'none';
-        document.getElementById('cartFabCount').textContent = '';
+        cartFab.style.display = 'none';
+        cartFab.setAttribute('aria-hidden', 'true');
       }
     }
 
-    document.getElementById('cartFab').onclick = showCartModal;
+    cartFab.addEventListener('click', openCartModal);
+    cartFab.addEventListener('mouseover', renderCartPreview);
 
-    function showCartModal() {
-      const modalBg = document.getElementById('cartModalBg');
-      const items = Object.values(cart).sort((a, b) => a.id - b.id);
-      const listHtml = items.length === 0
-        ? '<li style="color:var(--brand-olive);text-align:center;width:100%;">Корзина пуста</li>'
-        : items.map(it => `
-            <li>
-              <span>${escapeHtml(it.name)} x${it.qty}</span>
-              <span>
-                <button class="remove-btn" onclick="updateCart(${it.id},-1)">−</button>
-                <span style="margin:0 8px;">${formatVND((it.price||0) * it.qty)}</span>
-                <button class="add-btn" onclick="updateCart(${it.id},1)">+</button>
-              </span>
-            </li>
-          `).join('');
-      const total = items.reduce((s,i)=>s + (i.price || 0) * i.qty, 0);
-      
-      const savedAddressesHtml = savedAddresses.length > 0 ? `
-        <div class="saved-addresses">
-          <label style="font-size:0.9em;color:var(--brand-olive);margin-bottom:4px;display:block;">Сохраненные адреса:</label>
-          ${savedAddresses.map((addr, idx) => `
-            <div class="saved-address-item" onclick="selectAddress('${escapeHtml(addr)}')">
-              <span style="flex:1;">${escapeHtml(addr)}</span>
-              <button class="saved-address-delete" onclick="event.stopPropagation(); deleteAddress(${idx})">✕</button>
-            </div>
-          `).join('')}
-        </div>
-      ` : '';
+    function renderCartPreview() {
+      const items = Object.keys(cart).map(id => {
+        const p = PRODUCTS.find(x => x.id === id);
+        return { id, name: p ? p.name : id, qty: cart[id], price: p ? p.price : 0 };
+      });
+      if (items.length === 0) {
+        cartPreview.innerHTML = '<div class="cart-preview-title">Корзина пуста</div>';
+        return;
+      }
+      let html = '<div class="cart-preview-title">В корзине</div>';
+      items.slice(0,5).forEach(it => {
+        html += `<div class="cart-preview-item"><div>${it.name} × ${it.qty}</div><div>${formatPrice(it.price * it.qty)}</div></div>`;
+      });
+      const total = items.reduce((s, it) => s + it.qty * it.price, 0);
+      html += `<div class="cart-preview-total">Итого: ${formatPrice(total)}</div>`;
+      html += `<div style="margin-top:8px;text-align:center;"><button class="delivery-btn" onclick="openCartModal()">Открыть корзину</button></div>`;
+      cartPreview.innerHTML = html;
+    }
 
-      modalBg.innerHTML = `
+    // Модальное окно корзины
+    function openCartModal() {
+      renderCartModal();
+      cartModalBg.style.display = 'flex';
+      cartModalBg.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeCartModal() {
+      cartModalBg.style.display = 'none';
+      cartModalBg.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    function renderCartModal() {
+      const items = Object.keys(cart).map(id => {
+        const p = PRODUCTS.find(x => x.id === id);
+        return { id, name: p ? p.name : id, qty: cart[id], price: p ? p.price : 0, img: p ? p.img : '' };
+      });
+      const total = items.reduce((s, it) => s + it.qty * it.price, 0);
+      cartModalBg.innerHTML = `
         <div class="cart-modal" role="dialog" aria-modal="true" aria-label="Корзина">
-          <button class="cart-close" onclick="closeCartModal()" aria-label="Закрыть">&times;</button>
-          <div class="cart-title">Корзина</div>
-          <ul class="cart-list">${listHtml}</ul>
-          <div class="cart-total">Итого: ${formatVND(total)}</div>
-          <form class="order-form" id="orderForm">
-            <div style="background:#fff3cd;border:2px solid #ffc107;border-radius:8px;padding:8px;margin-bottom:10px;font-size:0.95em;color:#856404;text-align:center;">
-              ⚠️ <strong>Укажите точные данные для обратной связи</strong>
-            </div>
-            <input type="text" id="name" placeholder="Точный никнейм Telegram (например: @username)" value="${escapeHtml(savedUserData.name || '')}" required>
-            <input type="tel" id="phone" placeholder="Точный номер телефона" value="${escapeHtml(savedUserData.phone || '')}" required>
-            <select id="payment" required>
-              <option value="">Выберите способ оплаты</option>
-              <option value="qr" ${savedUserData.payment === 'qr' ? 'selected' : ''}>QR (оплатить через скан)</option>
-              <option value="cash" ${savedUserData.payment === 'cash' ? 'selected' : ''}>Наличные</option>
-            </select>
-            <button type="button" class="delivery-btn" onclick="showDeliveryInfo()">
-              🔸 Информация о доставке
-              <span style="font-size:0.9em;">▼</span>
-            </button>
-            ${savedAddressesHtml}
-            <input type="text" id="address" placeholder="Адрес доставки" value="${escapeHtml(savedUserData.address || '')}" required>
-            <label style="display:flex;align-items:center;gap:6px;margin:8px 0;font-size:0.9em;">
-              <input type="checkbox" id="saveAddress" ${savedAddresses.length > 0 ? 'checked' : ''}>
-              Сохранить адрес для будущих заказов
-            </label>
-            <textarea id="comment" placeholder="Комментарий к заказу (необязательно)" rows="2">${escapeHtml(savedUserData.comment || '')}</textarea>
-            <button type="submit" class="order-btn">Оформить заказ</button>
-            <div id="orderSuccess" class="order-success" style="display:none;"></div>
-          </form>
+          <button class="cart-close" onclick="closeCartModal()" aria-label="Закрыть корзину">&times;</button>
+          <div class="cart-title">Ваша корзина</div>
+          <ul class="cart-list">
+            ${items.length ? items.map(it => `
+              <li>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <img src="${it.img}" alt="${it.name}" style="width:56px;height:56px;border-radius:8px;object-fit:cover;border:1px solid #ddd;">
+                  <div>
+                    <div style="font-weight:700;color:var(--brand-olive);">${it.name}</div>
+                    <div style="font-size:0.9em;color:var(--muted);">${it.qty} × ${formatPrice(it.price)}</div>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                  <div style="font-weight:800;">${formatPrice(it.qty * it.price)}</div>
+                  <div>
+                    <button class="remove-btn" onclick="removeFromCart('${it.id}')">−</button>
+                    <button class="add-btn" onclick="addToCart('${it.id}')">+</button>
+                  </div>
+                </div>
+              </li>
+            `).join('') : '<li style="color:var(--muted);">Корзина пуста</li>'}
+          </ul>
+          <div class="cart-total">Итого: ${formatPrice(total)}</div>
+          <div class="order-form">
+            <input id="orderName" placeholder="Ваше имя" />
+            <input id="orderPhone" placeholder="Телефон" />
+            <input id="orderAddress" placeholder="Адрес доставки" />
+            <textarea id="orderNote" placeholder="Комментарий к заказу" rows="2"></textarea>
+            <button class="order-btn" onclick="placeOrder()">Оформить заказ</button>
+          </div>
         </div>
       `;
-      modalBg.style.display = 'flex';
-      const orderForm = document.getElementById('orderForm');
-      if (orderForm) orderForm.onsubmit = sendOrder;
-      setTimeout(() => {
-        const modal = document.querySelector('.cart-modal');
-        if (modal) modal.scrollIntoView({behavior: "smooth", block: "start"});
-      }, 50);
     }
 
-    window.selectAddress = function(addr) {
-      document.getElementById('address').value = addr;
-    };
-
-    window.deleteAddress = function(idx) {
-      if (confirm('Удалить этот адрес?')) {
-        savedAddresses.splice(idx, 1);
-        saveSavedAddresses();
-        showCartModal();
+    // Оформление заказа (имитация)
+    function placeOrder() {
+      const items = Object.keys(cart).map(id => {
+        const p = PRODUCTS.find(x => x.id === id);
+        return { id, name: p ? p.name : id, qty: cart[id], price: p ? p.price : 0 };
+      });
+      if (items.length === 0) {
+        alert('Корзина пуста');
+        return;
       }
-    };
+      const name = document.getElementById('orderName').value.trim();
+      const phone = document.getElementById('orderPhone').value.trim();
+      const address = document.getElementById('orderAddress').value.trim();
+      if (!name || !phone || !address) {
+        alert('Пожалуйста, заполните имя, телефон и адрес доставки.');
+        return;
+      }
 
-    window.closeCartModal = function() {
-      document.getElementById('cartModalBg').style.display = 'none';
-    };
-
-    window.showDeliveryInfo = function() {
-      document.getElementById('deliveryModal').classList.add('show');
-    };
-
-    window.closeDeliveryInfo = function() {
-      document.getElementById('deliveryModal').classList.remove('show');
-    };
-
-    document.getElementById('deliveryModal').onclick = function(e) {
-      if (e.target === this) closeDeliveryInfo();
-    };
-
-    window.showOrderHistory = function() {
-      const historyContent = document.getElementById('historyContent');
-      if (orderHistory.length === 0) {
-        historyContent.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px;">История заказов пуста</div>';
-      } else {
-        historyContent.innerHTML = orderHistory.slice().reverse().map(order => `
-          <div class="history-item">
-            <div class="history-item-header">
-              <span>Заказ #${order.number}</span>
-              <span>${new Date(order.date).toLocaleDateString('ru-RU')}</span>
-            </div>
-            <div class="history-item-products">
-              ${order.items.map(it => `${it.name} x${it.qty}`).join(', ')}
-            </div>
-            <div class="history-item-footer">
-              <strong>${formatVND(order.total)}</strong>
-              <button class="repeat-order-btn" onclick="repeatOrder(${order.number})">Повторить заказ</button>
+      // Показать processing
+      cartModalBg.innerHTML = `
+        <div class="cart-modal" role="dialog" aria-modal="true">
+          <div class="order-processing">
+            <div class="spinner-small" aria-hidden="true"></div>
+            <div class="order-processing-text">Заказ оформляется...</div>
+            <div class="order-processing-subtext">Пожалуйста, подождите</div>
+          </div>
+        </div>
+      `;
+      // Симуляция задержки
+      setTimeout(() => {
+        const order = {
+          id: 'ord_' + Date.now(),
+          name, phone, address,
+          items,
+          total: items.reduce((s, it) => s + it.qty * it.price, 0),
+          date: new Date().toISOString()
+        };
+        history.unshift(order);
+        saveState(STORAGE_KEYS.HISTORY, history);
+        // очистить корзину
+        cart = {};
+        saveState(STORAGE_KEYS.CART, cart);
+        updateCartFab();
+        renderCartPreview();
+        // Показать успех
+        cartModalBg.innerHTML = `
+          <div class="cart-modal" role="dialog" aria-modal="true">
+            <div style="text-align:center;padding:20px;">
+              <div style="font-size:1.4em;font-weight:800;color:var(--brand-olive);">Спасибо!</div>
+              <div style="margin-top:8px;">Ваш заказ принят. Ожидаем подтверждение от ресторана.</div>
+              <div style="margin-top:12px;font-weight:700;">Номер заказа: ${order.id}</div>
+              <div style="margin-top:18px;"><button class="delivery-btn" onclick="closeCartModal()">Закрыть</button></div>
             </div>
           </div>
-        `).join('');
+        `;
+      }, 1400);
+    }
+
+    // Избранное
+    function toggleFavorite(id, evt) {
+      favorites[id] = !favorites[id];
+      if (!favorites[id]) delete favorites[id];
+      saveState(STORAGE_KEYS.FAVORITES, favorites);
+      // Обновить кнопку и фильтр
+      if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.toggle('active', !!favorites[id]);
+        evt.currentTarget.textContent = favorites[id] ? '♥' : '♡';
       }
-      document.getElementById('historyModal').classList.add('show');
-    };
+      // Если сейчас фильтр "favorites", перерендерим список
+      const favBtn = document.getElementById('filterFavorites');
+      if (favBtn && favBtn.classList.contains('active')) {
+        renderMenu('favorites');
+      }
+    }
 
-    window.closeOrderHistory = function() {
-      document.getElementById('historyModal').classList.remove('show');
-    };
+    // История заказов
+    function showOrderHistory() {
+      historyModal.classList.add('show');
+      historyModal.setAttribute('aria-hidden', 'false');
+      renderHistory();
+      document.body.style.overflow = 'hidden';
+    }
+    function closeHistory() {
+      historyModal.classList.remove('show');
+      historyModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+    function renderHistory() {
+      if (!history.length) {
+        historyList.innerHTML = '<p style="color:var(--muted);">У вас пока нет заказов.</p>';
+        return;
+      }
+      historyList.innerHTML = history.map(h => `
+        <div class="history-item">
+          <div class="history-item-header">
+            <div>Заказ ${h.id}</div>
+            <div>${new Date(h.date).toLocaleString()}</div>
+          </div>
+          <div class="history-item-products">
+            ${h.items.map(it => `${it.name} × ${it.qty}`).join(', ')}
+          </div>
+          <div class="history-item-footer">
+            <div style="font-weight:800;">${formatPrice(h.total)}</div>
+            <div><button class="repeat-order-btn" onclick='repeatOrder("${h.id}")'>Повторить</button></div>
+          </div>
+        </div>
+      `).join('');
+    }
 
-    window.repeatOrder = function(orderNumber) {
-      const order = orderHistory.find(o => o.number === orderNumber);
-      if (!order) return;
-      
-      cart = {};
-      order.items.forEach(item => {
-        const menuItem = menuData.find(m => m.id === item.id);
-        if (menuItem && menuItem.available) {
-          cart[item.id] = { ...menuItem,
+    function repeatOrder(orderId) {
+      const ord = history.find(h => h.id === orderId);
+      if (!ord) return;
+      // добавить позиции в корзину
+      ord.items.forEach(it => {
+        cart[it.id] = (cart[it.id] || 0) + it.qty;
+      });
+      saveState(STORAGE_KEYS.CART, cart);
+      updateCartFab();
+      renderCartPreview();
+      closeHistory();
+      openCartModal();
+    }
+
+    // Модал просмотра изображения
+    function showImageModal(src) {
+      imageModalImg.src = src;
+      imageModal.classList.add('show');
+      imageModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeImageModal() {
+      imageModal.classList.remove('show');
+      imageModal.setAttribute('aria-hidden', 'true');
+      imageModalImg.src = '';
+      document.body.style.overflow = '';
+    }
+
+    // Открыть/закрыть информацию о доставке
+    function closeDeliveryInfo() {
+      const dm = document.getElementById('deliveryModal');
+      dm.classList.remove('show');
+      dm.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    function openDeliveryInfo() {
+      const dm = document.getElementById('deliveryModal');
+      dm.classList.add('show');
+      dm.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Фильтрация меню и управление состоянием кнопок
+    function filterMenu(filter) {
+      document.querySelectorAll('.menu-controls button').forEach(b => b.classList.remove('active'));
+      if (filter === 'all') document.getElementById('filterAll').classList.add('active');
+      if (filter === 'favorites') document.getElementById('filterFavorites').classList.add('active');
+      renderMenu(filter);
+    }
+
+    // Инициализация
+    (function init(){
+      showMenuLoader(true);
+      // Симуляция асинхронной загрузки (например, fetch)
+      setTimeout(() => {
+        renderMenu('all');
+        updateCartFab();
+        renderCartPreview();
+        showMenuLoader(false);
+      }, 700);
+    })();
+
+    // Доступ из inline onclick в элементах
+    window.addToCart = addToCart;
+    window.removeFromCart = removeFromCart;
+    window.toggleFavorite = toggleFavorite;
+    window.openCartModal = openCartModal;
+    window.closeCartModal = closeCartModal;
+    window.showOrderHistory = showOrderHistory;
+    window.closeHistory = closeHistory;
+    window.repeatOrder = repeatOrder;
+    window.showImageModal = showImageModal;
+    window.closeImageModal = closeImageModal;
+    window.closeDeliveryInfo = closeDeliveryInfo;
+    window.openDeliveryInfo = openDeliveryInfo;
+    window.filterMenu = filterMenu;
+  </script>
+</body>
+</html>
