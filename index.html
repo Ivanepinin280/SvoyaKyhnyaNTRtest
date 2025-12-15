@@ -206,6 +206,31 @@
     .delivery-info-list {
       margin-top:4px;
     }
+    .delivery-btn {
+      background:var(--brand-olive);color:#fff;border:none;border-radius:8px;padding:10px;
+      font-size:1em;font-weight:700;cursor:pointer;width:100%;margin:8px 0;
+      font-family: 'PT Sans Narrow', Arial, sans-serif;letter-spacing:0.5px;
+      display:flex;align-items:center;justify-content:center;gap:6px;
+    }
+    .delivery-btn:hover {
+      background:var(--brand-olive-light);
+    }
+    .delivery-modal {
+      display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:250;
+      align-items:center;justify-content:center;animation:fadein .22s;
+    }
+    .delivery-modal.show {
+      display:flex;
+    }
+    .delivery-modal-content {
+      background:var(--bg-cream);border-radius:16px;padding:20px;max-width:90vw;width:400px;
+      border:2px solid var(--brand-olive);box-shadow:0 12px 36px rgba(0,0,0,0.2);
+      position:relative;max-height:80vh;overflow-y:auto;
+    }
+    .delivery-modal-close {
+      position:absolute;right:10px;top:10px;font-size:24px;color:var(--brand-olive);
+      background:none;border:none;cursor:pointer;line-height:1;
+    }
 
     .unavailable-label { display:none; }
 
@@ -290,6 +315,29 @@
   </button>
 
   <div id="cartModalBg" class="cart-modal-bg" style="display:none;"></div>
+
+  <!-- Модальное окно информации о доставке -->
+  <div id="deliveryModal" class="delivery-modal">
+    <div class="delivery-modal-content">
+      <button class="delivery-modal-close" onclick="closeDeliveryInfo()">&times;</button>
+      <div class="delivery-info">
+        <strong>🔸 Доставка:</strong>
+        <div class="delivery-info-subtitle">(До входа в отель, апартаменты)</div>
+        <div style="background:#e8f5e9;padding:6px;border-radius:6px;margin:6px 0;font-size:0.92em;color:#2e7d32;text-align:center;">
+          ⏱️ Заказ будет доставлен в течение 1-1,5 часа
+        </div>
+        <div class="delivery-info-list">
+          • Центр - Бесплатно от 150 VND<br>
+          &nbsp;&nbsp;(До 150 VND - 20 VND)<br>
+          • Север - от 40 VND<br>
+          • Район - coopmart, Луизиана, Z Beach - от 40 VND<br>
+          • Big C, за Coopmart (в сторону Юга) - от 45 VND<br>
+          • Юг, Анвьен - от 50 VND<br>
+          • За мостом после Coopmart, My gia, за Big C - от 60 VND
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     // --- Настройки ---
@@ -508,6 +556,9 @@
           <ul class="cart-list">${listHtml}</ul>
           <div class="cart-total">Итого: ${RUB_FMT.format(total)}</div>
           <form class="order-form" id="orderForm">
+            <div style="background:#fff3cd;border:2px solid #ffc107;border-radius:8px;padding:8px;margin-bottom:10px;font-size:0.95em;color:#856404;text-align:center;">
+              ⚠️ <strong>Укажите точные данные для обратной связи</strong>
+            </div>
             <input type="text" id="name" placeholder="Точный никнейм Telegram (например: @username)" required>
             <input type="tel" id="phone" placeholder="Точный номер телефона" required>
             <select id="payment" required>
@@ -515,19 +566,10 @@
               <option value="qr">QR (оплатить через скан)</option>
               <option value="cash">Наличные</option>
             </select>
-            <div class="delivery-info">
-              <strong>🔸 Доставка:</strong>
-              <div class="delivery-info-subtitle">(До входа в отель, апартаменты)</div>
-              <div class="delivery-info-list">
-                • Центр - Бесплатно от 150 VND<br>
-                &nbsp;&nbsp;(До 150 VND - 20 VND)<br>
-                • Север - от 40 VND<br>
-                • Район - coopmart, Луизиана, Z Beach - от 40 VND<br>
-                • Big C, за Coopmart (в сторону Юга) - от 45 VND<br>
-                • Юг, Анвьен - от 50 VND<br>
-                • За мостом после Coopmart, My gia, за Big C - от 60 VND
-              </div>
-            </div>
+            <button type="button" class="delivery-btn" onclick="showDeliveryInfo()">
+              🔸 Информация о доставке
+              <span style="font-size:0.9em;">▼</span>
+            </button>
             <input type="text" id="address" placeholder="Адрес доставки" required>
             <textarea id="comment" placeholder="Комментарий к заказу (необязательно)" rows="2"></textarea>
             <button type="submit" class="order-btn">Оформить заказ</button>
@@ -546,6 +588,19 @@
 
     window.closeCartModal = function() {
       document.getElementById('cartModalBg').style.display = 'none';
+    };
+
+    window.showDeliveryInfo = function() {
+      document.getElementById('deliveryModal').classList.add('show');
+    };
+
+    window.closeDeliveryInfo = function() {
+      document.getElementById('deliveryModal').classList.remove('show');
+    };
+
+    // Закрытие модального окна при клике вне его
+    document.getElementById('deliveryModal').onclick = function(e) {
+      if (e.target === this) closeDeliveryInfo();
     };
 
     async function sendOrder(e) {
