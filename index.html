@@ -115,6 +115,7 @@
       box-shadow:0 8px 24px rgba(0,0,0,0.1);
     }
     .product.unavailable { opacity:.6; pointer-events:none; }
+    .product.unavailable .favorite-btn { pointer-events:none; }
     
     .favorite-btn {
       position:absolute;
@@ -671,23 +672,26 @@
         return;
       }
       
-      menu.innerHTML = items.map(item => `
-        <div class="product ${!item.available ? 'unavailable' : ''}">
-          ${!item.available ? '<div class="prod-unavailable">Нет в наличии</div>' : ''}
-          <button class="favorite-btn ${favorites.includes(item.id) ? 'active' : ''}" onclick="toggleFav(${item.id})">
-            ${favorites.includes(item.id) ? '❤️' : '🤍'}
+      menu.innerHTML = items.map(item => {
+        const isAvailable = item.available;
+        const isFav = favorites.includes(item.id);
+        return `
+        <div class="product ${!isAvailable ? 'unavailable' : ''}">
+          ${!isAvailable ? '<div class="prod-unavailable">Нет в наличии</div>' : ''}
+          <button class="favorite-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${item.id})" ${!isAvailable ? 'style="pointer-events:auto;"' : ''}>
+            ${isFav ? '❤️' : '🤍'}
           </button>
-          <img class="product-img" src="${item.img || 'https://via.placeholder.com/200x120?text=Фото'}" onclick="showImage('${item.img}')">
+          <img class="product-img" src="${item.img || 'https://via.placeholder.com/200x120?text=Фото'}" onclick="showImage('${item.img}')" ${!isAvailable ? 'style="cursor:default;"' : ''}>
           <div class="product-name">${esc(item.name)}</div>
           <div class="product-desc">${esc(item.description)}</div>
           <div class="product-price">${FMT.format(item.price)}</div>
           <div class="controls">
-            <button class="remove-btn" ${!item.available?'disabled':''} onclick="updateCart(${item.id},-1)">−</button>
+            <button class="remove-btn" ${!isAvailable ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''} onclick="updateCart(${item.id},-1)">−</button>
             <span id="qty-${item.id}">${cart[item.id]?.qty||0}</span>
-            <button class="add-btn" ${!item.available?'disabled':''} onclick="updateCart(${item.id},1)">+</button>
+            <button class="add-btn" ${!isAvailable ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''} onclick="updateCart(${item.id},1)">+</button>
           </div>
         </div>
-      `).join('');
+      `}).join('');
       
       updateCartFab();
       document.getElementById('favCount').textContent = favorites.length;
