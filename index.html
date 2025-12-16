@@ -641,18 +641,33 @@
           const rows = json.values;
           const headers = rows[0].map(h => String(h||'').trim().toLowerCase());
           const dataRows = rows.slice(1);
+          
+          console.log('=== ОТЛАДКА ЗАГРУЗКИ МЕНЮ ===');
+          console.log('Заголовки:', headers);
+          console.log('Первая строка данных:', dataRows[0]);
+          
           menuData = dataRows.map((row, idx) => {
             const obj = {};
             headers.forEach((h, i) => obj[h] = row[i] !== undefined ? row[i] : '');
+            
+            const availableRaw = obj.available || obj.доступно || 'true';
+            const availableStr = String(availableRaw).trim().toLowerCase();
+            const isAvailable = availableStr === 'true';
+            
+            console.log(`Блюдо "${obj.name}": available="${availableRaw}" -> "${availableStr}" -> ${isAvailable}`);
+            
             return {
               id: idx + 1,
               name: obj.name || obj.title || `Блюдо ${idx+1}`,
               description: obj.description || obj.desc || '',
               img: obj.img || obj.image || '',
               price: toNum(obj.price || obj.cost),
-              available: String(obj.available || obj.доступно || 'true').trim().toLowerCase() === 'true'
+              available: isAvailable
             };
           });
+          
+          console.log('Загружено блюд:', menuData.length);
+          console.log('Первое блюдо:', menuData[0]);
         } else if (json?.menu) {
           menuData = json.menu.map((item, idx) => ({
             id: idx + 1,
@@ -846,7 +861,7 @@
           <div class="delivery-info-content">
             <strong>🔸 Доставка:</strong>
             <div style="font-size:0.9em;margin-bottom:8px;">(До входа в отель, апартаменты)</div>
-            <div class="delivery-time">⏱️ Заказ будет доставлен от 40 минут до 1,5 часа</div>
+            <div class="delivery-time">⏱️ Заказ будет доставлен в течение 1-1,5 часа</div>
             <div style="margin-top:8px;">
               • Центр - Бесплатно от 150 VND<br>
               &nbsp;&nbsp;(До 150 VND - 20 VND)<br>
