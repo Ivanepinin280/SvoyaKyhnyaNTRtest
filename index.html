@@ -14,23 +14,20 @@
       --muted:#7c6a5c;
       --card-border:#6b7a29;
     }
-    html,body{height:100%;}
+    * { box-sizing:border-box; }
+    html,body{height:100%;margin:0;}
     body {
-      background: var(--bg-cream);
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
-      margin:0;
-      min-height:100vh;
+      background:var(--bg-cream);
+      font-family:'PT Sans Narrow',Arial,sans-serif;
       color:#2b2b2b;
       -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
     }
 
     .header {
       text-align:center;
-      padding:28px 12px 10px 12px;
-      background: linear-gradient(90deg, var(--brand-olive) 0%, var(--brand-olive-light) 100%);
+      padding:28px 12px 10px;
+      background:linear-gradient(90deg,var(--brand-olive),var(--brand-olive-light));
       box-shadow:0 2px 10px rgba(0,0,0,0.08);
-      position:relative;
     }
     .logo-wrap {
       display:flex;
@@ -39,42 +36,35 @@
       gap:14px;
       flex-wrap:wrap;
     }
-    @keyframes logoPop { from{transform:scale(0.7); opacity:0;} to{transform:scale(1); opacity:1;} }
     .logo-img {
       width:84px;
       height:84px;
       object-fit:cover;
       border-radius:50%;
-      border: none;
-      background: transparent;
-      padding: 0;
       box-shadow:0 6px 18px rgba(0,0,0,0.12);
-      animation:logoPop .35s ease;
     }
     .header-title {
-      font-size:2.0em;
+      font-size:2em;
       color:#fff;
       font-weight:800;
       letter-spacing:1px;
       text-shadow:0 1px 6px rgba(0,0,0,0.12);
-      margin-bottom:0;
+      margin:0;
     }
     .header-desc {
       color:#fffbe6;
       font-size:1.02em;
       font-weight:700;
-      letter-spacing:0.5px;
       margin-top:6px;
-      opacity:0.95;
     }
     .promo-banner {
       text-align:center;
-      margin-top:10px;
-      margin-bottom:10px;
+      margin:10px 0;
+      color:#fffbe6;
+      font-weight:700;
       letter-spacing:1px;
     }
     .promo-star { color:var(--accent); font-size:1.6em; vertical-align:middle; }
-    .promo-text { color:#fffbe6; font-weight:700; margin:0 8px; }
 
     .menu-controls {
       max-width:1100px;
@@ -83,7 +73,6 @@
       display:flex;
       gap:10px;
       flex-wrap:wrap;
-      align-items:center;
       justify-content:center;
     }
     .menu-controls button {
@@ -95,89 +84,43 @@
       font-size:0.95em;
       font-weight:700;
       cursor:pointer;
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
+      font-family:'PT Sans Narrow',Arial,sans-serif;
       transition:all .2s;
     }
-    .menu-controls button:hover {
-      background:var(--brand-olive-light);
-      transform:translateY(-2px);
-    }
-    .menu-controls button.active {
-      background:var(--accent);
-    }
+    .menu-controls button:hover { background:var(--brand-olive-light); }
+    .menu-controls button.active { background:var(--accent); }
 
     .menu {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
       gap:18px;
-      justify-items:center;
-      align-items:start;
-      grid-auto-rows: 1fr;
       max-width:1100px;
-      margin:26px auto 80px;
+      margin:26px auto 100px;
       padding:0 12px;
-      box-sizing:border-box;
     }
 
     .product {
-      background: #fff;
+      background:#fff;
       border-radius:14px;
       box-shadow:0 4px 18px rgba(0,0,0,0.06);
-      width:100%;
-      max-width:220px;
       padding:16px 12px 14px;
       display:flex; 
       flex-direction:column;
-      justify-content:space-between;
-      transition:transform .18s,box-shadow .18s;
       position:relative;
       border:2px solid var(--card-border);
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
-      box-sizing:border-box;
-      height:100%;
-    }
-    .product:not(.unavailable):hover {
-      transform:translateY(-6px) scale(1.02);
-      box-shadow:0 10px 28px rgba(0,0,0,0.08);
-      border-color:var(--brand-olive-light);
-    }
-    .product.unavailable { opacity:.6; pointer-events:none; }
-    .product-img {
-      width:100px; height:100px; object-fit:cover; border-radius:12px; margin-bottom:10px; background:#eee;
-      border:2px solid var(--brand-olive);
-      flex: 0 0 auto;
-      cursor:pointer;
       transition:transform .2s;
     }
-    .product-img:hover {
-      transform:scale(1.05);
+    .product:hover {
+      transform:translateY(-4px);
+      box-shadow:0 8px 24px rgba(0,0,0,0.1);
     }
-    .product-name {
-      font-size:1.05em; font-weight:700; color:var(--brand-olive); margin-bottom:6px; text-align:center;
-      letter-spacing:1px; text-transform:uppercase;
-    }
-    .product-desc {
-      color:var(--muted); font-size:.95em; margin-bottom:6px; text-align:center; min-height:36px;
-      flex: 1 1 auto;
-    }
-    .product-price {
-      font-size:1.05em; color:#222; margin-bottom:10px; font-weight:700; letter-spacing:0.5px;
-    }
-    .controls { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:center; }
-    .add-btn, .remove-btn {
-      border:none; border-radius:8px; font-size:1em; padding:6px 12px; margin:0 4px; cursor:pointer; transition:filter .12s;
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
-      font-weight:700;
-    }
-    .add-btn { background:var(--brand-olive); color:#fff; box-shadow:0 2px 6px rgba(91,104,44,0.12); }
-    .remove-btn { background:#fff; color:var(--brand-olive); border:1px solid var(--card-border); }
-    .add-btn:active,.remove-btn:active{ transform:translateY(1px); }
-
+    .product.unavailable { opacity:.6; pointer-events:none; }
+    
     .favorite-btn {
       position:absolute;
       top:8px;
       right:8px;
-      background:rgba(255,255,255,0.9);
+      background:rgba(255,255,255,0.95);
       border:none;
       border-radius:50%;
       width:32px;
@@ -187,54 +130,109 @@
       justify-content:center;
       cursor:pointer;
       font-size:1.2em;
-      transition:all .2s;
       z-index:10;
+      transition:transform .2s;
     }
-    .favorite-btn:hover {
-      transform:scale(1.15);
-      background:#fff;
+    .favorite-btn:hover { transform:scale(1.1); }
+    .favorite-btn.active { color:#ff6b6b; }
+    
+    .product-img {
+      width:100%;
+      height:120px;
+      object-fit:cover;
+      border-radius:12px;
+      margin-bottom:10px;
+      border:2px solid var(--brand-olive);
+      cursor:pointer;
+      transition:transform .2s;
     }
-    .favorite-btn.active {
-      color:#ff6b6b;
+    .product-img:hover { transform:scale(1.03); }
+    
+    .product-name {
+      font-size:1.05em;
+      font-weight:700;
+      color:var(--brand-olive);
+      margin-bottom:6px;
+      text-align:center;
+      letter-spacing:1px;
+      text-transform:uppercase;
     }
-
-    @keyframes addToCart {
-      0% { transform:scale(1); }
-      50% { transform:scale(1.2); }
-      100% { transform:scale(1); }
+    .product-desc {
+      color:var(--muted);
+      font-size:.95em;
+      margin-bottom:8px;
+      text-align:center;
+      min-height:40px;
+      flex:1;
     }
-    .adding-animation {
-      animation:addToCart .3s ease;
+    .product-price {
+      font-size:1.1em;
+      color:#222;
+      margin-bottom:10px;
+      font-weight:700;
+      text-align:center;
     }
+    .controls {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      justify-content:center;
+    }
+    .add-btn, .remove-btn {
+      border:none;
+      border-radius:8px;
+      font-size:1em;
+      padding:6px 14px;
+      cursor:pointer;
+      font-family:'PT Sans Narrow',Arial,sans-serif;
+      font-weight:700;
+    }
+    .add-btn { background:var(--brand-olive); color:#fff; }
+    .remove-btn { background:#fff; color:var(--brand-olive); border:1px solid var(--card-border); }
 
     .cart-fab {
-      position:fixed; bottom:22px; right:18px; background:none; border:none; box-shadow:none;
-      width:72px; height:72px; display:flex; align-items:center; justify-content:center;
-      cursor:pointer; z-index:100; padding:0;
-      transition:transform .18s;
+      position:fixed;
+      bottom:20px;
+      right:20px;
+      background:none;
+      border:none;
+      width:64px;
+      height:64px;
+      cursor:pointer;
+      z-index:100;
     }
-    .cart-fab:hover .cart-preview {
-      display:block;
-    }
-    .cart-fab svg { display:block; filter: drop-shadow(0 4px 18px rgba(0,0,0,0.12));}
+    .cart-fab:hover .cart-preview { display:block; }
+    .cart-fab svg { filter:drop-shadow(0 4px 18px rgba(0,0,0,0.12)); }
     .cart-fab-circle { fill:var(--accent); stroke:#fff; stroke-width:2; }
     .cart-fab-count {
-      position:absolute; right:6px; top:6px; background:#fff; color:var(--accent); font-weight:700;
-      border-radius:50%; min-width:26px; height:26px; display:flex; align-items:center; justify-content:center;
-      font-size:1em; box-shadow:0 2px 8px rgba(0,0,0,0.12); border:2px solid var(--accent);
+      position:absolute;
+      right:4px;
+      top:4px;
+      background:#fff;
+      color:var(--accent);
+      font-weight:700;
+      border-radius:50%;
+      min-width:24px;
+      height:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:0.9em;
+      box-shadow:0 2px 8px rgba(0,0,0,0.12);
+      border:2px solid var(--accent);
       pointer-events:none;
     }
 
     .cart-preview {
       display:none;
       position:absolute;
-      bottom:80px;
+      bottom:75px;
       right:0;
       background:#fff;
       border:2px solid var(--brand-olive);
       border-radius:12px;
       padding:12px;
-      min-width:200px;
+      min-width:220px;
       max-width:300px;
       box-shadow:0 8px 24px rgba(0,0,0,0.15);
       font-size:0.9em;
@@ -244,14 +242,13 @@
       font-weight:700;
       color:var(--brand-olive);
       margin-bottom:8px;
-      border-bottom:1px solid #ddd;
       padding-bottom:6px;
+      border-bottom:1px solid #ddd;
     }
     .cart-preview-item {
       display:flex;
       justify-content:space-between;
       margin:4px 0;
-      color:#333;
     }
     .cart-preview-total {
       margin-top:8px;
@@ -261,75 +258,184 @@
       text-align:right;
     }
 
-    .cart-modal-bg {
-      position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.35); z-index:200;
-      display:flex; align-items:flex-start; justify-content:center; animation:fadein .22s;
+    .modal-bg {
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.4);
+      z-index:200;
+      align-items:flex-start;
+      justify-content:center;
+      overflow-y:auto;
     }
-    @keyframes fadein { from{opacity:0;} to{opacity:1;} }
-    .cart-modal {
-      background: var(--bg-cream); border-radius:18px; padding:20px 16px 16px 16px; min-width:320px; max-width:95vw;
-      box-shadow:0 12px 36px rgba(0,0,0,0.12); position:relative;
+    .modal-bg.show { display:flex; }
+    
+    .modal {
+      background:var(--bg-cream);
+      border-radius:18px;
+      padding:20px;
+      max-width:500px;
+      width:90vw;
       border:2px solid var(--brand-olive);
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
-      max-height:86vh; overflow-y:auto;
-      display:flex; flex-direction:column;
-      margin-top:36px;
+      box-shadow:0 12px 36px rgba(0,0,0,0.2);
+      position:relative;
+      margin:40px auto;
+      max-height:85vh;
+      overflow-y:auto;
     }
-    .cart-title { font-size:1.2em; color:var(--brand-olive); margin-bottom:10px; letter-spacing:1px; font-weight:800; }
-    .cart-list { list-style:none; padding:0; margin:0 0 10px 0; }
-    .cart-list li { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; color:#333; }
-    .cart-total { font-size:1.05em; color:#222; margin-bottom:12px; text-align:right; font-weight:800; }
-    .cart-close { position:absolute; right:10px; top:8px; font-size:1.4em; color:var(--brand-olive); background:none; border:none; cursor:pointer; }
-    .order-form input, .order-form textarea, .order-form select {
-      width:100%; padding:8px; margin-bottom:8px; border-radius:8px; border:1px solid #ddd; font-size:1em;
-      background:#fff; font-family: 'PT Sans Narrow', Arial, sans-serif; box-sizing:border-box;
+    
+    .modal-close {
+      position:absolute;
+      right:12px;
+      top:12px;
+      font-size:28px;
+      color:var(--brand-olive);
+      background:none;
+      border:none;
+      cursor:pointer;
+      line-height:1;
     }
-    .order-btn {
-      background:var(--accent); color:#fff; border:none; border-radius:8px; padding:10px 18px; font-size:1.03em; font-weight:800; cursor:pointer; width:100%; margin-top:8px;
+    
+    .modal-title {
+      font-size:1.3em;
+      color:var(--brand-olive);
+      margin-bottom:15px;
+      font-weight:800;
       letter-spacing:1px;
     }
-    .order-success { color:#2e7d32; font-size:1.05em; text-align:center; margin-top:10px; }
-    .order-processing {
-      text-align:center; padding:20px; color:var(--brand-olive);
+
+    .cart-list {
+      list-style:none;
+      padding:0;
+      margin:0 0 15px;
     }
-    .order-processing .spinner-small {
-      width:36px; height:36px; border:4px solid rgba(0,0,0,0.08); border-top-color:var(--brand-olive);
-      border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 12px;
-    }
-    .order-processing-text {
-      font-size:1.05em; font-weight:700; margin-bottom:8px;
-    }
-    .order-processing-subtext {
-      font-size:0.95em; color:var(--muted);
-    }
-    .delivery-btn {
-      background:var(--brand-olive);color:#fff;border:none;border-radius:8px;padding:10px;
-      font-size:1em;font-weight:700;cursor:pointer;width:100%;margin:8px 0;
-      font-family: 'PT Sans Narrow', Arial, sans-serif;letter-spacing:0.5px;
-      display:flex;align-items:center;justify-content:center;gap:6px;
-    }
-    .delivery-btn:hover {
-      background:var(--brand-olive-light);
-    }
-    .delivery-modal {
-      display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:250;
-      align-items:center;justify-content:center;animation:fadein .22s;
-    }
-    .delivery-modal.show {
+    .cart-list li {
       display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:10px;
+      padding:8px;
+      background:#fff;
+      border-radius:8px;
     }
-    .delivery-modal-content, .history-modal-content {
-      background:var(--bg-cream);border-radius:16px;padding:20px;max-width:90vw;width:400px;
-      border:2px solid var(--brand-olive);box-shadow:0 12px 36px rgba(0,0,0,0.2);
-      position:relative;max-height:80vh;overflow-y:auto;
+    .cart-total {
+      font-size:1.1em;
+      font-weight:800;
+      text-align:right;
+      margin-bottom:15px;
+      color:#222;
     }
-    .history-modal-content {
-      width:500px;
+
+    .form-group {
+      margin-bottom:12px;
     }
-    .delivery-modal-close {
-      position:absolute;right:10px;top:10px;font-size:24px;color:var(--brand-olive);
-      background:none;border:none;cursor:pointer;line-height:1;
+    .form-group label {
+      display:block;
+      font-weight:700;
+      margin-bottom:4px;
+      color:var(--brand-olive);
+      font-size:0.95em;
     }
+    .form-group input, .form-group textarea, .form-group select {
+      width:100%;
+      padding:10px;
+      border-radius:8px;
+      border:1px solid #ddd;
+      font-size:1em;
+      background:#fff;
+      font-family:'PT Sans Narrow',Arial,sans-serif;
+    }
+    .form-group textarea { resize:vertical; min-height:60px; }
+    
+    .geo-group {
+      display:flex;
+      gap:8px;
+      align-items:flex-end;
+    }
+    .geo-group input { flex:1; }
+    .geo-btn {
+      background:var(--brand-olive);
+      color:#fff;
+      border:none;
+      border-radius:8px;
+      padding:10px 14px;
+      cursor:pointer;
+      font-size:1.2em;
+      flex-shrink:0;
+      height:41px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .geo-btn:hover { background:var(--brand-olive-light); }
+    .geo-btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+    .info-box {
+      background:#fff3cd;
+      border:2px solid #ffc107;
+      border-radius:8px;
+      padding:10px;
+      margin-bottom:12px;
+      font-size:0.9em;
+      color:#856404;
+      text-align:center;
+    }
+
+    .delivery-info-btn {
+      background:var(--brand-olive);
+      color:#fff;
+      border:none;
+      border-radius:8px;
+      padding:10px;
+      width:100%;
+      font-weight:700;
+      cursor:pointer;
+      margin-bottom:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      font-family:'PT Sans Narrow',Arial,sans-serif;
+    }
+    .delivery-info-btn:hover { background:var(--brand-olive-light); }
+
+    .delivery-info-content {
+      background:#fff;
+      border:2px solid var(--brand-olive);
+      border-radius:8px;
+      padding:12px;
+      font-size:0.9em;
+      line-height:1.6;
+    }
+    .delivery-info-content strong {
+      color:var(--brand-olive);
+      display:block;
+      margin-bottom:8px;
+    }
+    .delivery-time {
+      background:#e8f5e9;
+      padding:8px;
+      border-radius:6px;
+      margin:8px 0;
+      color:#2e7d32;
+      text-align:center;
+      font-weight:700;
+    }
+
+    .btn-primary {
+      background:var(--accent);
+      color:#fff;
+      border:none;
+      border-radius:8px;
+      padding:12px 20px;
+      font-size:1.05em;
+      font-weight:800;
+      cursor:pointer;
+      width:100%;
+      letter-spacing:1px;
+      font-family:'PT Sans Narrow',Arial,sans-serif;
+    }
+    .btn-primary:hover { background:#944e18; }
 
     .history-item {
       background:#fff;
@@ -338,25 +444,25 @@
       padding:12px;
       margin-bottom:10px;
     }
-    .history-item-header {
+    .history-header {
       display:flex;
       justify-content:space-between;
-      margin-bottom:8px;
       font-weight:700;
       color:var(--brand-olive);
+      margin-bottom:8px;
       font-size:0.95em;
     }
-    .history-item-products {
+    .history-products {
       font-size:0.85em;
-      color:#555;
+      color:#666;
       margin-bottom:8px;
     }
-    .history-item-footer {
+    .history-footer {
       display:flex;
       justify-content:space-between;
       align-items:center;
     }
-    .repeat-order-btn {
+    .btn-repeat {
       background:var(--accent);
       color:#fff;
       border:none;
@@ -365,23 +471,19 @@
       cursor:pointer;
       font-size:0.85em;
       font-weight:700;
-      font-family: 'PT Sans Narrow', Arial, sans-serif;
     }
 
     .image-modal {
       display:none;
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,0.85);
+      background:rgba(0,0,0,0.9);
       z-index:300;
       align-items:center;
       justify-content:center;
-      animation:fadein .22s;
       cursor:pointer;
     }
-    .image-modal.show {
-      display:flex;
-    }
+    .image-modal.show { display:flex; }
     .image-modal img {
       max-width:90vw;
       max-height:90vh;
@@ -389,48 +491,50 @@
       box-shadow:0 12px 48px rgba(0,0,0,0.5);
     }
 
-    .product .prod-unavailable {
-      position: absolute;
-      left: 8px;
-      right: 8px;
-      top: 8px;
-      background: var(--accent);
-      color: #fff;
-      font-size: .95em;
-      border-radius: 10px;
-      padding: 6px 8px;
-      text-align: center;
-      letter-spacing: 1px;
-      z-index: 6;
-      pointer-events: none;
+    .prod-unavailable {
+      position:absolute;
+      left:8px;
+      right:8px;
+      top:8px;
+      background:var(--accent);
+      color:#fff;
+      font-size:0.9em;
+      border-radius:10px;
+      padding:6px;
+      text-align:center;
+      z-index:6;
     }
 
-    #menuLoader{
-      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-      background:rgba(255,255,255,0.86); z-index:300; opacity:0; pointer-events:none; transition:opacity .22s ease;
-      backdrop-filter: blur(4px);
+    .spinner {
+      width:40px;
+      height:40px;
+      border:4px solid rgba(0,0,0,0.1);
+      border-top-color:var(--brand-olive);
+      border-radius:50%;
+      animation:spin 1s linear infinite;
+      margin:20px auto;
     }
-    #menuLoader.visible{ opacity:1; pointer-events:auto; }
-    .loader-box{ text-align:center; color:var(--brand-olive); }
-    .spinner{ width:48px; height:48px; border:5px solid rgba(0,0,0,0.08); border-top-color:var(--brand-olive); border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 8px; }
-    @keyframes spin{ to{ transform:rotate(360deg); } }
+    @keyframes spin { to{ transform:rotate(360deg); } }
 
-    @media (max-width:1000px) {
-      .menu { grid-template-columns: repeat(3, minmax(140px, 1fr)); max-width:900px; }
+    .processing {
+      text-align:center;
+      padding:20px;
+      color:var(--brand-olive);
     }
-    @media (max-width:600px) {
-      .menu { grid-template-columns: repeat(2, minmax(140px, 1fr)); gap:12px; max-width:720px; margin-bottom:120px; }
-      .product { width:100%; max-width:220px; padding:10px 8px; }
-      .product-img { width:72px; height:72px; }
-      .cart-modal, .history-modal-content { min-width:92vw; padding:12px 8px 10px 8px; border-radius:16px; margin-top:12vw;}
-      .cart-fab { width:56px; height:56px; bottom:12px; right:10px; top:auto !important;}
-      .cart-fab-count { min-width:18px; height:18px; font-size:.9em; right:2px; top:2px; }
+    .processing-text {
+      font-size:1.1em;
+      font-weight:700;
+      margin:10px 0;
+    }
+
+    @media (max-width:768px) {
+      .menu { grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:120px; }
+      .product { padding:12px 8px; }
+      .product-img { height:100px; }
+      .modal { width:95vw; padding:16px; }
       .header-title { font-size:1.4em; }
-      .cart-preview { bottom:70px; right:-10px; max-width:250px; }
-    }
-    @media (max-width:420px) {
-      .menu { gap:10px; padding:0 8px; }
-      .header-title { font-size:1.1rem; }
+      .cart-fab { width:56px; height:56px; bottom:15px; right:15px; }
+      .cart-preview { bottom:70px; right:0; max-width:260px; }
     }
   </style>
 </head>
@@ -445,7 +549,7 @@
     </div>
     <div class="promo-banner">
       <span class="promo-star">★</span>
-      <span class="promo-text">МЕНЮ</span>
+      <span>МЕНЮ</span>
       <span class="promo-star">★</span>
     </div>
   </div>
@@ -456,58 +560,22 @@
     <button onclick="showOrderHistory()">📋 История (<span id="historyCount">0</span>)</button>
   </div>
 
-  <div id="menuLoader" aria-hidden="true">
-    <div class="loader-box" role="status" aria-live="polite">
-      <div class="spinner" aria-hidden="true"></div>
-      <div class="loader-text">Загрузка меню…</div>
-    </div>
-  </div>
-
   <div class="menu" id="menu"></div>
 
-  <button id="cartFab" class="cart-fab" style="display:none;" title="Корзина" aria-label="Корзина">
-    <svg viewBox="0 0 48 48" width="56" height="56" style="display:block;margin:auto;">
+  <button id="cartFab" class="cart-fab" style="display:none;">
+    <svg viewBox="0 0 48 48" width="56" height="56">
       <circle cx="24" cy="24" r="22" class="cart-fab-circle"/>
       <path d="M16 18h16l-2 13a3 3 0 0 1-3 2h-6a3 3 0 0 1-3-2l-2-13zm3 0v-4a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v4" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
       <circle cx="19" cy="36" r="2" fill="#fff"/>
       <circle cx="29" cy="36" r="2" fill="#fff"/>
     </svg>
-    <span id="cartFabCount" class="cart-fab-count" aria-hidden="true"></span>
+    <span id="cartFabCount" class="cart-fab-count"></span>
     <div class="cart-preview" id="cartPreview"></div>
   </button>
 
-  <div id="cartModalBg" class="cart-modal-bg" style="display:none;"></div>
-
-  <div id="deliveryModal" class="delivery-modal">
-    <div class="delivery-modal-content">
-      <button class="delivery-modal-close" onclick="closeDeliveryInfo()">&times;</button>
-      <div style="background:#fff;border:2px solid var(--brand-olive);border-radius:8px;padding:10px;font-size:0.95em;color:#333;line-height:1.5;">
-        <strong style="color:var(--brand-olive);display:block;margin-bottom:6px;">🔸 Доставка:</strong>
-        <div style="font-size:0.9em;">(До входа в отель, апартаменты)</div>
-        <div style="background:#e8f5e9;padding:6px;border-radius:6px;margin:6px 0;font-size:0.92em;color:#2e7d32;text-align:center;">
-          ⏱️ Заказ будет доставлен в течение 1-1,5 часа
-        </div>
-        <div style="margin-top:4px;">
-          • Центр - Бесплатно от 150 VND<br>
-          &nbsp;&nbsp;(До 150 VND - 20 VND)<br>
-          • Север - от 40 VND<br>
-          • Район - coopmart, Луизиана, Z Beach - от 40 VND<br>
-          • Big C, за Coopmart (в сторону Юга) - от 45 VND<br>
-          • Юг, Анвьен - от 50 VND<br>
-          • За мостом после Coopmart, My gia, за Big C - от 60 VND
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="historyModal" class="delivery-modal">
-    <div class="history-modal-content">
-      <button class="delivery-modal-close" onclick="closeOrderHistory()">&times;</button>
-      <div class="cart-title">История заказов</div>
-      <div id="historyContent"></div>
-    </div>
-  </div>
-
+  <div id="cartModal" class="modal-bg"></div>
+  <div id="deliveryModal" class="modal-bg"></div>
+  <div id="historyModal" class="modal-bg"></div>
   <div id="imageModal" class="image-modal" onclick="closeImageModal()">
     <img id="imageModalImg" src="" alt="">
   </div>
@@ -526,479 +594,398 @@
     let orderCounter = parseInt(localStorage.getItem('orderCounter') || '0');
     let currentFilter = 'all';
 
-    const RUB_FMT = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 });
+    const FMT = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 });
 
-    function toNumberSafe(v) {
+    function toNum(v) {
       if (typeof v === 'number') return v;
-      if (v == null) return 0;
-      let s = String(v).replace(/\u00A0/g, '').trim();
-      s = s.replace(/[^\d,.\-]/g, '');
-      if (!s) return 0;
-      s = s.replace(/,/g, '.');
-      const parts = s.split('.');
-      if (parts.length > 2) {
-        const frac = parts.pop();
-        s = parts.join('') + '.' + frac;
-      }
-      const n = parseFloat(s);
-      return isNaN(n) ? 0 : n;
+      if (!v) return 0;
+      let s = String(v).replace(/[^\d,.\-]/g, '').replace(/,/g, '.');
+      return parseFloat(s) || 0;
     }
 
-    function escapeHtml(s){ return String(s || '').replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]); }
+    function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 
-    function saveCart() {
-      localStorage.setItem('cart', JSON.stringify(cart));
-      updateCartPreview();
-    }
-
-    function saveFavorites() {
-      localStorage.setItem('favorites', JSON.stringify(favorites));
-      document.getElementById('favCount').textContent = favorites.length;
-    }
-
-    function saveOrderHistory() {
-      localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
-      document.getElementById('historyCount').textContent = orderHistory.length;
-    }
-
-    function saveUserData() {
-      localStorage.setItem('userData', JSON.stringify(savedUserData));
-    }
-
-    function showLoader(){
-      const l = document.getElementById('menuLoader');
-      if(!l) return;
-      l.classList.add('visible');
-      l.setAttribute('aria-hidden','false');
-    }
-    function hideLoader(){
-      const l = document.getElementById('menuLoader');
-      if(!l) return;
-      l.classList.remove('visible');
-      l.setAttribute('aria-hidden','true');
-    }
+    function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
 
     async function loadMenu() {
-      showLoader();
-      const safetyTimeout = setTimeout(()=>{ hideLoader(); }, 20000);
+      document.getElementById('menu').innerHTML = '<div class="spinner"></div>';
       try {
         const res = await fetch(SHEET_API_URL);
-        if (!res.ok) throw new Error('Primary sheet fetch failed');
+        if (!res.ok) throw new Error('Primary failed');
         const json = await res.json();
 
-        if (json && Array.isArray(json.values) && json.values.length > 0) {
+        if (json?.values?.length > 0) {
           const rows = json.values;
-          const headers = rows[0].map(h => String(h || '').trim().toLowerCase());
-          const dataRows = rows.slice(1);
-          menuData = dataRows.map((row, idx) => {
+          const headers = rows[0].map(h => String(h||'').trim().toLowerCase());
+          menuData = rows.slice(1).map((row, idx) => {
             const obj = {};
-            headers.forEach((h, i) => obj[h] = row[i] !== undefined ? row[i] : '');
+            headers.forEach((h, i) => obj[h] = row[i] || '');
             return {
               id: idx + 1,
               name: obj.name || obj.title || `Блюдо ${idx+1}`,
               description: obj.description || obj.desc || '',
               img: obj.img || obj.image || '',
-              price: toNumberSafe(obj.price || obj.cost || obj['цена']),
-              available: String(obj.available || obj.доступно || 'true').trim().toLowerCase() === 'true'
+              price: toNum(obj.price || obj.cost),
+              available: String(obj.available||'true').trim().toLowerCase() === 'true'
             };
           });
-          clearTimeout(safetyTimeout);
-          hideLoader();
-          renderMenu();
-          return;
-        }
-
-        if (json && json.menu && Array.isArray(json.menu)) {
+        } else if (json?.menu) {
           menuData = json.menu.map((item, idx) => ({
             id: idx + 1,
-            name: item.name || item.title || `Блюдо ${idx+1}`,
-            description: item.description || item.desc || '',
-            img: item.img || item.image || '',
-            price: toNumberSafe(item.price),
-            available: String(item.available).trim().toLowerCase() === 'true'
+            name: item.name || `Блюдо ${idx+1}`,
+            description: item.description || '',
+            img: item.img || '',
+            price: toNum(item.price),
+            available: String(item.available||'true').toLowerCase() === 'true'
           }));
-          clearTimeout(safetyTimeout);
-          hideLoader();
-          renderMenu();
-          return;
         }
-
-        if (Array.isArray(json) && json.length > 0 && typeof json[0] === 'object') {
-          menuData = json.map((item, idx) => ({
-            id: idx + 1,
-            name: item.name || item.title || `Блюдо ${idx+1}`,
-            description: item.description || item.desc || '',
-            img: item.img || item.image || '',
-            price: toNumberSafe(item.price),
-            available: String(item.available).trim().toLowerCase() === 'true'
-          }));
-          clearTimeout(safetyTimeout);
-          hideLoader();
-          renderMenu();
-          return;
-        }
-
-        throw new Error('Unknown sheet response format');
       } catch (err) {
-        console.warn('Primary load failed, trying fallback...', err);
         try {
           const res2 = await fetch(SHEET_API_FALLBACK);
-          if (!res2.ok) throw new Error('Fallback fetch failed');
           const j2 = await res2.json();
-          if (j2 && j2.menu && Array.isArray(j2.menu)) {
+          if (j2?.menu) {
             menuData = j2.menu.map((item, idx) => ({
               id: idx + 1,
-              name: item.name || item.title || `Блюдо ${idx+1}`,
-              description: item.description || item.desc || '',
-              img: item.img || item.image || '',
-              price: toNumberSafe(item.price),
-              available: String(item.available).trim().toLowerCase() === 'true'
+              name: item.name || `Блюдо ${idx+1}`,
+              description: item.description || '',
+              img: item.img || '',
+              price: toNum(item.price),
+              available: String(item.available||'true').toLowerCase() === 'true'
             }));
-            clearTimeout(safetyTimeout);
-            hideLoader();
-            renderMenu();
-            return;
           }
-          throw new Error('Fallback returned unexpected format');
         } catch (e) {
-          clearTimeout(safetyTimeout);
-          hideLoader();
-          document.getElementById('menu').innerHTML = '<div style="color:var(--brand-olive);font-size:1.1em;text-align:center;margin:40px auto;">Ошибка загрузки меню. Проверьте соединение.</div>';
+          document.getElementById('menu').innerHTML = '<div style="text-align:center;color:var(--brand-olive);margin:40px;">Ошибка загрузки меню</div>';
+          return;
         }
       }
+      renderMenu();
     }
 
     function renderMenu() {
       const menu = document.getElementById('menu');
-      menu.innerHTML = '';
+      let items = currentFilter === 'favorites' ? menuData.filter(i => favorites.includes(i.id)) : menuData;
       
-      let itemsToShow = menuData;
-      if (currentFilter === 'favorites') {
-        itemsToShow = menuData.filter(item => favorites.includes(item.id));
-      }
-      
-      if (!itemsToShow || itemsToShow.length === 0) {
-        menu.innerHTML = '<div style="color:var(--brand-olive);font-size:1.05em;text-align:center;margin:40px auto;">' + 
-          (currentFilter === 'favorites' ? 'Нет избранных блюд. Добавьте блюда в избранное!' : 'Меню пусто.') + '</div>';
-        updateCartFab();
+      if (!items.length) {
+        menu.innerHTML = '<div style="text-align:center;color:var(--muted);margin:40px;">' + 
+          (currentFilter === 'favorites' ? 'Нет избранных блюд' : 'Меню пусто') + '</div>';
         return;
       }
       
-      itemsToShow.forEach(item => {
-        const isFav = favorites.includes(item.id);
-        const prod = document.createElement('div');
-        prod.className = 'product' + (!item.available ? ' unavailable' : '');
-        const priceText = RUB_FMT.format(Number(item.price) || 0);
-        prod.innerHTML = `
-          ${!item.available ? `<div class="prod-unavailable">Нет в наличии</div>` : ''}
-          <button class="favorite-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(${item.id})" title="${isFav ? 'Убрать из избранного' : 'Добавить в избранное'}">
-            ${isFav ? '❤️' : '🤍'}
+      menu.innerHTML = items.map(item => `
+        <div class="product ${!item.available ? 'unavailable' : ''}">
+          ${!item.available ? '<div class="prod-unavailable">Нет в наличии</div>' : ''}
+          <button class="favorite-btn ${favorites.includes(item.id) ? 'active' : ''}" onclick="toggleFav(${item.id})">
+            ${favorites.includes(item.id) ? '❤️' : '🤍'}
           </button>
-          <img class="product-img" src="${item.img || 'https://via.placeholder.com/100x100?text=Фото'}" alt="${escapeHtml(item.name)}" onclick="showImage('${item.img || 'https://via.placeholder.com/100x100?text=Фото'}')">
-          <div class="product-name">${escapeHtml(item.name)}</div>
-          <div class="product-desc">${escapeHtml(item.description || '')}</div>
-          <div class="product-price">${priceText}</div>
+          <img class="product-img" src="${item.img || 'https://via.placeholder.com/200x120?text=Фото'}" onclick="showImage('${item.img}')">
+          <div class="product-name">${esc(item.name)}</div>
+          <div class="product-desc">${esc(item.description)}</div>
+          <div class="product-price">${FMT.format(item.price)}</div>
           <div class="controls">
-            <button class="remove-btn" ${!item.available ? 'disabled' : ''} onclick="updateCart(${item.id},-1)">−</button>
+            <button class="remove-btn" ${!item.available?'disabled':''} onclick="updateCart(${item.id},-1)">−</button>
             <span id="qty-${item.id}">${cart[item.id]?.qty||0}</span>
-            <button class="add-btn" ${!item.available ? 'disabled' : ''} onclick="updateCart(${item.id},1)">+</button>
+            <button class="add-btn" ${!item.available?'disabled':''} onclick="updateCart(${item.id},1)">+</button>
           </div>
-        `;
-        menu.appendChild(prod);
-      });
+        </div>
+      `).join('');
+      
       updateCartFab();
-      saveFavorites();
-      saveOrderHistory();
+      document.getElementById('favCount').textContent = favorites.length;
+      document.getElementById('historyCount').textContent = orderHistory.length;
     }
 
-    window.toggleFavorite = function(id) {
+    window.toggleFav = function(id) {
       const idx = favorites.indexOf(id);
-      if (idx > -1) {
-        favorites.splice(idx, 1);
-      } else {
-        favorites.push(id);
-      }
-      saveFavorites();
+      idx > -1 ? favorites.splice(idx, 1) : favorites.push(id);
+      save('favorites', favorites);
       renderMenu();
     };
 
     window.filterMenu = function(filter) {
       currentFilter = filter;
       document.querySelectorAll('.menu-controls button').forEach(b => b.classList.remove('active'));
-      if (filter === 'all') {
-        document.getElementById('filterAll').classList.add('active');
-      } else if (filter === 'favorites') {
-        document.getElementById('filterFavorites').classList.add('active');
-      }
+      document.getElementById(filter === 'all' ? 'filterAll' : 'filterFavorites').classList.add('active');
       renderMenu();
     };
 
     window.updateCart = function(id, delta) {
       const item = menuData.find(i=>i.id===id);
-      if (!item || !item.available) return;
+      if (!item?.available) return;
       if (!cart[id]) cart[id] = { ...item, qty: 0 };
       cart[id].qty = Math.max(0, cart[id].qty + delta);
       if (cart[id].qty === 0) delete cart[id];
-      
-      const btn = document.querySelector(`#qty-${id}`).parentElement.querySelector('.add-btn');
-      if (btn && delta > 0) {
-        btn.classList.add('adding-animation');
-        setTimeout(() => btn.classList.remove('adding-animation'), 300);
-      }
-      
-      const qtyEl = document.getElementById(`qty-${id}`);
-      if (qtyEl) qtyEl.textContent = cart[id]?.qty || 0;
-      saveCart();
-      if (document.getElementById('cartModalBg').style.display === 'flex') showCartModal();
+      document.getElementById(`qty-${id}`).textContent = cart[id]?.qty || 0;
+      save('cart', cart);
+      updateCartFab();
+      if (document.getElementById('cartModal').classList.contains('show')) showCartModal();
     };
 
     function updateCartFab() {
       const fab = document.getElementById('cartFab');
-      const count = Object.values(cart).reduce((s,i)=>s + (i.qty || 0), 0);
-      if (count > 0) {
-        fab.style.display = 'flex';
-        document.getElementById('cartFabCount').textContent = count;
-      } else {
-        fab.style.display = 'none';
-        document.getElementById('cartFabCount').textContent = '';
-      }
-    }
-
-    function updateCartPreview() {
+      const count = Object.values(cart).reduce((s,i)=>s + i.qty, 0);
+      fab.style.display = count > 0 ? 'flex' : 'none';
+      document.getElementById('cartFabCount').textContent = count || '';
+      
       const preview = document.getElementById('cartPreview');
-      const items = Object.values(cart).sort((a, b) => a.id - b.id);
-      if (items.length === 0) {
+      const items = Object.values(cart);
+      if (!items.length) {
         preview.innerHTML = '<div class="cart-preview-title">Корзина пуста</div>';
         return;
       }
-      const total = items.reduce((s,i)=>s + (i.price || 0) * i.qty, 0);
-      const listHtml = items.map(it => `
-        <div class="cart-preview-item">
-          <span>${escapeHtml(it.name)} x${it.qty}</span>
-          <span>${RUB_FMT.format((it.price||0) * it.qty)}</span>
-        </div>
-      `).join('');
+      const total = items.reduce((s,i)=>s + i.price * i.qty, 0);
       preview.innerHTML = `
         <div class="cart-preview-title">Корзина</div>
-        ${listHtml}
-        <div class="cart-preview-total">Итого: ${RUB_FMT.format(total)}</div>
+        ${items.map(i => `<div class="cart-preview-item"><span>${esc(i.name)} x${i.qty}</span><span>${FMT.format(i.price*i.qty)}</span></div>`).join('')}
+        <div class="cart-preview-total">Итого: ${FMT.format(total)}</div>
       `;
     }
 
     document.getElementById('cartFab').onclick = showCartModal;
 
     function showCartModal() {
-      const modalBg = document.getElementById('cartModalBg');
-      const items = Object.values(cart).sort((a, b) => a.id - b.id);
-      const listHtml = items.length === 0
-        ? '<li style="color:var(--brand-olive);text-align:center;width:100%;">Корзина пуста</li>'
-        : items.map(it => `
-            <li>
-              <span>${escapeHtml(it.name)} x${it.qty}</span>
-              <span>
-                <button class="remove-btn" onclick="updateCart(${it.id},-1)">−</button>
-                <span style="margin:0 8px;">${RUB_FMT.format((it.price||0) * it.qty)}</span>
-                <button class="add-btn" onclick="updateCart(${it.id},1)">+</button>
-              </span>
-            </li>
-          `).join('');
-      const total = items.reduce((s,i)=>s + (i.price || 0) * i.qty, 0);
+      const items = Object.values(cart).sort((a,b) => a.id - b.id);
+      const total = items.reduce((s,i)=>s + i.price * i.qty, 0);
       
-      modalBg.innerHTML = `
-        <div class="cart-modal" role="dialog" aria-modal="true" aria-label="Корзина">
-          <button class="cart-close" onclick="closeCartModal()" aria-label="Закрыть">&times;</button>
-          <div class="cart-title">Корзина</div>
-          <ul class="cart-list">${listHtml}</ul>
-          <div class="cart-total">Итого: ${RUB_FMT.format(total)}</div>
-          <form class="order-form" id="orderForm">
-            <div style="background:#fff3cd;border:2px solid #ffc107;border-radius:8px;padding:8px;margin-bottom:10px;font-size:0.95em;color:#856404;text-align:center;">
-              ⚠️ <strong>Укажите точные данные для обратной связи</strong>
-            </div>
-            <input type="text" id="name" placeholder="Точный никнейм Telegram (например: @username)" value="${savedUserData.name || ''}" required>
-            <input type="tel" id="phone" placeholder="Точный номер телефона" value="${savedUserData.phone || ''}" required>
-            <select id="payment" required>
-              <option value="">Выберите способ оплаты</option>
-              <option value="qr" ${savedUserData.payment === 'qr' ? 'selected' : ''}>QR (оплатить через скан)</option>
-              <option value="cash" ${savedUserData.payment === 'cash' ? 'selected' : ''}>Наличные</option>
-            </select>
-            <button type="button" class="delivery-btn" onclick="showDeliveryInfo()">
-              🔸 Информация о доставке
-              <span style="font-size:0.9em;">▼</span>
-            </button>
-            <input type="text" id="address" placeholder="Адрес доставки" value="${savedUserData.address || ''}" required>
-            <textarea id="comment" placeholder="Комментарий к заказу (необязательно)" rows="2">${savedUserData.comment || ''}</textarea>
-            <button type="submit" class="order-btn">Оформить заказ</button>
-          </form>
-        </div>
-      `;
-      modalBg.style.display = 'flex';
-      const orderForm = document.getElementById('orderForm');
-      if (orderForm) orderForm.onsubmit = sendOrder;
-      setTimeout(() => {
-        const modal = document.querySelector('.cart-modal');
-        if (modal) modal.scrollIntoView({behavior: "smooth", block: "start"});
-      }, 50);
+      document.getElementById('cartModal').innerHTML = `
+        <div class="modal">
+          <button class="modal-close" onclick="closeModal('cartModal')">&times;</button>
+          <div class="modal-title">Корзина</div>
+          ${!items.length ? '<p style="text-align:center;color:var(--muted);">Корзина пуста</p>' : `
+            <ul class="cart-list">
+              ${items.map(i => `
+                <li>
+                  <span>${esc(i.name)} x${i.qty}</span>
+                  <span>
+                    <button class="remove-btn" onclick="updateCart(${i.id},-1)">−</button>
+                    <span style="margin:0 8px;">${FMT.format(i.price*i.qty)}</span>
+                    <button class="add-btn" onclick="updateCart(${i.id},1)">+</button>
+                  </span>
+                </li>
+              `).join('')}
+            </ul>
+            <div class="cart-total">Итого: ${FMT.format(total)}</div>
+            <form id="orderForm" onsubmit="sendOrder(event)">
+              <div class="info-box">⚠️ <strong>Укажите точные данные для обратной связи</strong<function_calls>
+<invoke name="artifacts">
+<parameter name="command">update</parameter>
+<parameter name="id">svoya-kuhnya-delivery</parameter>
+<parameter name="old_str">              <div class="info-box">⚠️ <strong>Укажите точные данные для обратной связи</strong</parameter>
+<parameter name="new_str">              <div class="info-box">⚠️ <strong>Укажите точные данные для обратной связи</strong></div>
+<div class="form-group">
+<label>Никнейм Telegram</label>
+<input type="text" id="name" placeholder="@username" value="${esc(savedUserData.name||'')}" required>
+</div>
+<div class="form-group">
+<label>Телефон</label>
+<input type="tel" id="phone" placeholder="+84..." value="${esc(savedUserData.phone||'')}" required>
+</div>
+<div class="form-group">
+<label>Способ оплаты</label>
+<select id="payment" required>
+<option value="">Выберите</option>
+<option value="qr" ${savedUserData.payment==='qr'?'selected':''}>QR (оплатить через скан)</option>
+<option value="cash" ${savedUserData.payment==='cash'?'selected':''}>Наличные</option>
+</select>
+</div>
+<button type="button" class="delivery-info-btn" onclick="showDeliveryInfo()">🔸 Информация о доставке ▼</button>
+<div class="form-group">
+<label>Адрес доставки</label>
+<div class="geo-group">
+<input type="text" id="address" placeholder="Укажите адрес" value="${esc(savedUserData.address||'')}" required>
+<button type="button" class="geo-btn" onclick="getGeo()" title="Моё местоположение">📍</button>
+</div>
+</div>
+<div class="form-group">
+<label>Комментарий (необязательно)</label>
+<textarea id="comment" placeholder="Дополнительная информация">${esc(savedUserData.comment||'')}</textarea>
+</div>
+<button type="submit" class="btn-primary">Оформить заказ</button>
+</form>
+}         </div>       ;
+document.getElementById('cartModal').classList.add('show');
+}
+window.getGeo = function() {
+  const btn = event.target;
+  const input = document.getElementById('address');
+  
+  if (!navigator.geolocation) {
+    alert('Геолокация не поддерживается вашим браузером');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.textContent = '⏳';
+  
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      const lat = position.coords.latitude.toFixed(6);
+      const lon = position.coords.longitude.toFixed(6);
+      input.value = `${lat}, ${lon}`;
+      btn.disabled = false;
+      btn.textContent = '✓';
+      setTimeout(() => btn.textContent = '📍', 2000);
+    },
+    error => {
+      alert('Не удалось получить местоположение. Проверьте разрешения.');
+      btn.disabled = false;
+      btn.textContent = '📍';
     }
+  );
+};
 
-    window.closeCartModal = function() {
-      document.getElementById('cartModalBg').style.display = 'none';
-    };
+window.showDeliveryInfo = function() {
+  document.getElementById('deliveryModal').innerHTML = `
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('deliveryModal')">&times;</button>
+      <div class="modal-title">Информация о доставке</div>
+      <div class="delivery-info-content">
+        <strong>🔸 Доставка:</strong>
+        <div style="font-size:0.9em;margin-bottom:8px;">(До входа в отель, апартаменты)</div>
+        <div class="delivery-time">⏱️ Заказ будет доставлен в течение 1-1,5 часа</div>
+        <div>
+          • Центр - Бесплатно от 150 VND<br>
+          &nbsp;&nbsp;(До 150 VND - 20 VND)<br>
+          • Север - от 40 VND<br>
+          • Район - coopmart, Луизиана, Z Beach - от 40 VND<br>
+          • Big C, за Coopmart (в сторону Юга) - от 45 VND<br>
+          • Юг, Анвьен - от 50 VND<br>
+          • За мостом после Coopmart, My gia, за Big C - от 60 VND
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('deliveryModal').classList.add('show');
+};
 
-    window.showDeliveryInfo = function() {
-      document.getElementById('deliveryModal').classList.add('show');
-    };
-
-    window.closeDeliveryInfo = function() {
-      document.getElementById('deliveryModal').classList.remove('show');
-    };
-
-    document.getElementById('deliveryModal').onclick = function(e) {
-      if (e.target === this) closeDeliveryInfo();
-    };
-
-    window.showImage = function(imgSrc) {
-      document.getElementById('imageModalImg').src = imgSrc;
-      document.getElementById('imageModal').classList.add('show');
-    };
-
-    window.closeImageModal = function() {
-      document.getElementById('imageModal').classList.remove('show');
-    };
-
-    window.showOrderHistory = function() {
-      const modal = document.getElementById('historyModal');
-      const content = document.getElementById('historyContent');
-      
-      if (orderHistory.length === 0) {
-        content.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px;">История заказов пуста</div>';
-      } else {
-        content.innerHTML = orderHistory.slice().reverse().map(order => `
+window.showOrderHistory = function() {
+  document.getElementById('historyModal').innerHTML = `
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('historyModal')">&times;</button>
+      <div class="modal-title">История заказов</div>
+      ${!orderHistory.length ? '<p style="text-align:center;color:var(--muted);">История пуста</p>' : 
+        orderHistory.slice().reverse().map(o => `
           <div class="history-item">
-            <div class="history-item-header">
-              <span>Заказ #${order.orderNumber}</span>
-              <span>${new Date(order.date).toLocaleDateString('ru-RU')}</span>
+            <div class="history-header">
+              <span>Заказ #${o.orderNumber}</span>
+              <span>${new Date(o.date).toLocaleDateString('ru-RU')}</span>
             </div>
-            <div class="history-item-products">
-              ${order.items.map(i => `${i.name} x${i.qty}`).join(', ')}
-            </div>
-            <div class="history-item-footer">
-              <strong>${RUB_FMT.format(order.total)}</strong>
-              <button class="repeat-order-btn" onclick="repeatOrder(${order.orderNumber})">Повторить</button>
+            <div class="history-products">${o.items.map(i => `${i.name} x${i.qty}`).join(', ')}</div>
+            <div class="history-footer">
+              <strong>${FMT.format(o.total)}</strong>
+              <button class="btn-repeat" onclick="repeatOrder(${o.orderNumber})">Повторить</button>
             </div>
           </div>
-        `).join('');
+        `).join('')
       }
-      
-      modal.classList.add('show');
-    };
+    </div>
+  `;
+  document.getElementById('historyModal').classList.add('show');
+};
 
-    window.closeOrderHistory = function() {
-      document.getElementById('historyModal').classList.remove('show');
-    };
+window.repeatOrder = function(num) {
+  const order = orderHistory.find(o => o.orderNumber === num);
+  if (!order) return;
+  cart = {};
+  order.items.forEach(item => {
+    const menuItem = menuData.find(m => m.id === item.id);
+    if (menuItem?.available) cart[item.id] = { ...menuItem, qty: item.qty };
+  });
+  save('cart', cart);
+  closeModal('historyModal');
+  renderMenu();
+  showCartModal();
+};
 
-    document.getElementById('historyModal').onclick = function(e) {
-      if (e.target === this) closeOrderHistory();
-    };
+window.closeModal = function(id) {
+  document.getElementById(id).classList.remove('show');
+};
 
-    window.repeatOrder = function(orderNumber) {
-      const order = orderHistory.find(o => o.orderNumber === orderNumber);
-      if (!order) return;
-      
-      cart = {};
-      order.items.forEach(item => {
-        const menuItem = menuData.find(m => m.id === item.id);
-        if (menuItem && menuItem.available) {
-          cart[item.id] = { ...menuItem, qty: item.qty };
-        }
+window.showImage = function(src) {
+  document.getElementById('imageModalImg').src = src;
+  document.getElementById('imageModal').classList.add('show');
+};
+
+window.closeImageModal = function() {
+  document.getElementById('imageModal').classList.remove('show');
+};
+
+async function sendOrder(e) {
+  e.preventDefault();
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const address = document.getElementById('address').value.trim();
+  const payment = document.getElementById('payment').value;
+  const comment = document.getElementById('comment').value.trim();
+  
+  if (!name || !phone || !address || !payment) {
+    alert('Заполните все обязательные поля!');
+    return;
+  }
+  
+  const items = Object.values(cart);
+  if (!items.length) {
+    alert('Корзина пуста');
+    return;
+  }
+  
+  savedUserData = { name, phone, address, payment, comment };
+  save('userData', savedUserData);
+  
+  document.getElementById('orderForm').innerHTML = `
+    <div class="processing">
+      <div class="spinner"></div>
+      <div class="processing-text">Ваш заказ обрабатывает оператор</div>
+      <div style="color:var(--muted);">Вам придет сообщение от оператора</div>
+    </div>
+  `;
+  
+  orderCounter++;
+  localStorage.setItem('orderCounter', orderCounter);
+  
+  const total = items.reduce((s,i)=>s + i.price * i.qty, 0);
+  const orderLines = items.map(i=>`${i.name} x${i.qty} — ${FMT.format(i.price * i.qty)}`).join('\n');
+  const paymentText = payment==='cash' ? 'Оплата: Наличные' : 'Оплата: QR';
+  const text = `🛒 Новый заказ #${orderCounter} (СВОЯ КУХНЯ)\n\nНикнейм Telegram: ${name}\nТелефон: ${phone}\nАдрес: ${address}\n${paymentText}\n${comment ? `Комментарий: ${comment}\n` : ''}\nЗаказ:\n${orderLines}\n\nСумма: ${FMT.format(total)}`;
+  
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text })
+    });
+    const result = await res.json();
+    
+    if (result.ok) {
+      orderHistory.push({
+        orderNumber: orderCounter,
+        date: new Date().toISOString(),
+        items: items.map(i => ({ id: i.id, name: i.name, qty: i.qty, price: i.price })),
+        total
       });
+      save('orderHistory', orderHistory);
       
-      saveCart();
-      closeOrderHistory();
-      renderMenu();
-      showCartModal();
-    };
-
-    async function sendOrder(e) {
-      e.preventDefault();
-      const form = document.getElementById('orderForm');
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const address = document.getElementById('address').value.trim();
-      const payment = document.getElementById('payment').value;
-      const comment = document.getElementById('comment').value.trim();
-      
-      if (!name || !phone || !address || !payment) {
-        alert('Пожалуйста, заполните все обязательные поля!');
-        return;
-      }
-      
-      const itemsArr = Object.values(cart);
-      if (itemsArr.length === 0) {
-        alert('Корзина пуста');
-        return;
-      }
-      
-      savedUserData = { name, phone, address, payment, comment };
-      saveUserData();
-      
-      form.innerHTML = `
-        <div class="order-processing">
-          <div class="spinner-small"></div>
-          <div class="order-processing-text">Ваш заказ обрабатывает оператор</div>
-          <div class="order-processing-subtext">Вам придет сообщение от оператора</div>
+      document.getElementById('orderForm').innerHTML = `
+        <div style="text-align:center;color:#2e7d32;padding:20px;">
+          <div style="font-size:3em;margin-bottom:10px;">✅</div>
+          <div style="font-size:1.2em;font-weight:700;margin-bottom:8px;">Спасибо!</div>
+          <div>Ваша заявка #${orderCounter} принята.</div>
+          <div style="margin-top:8px;color:var(--muted);">Оператор свяжется с вами в ближайшее время.</div>
         </div>
       `;
-      
-      orderCounter++;
-      localStorage.setItem('orderCounter', orderCounter.toString());
-      
-      const total = itemsArr.reduce((s,i)=>s + (i.price||0)*i.qty,0);
-      let orderLines = itemsArr.map(i=>`${i.name} x${i.qty} — ${RUB_FMT.format(i.price * i.qty)}`).join('\n');
-      let paymentText = payment==='cash' ? 'Оплата: Наличные' : payment==='qr' ? 'Оплата: QR' : '';
-      const text =
-        `🛒 Новый заказ #${orderCounter} (СВОЯ КУХНЯ)\n` +
-        `Никнейм Telegram: ${name}\nТелефон: ${phone}\nАдрес: ${address}\n` +
-        (paymentText?paymentText+'\n':'') +
-        (comment?`Комментарий: ${comment}\n`:'') +
-        `\nЗаказ:\n${orderLines}\n\nСумма: ${RUB_FMT.format(total)}`;
-      
-      try {
-        const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text })
-        });
-        const result = await response.json();
-        
-        if (result.ok) {
-          orderHistory.push({
-            orderNumber: orderCounter,
-            date: new Date().toISOString(),
-            items: itemsArr.map(i => ({ id: i.id, name: i.name, qty: i.qty, price: i.price })),
-            total: total
-          });
-          saveOrderHistory();
-          
-          form.innerHTML = `
-            <div class="order-success">
-              ✅ Спасибо! Ваша заявка #${orderCounter} принята.<br>
-              Оператор свяжется с вами в ближайшее время.
-            </div>
-          `;
-          cart = {};
-          saveCart();
-          setTimeout(()=>{ closeCartModal(); renderMenu(); }, 2500);
-        } else {
-          alert('Ошибка отправки заказа. Попробуйте позже.');
-          showCartModal();
-        }
-      } catch (err) {
-        alert('Ошибка отправки заказа. Попробуйте позже.');
-        showCartModal();
-      }
+      cart = {};
+      save('cart', cart);
+      setTimeout(() => { closeModal('cartModal'); renderMenu(); }, 2500);
+    } else {
+      alert('Ошибка отправки. Попробуйте позже.');
+      showCartModal();
     }
+  } catch (err) {
+    alert('Ошибка отправки. Проверьте соединение.');
+    showCartModal();
+  }
+}
 
-    loadMenu();
+loadMenu();
   </script>
 </body>
-</html>
+</html></parameter>Claude is AI and can make mistakes. Please double-check responses. Sonnet 4.5
