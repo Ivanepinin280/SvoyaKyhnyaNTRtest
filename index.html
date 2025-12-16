@@ -636,23 +636,43 @@
         const res = await fetch(SHEET_API_URL);
         if (!res.ok) throw new Error('Primary failed');
         const json = await res.json();
+        
+        console.log('RAW API Response:', json); // Отладка
 
         if (json?.values?.length > 0) {
           const rows = json.values;
+          console.log('First row (headers):', rows[0]); // Отладка
+          console.log('Second row (first item):', rows[1]); // Отладка
+          
           const headers = rows[0].map(h => String(h||'').trim().toLowerCase());
+          console.log('Processed headers:', headers); // Отладка
+          
           menuData = rows.slice(1).map((row, idx) => {
             const obj = {};
-            headers.forEach((h, i) => obj[h] = row[i] || '');
-            const availableStr = String(obj.available || obj.доступно || 'true').trim().toLowerCase();
+            headers.forEach((h, i) => {
+              obj[h] = row[i] !== undefined ? row[i] : '';
+            });
+            
+            console.log(`Row ${idx + 1}:`, obj); // Отладка каждой строки
+            
+            // Проверяем значение available
+            const availableValue = obj.available || obj.доступно || '';
+            const availableStr = String(availableValue).trim().toUpperCase();
+            const isAvailable = availableStr === 'TRUE' || availableStr === '1' || availableStr === 'ДА';
+            
+            console.log(`  -> Name: "${obj.name}", Available raw: "${availableValue}", Processed: "${availableStr}", Result: ${isAvailable}`);
+            
             return {
               id: idx + 1,
               name: obj.name || obj.title || `Блюдо ${idx+1}`,
               description: obj.description || obj.desc || '',
               img: obj.img || obj.image || '',
               price: toNum(obj.price || obj.cost),
-              available: availableStr === 'true' || availableStr === '1' || availableStr === 'да'
+              available: isAvailable
             };
           });
+          
+          console.log('Final menuData:', menuData); // Отладка финального результата
         } else if (json?.menu) {
           menuData = json.menu.map((item, idx) => {
             const availableStr = String(item.available||'true').trim().toLowerCase();
