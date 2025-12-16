@@ -114,8 +114,19 @@
       transform:translateY(-4px);
       box-shadow:0 8px 24px rgba(0,0,0,0.1);
     }
-    .product.unavailable { opacity:.6; pointer-events:none; }
-    .product.unavailable .favorite-btn { pointer-events:none; }
+    .product.unavailable { 
+      opacity:.65; 
+      filter: grayscale(30%);
+    }
+    .product.unavailable .add-btn,
+    .product.unavailable .remove-btn { 
+      opacity:0.5; 
+      cursor:not-allowed;
+      pointer-events:none;
+    }
+    .product.unavailable .product-img {
+      cursor:default;
+    }
     
     .favorite-btn {
       position:absolute;
@@ -504,6 +515,8 @@
       padding:6px;
       text-align:center;
       z-index:6;
+      font-weight:700;
+      letter-spacing:0.5px;
     }
 
     .spinner {
@@ -545,6 +558,20 @@
       margin:10px 0;
     }
 
+    .debug-panel {
+      position:fixed;
+      bottom:100px;
+      left:10px;
+      background:rgba(0,0,0,0.8);
+      color:#fff;
+      padding:10px;
+      border-radius:8px;
+      font-size:0.75em;
+      max-width:300px;
+      z-index:150;
+      display:none;
+    }
+
     @media (max-width:768px) {
       .menu { grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:120px; }
       .product { padding:12px 8px; }
@@ -584,6 +611,8 @@
     <div class="spinner"></div>
     <div class="loader-text">Загрузка меню...</div>
   </div>
+
+  <div id="debugPanel" class="debug-panel"></div>
 
   <button id="cartFab" class="cart-fab" style="display:none;">
     <svg viewBox="0 0 48 48" width="56" height="56">
@@ -630,9 +659,40 @@
 
     function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
 
+    // Улучшенная функция определения доступности
+    function parseAvailable(value) {
+      if (value === undefined || value === null) return true; // По умолчанию доступно
+      
+      const str = String(value).trim().toLowerCase();
+      
+      // Проверяем все возможные варианты "false"
+      const falseValues = ['false', 'нет', 'no', '0', 'н', 'f', 'недоступно', 'unavailable'];
+      if (falseValues.includes(str)) return false;
+      
+      // Проверяем все возможные варианты "true"
+      const trueValues = ['true', 'да', 'yes', '1', 'д', 't', 'доступно', 'available'];
+      if (trueValues.includes(str)) return true;
+      
+      // Если пустая строка - считаем доступным
+      if (str === '') return true;
+      
+      // По умолчанию считаем доступным
+      return true;
+    }
+
+    function debugLog(message, data) {
+      console.log(`[DEBUG] ${message}`, data);
+      const panel = document.getElementById('debugPanel');
+      if (panel) {
+        panel.innerHTML += `<div>${message}: ${JSON.stringify(data)}</div>`;
+        panel.style.display = 'block';
+      }
+    }
+
     async function loadMenu() {
       document.getElementById('loader').style.display = 'flex';
       try {
+        debugLog('Загрузка из основного API', SHEET_API_URL);
         const res = await fetch(SHEET_API_URL);
         if (!res.ok) throw new Error('Primary failed');
         const json = await res.json();
@@ -642,19 +702,29 @@
           const headers = rows[0].map(h => String(h||'').trim().toLowerCase());
           const dataRows = rows.slice(1);
           
-          console.log('=== ОТЛАДКА ЗАГРУЗКИ МЕНЮ ===');
-          console.log('Заголовки:', headers);
-          console.log('Первая строка данных:', dataRows[0]);
+          debugLog('Заголовки таблицы', headers);
+          debugLog('Первая строка данных', dataRows[0]);
+          
+          // Находим индекс колонки available
+          const availableIndex = headers.findIndex(h => 
+            h === 'available' || h === 'доступно' || h === 'availability' || h === 'в наличии'
+          );
+          
+          debugLog('Индекс колонки available', availableIndex);
           
           menuData = dataRows.map((row, idx) => {
             const obj = {};
             headers.forEach((h, i) => obj[h] = row[i] !== undefined ? row[i] : '');
             
-            const availableRaw = obj.available || obj.доступно || 'true';
-            const availableStr = String(availableRaw).trim().toLowerCase();
-            const isAvailable = availableStr === 'true';
+            // Получаем значение available из разных возможных колонок
+            const availableValue = obj.available || obj.доступно || obj.availability || obj['в наличии'];
+            const isAvailable = parseAvailable(availableValue);
             
-            console.log(`Блюдо "${obj.name}": available="${availableRaw}" -> "${availableStr}" -> ${isAvailable}`);
+            debugLog(`Блюдо "${obj.name}"`, {
+              rawValue: availableValue,
+              parsed: isAvailable,
+              allFields: obj
+            });
             
             return {
               id: idx + 1,
@@ -666,8 +736,9 @@
             };
           });
           
-          console.log('Загружено блюд:', menuData.length);
-          console.log('Первое блюдо:', menuData[0]);
+          debugLog('Загружено блюд', menuData.length);
+          debugLog('Первое блюдо после обработки', menuData[0]);
+          
         } else if (json?.menu) {
           menuData = json.menu.map((item, idx) => ({
             id: idx + 1,
@@ -675,29 +746,29 @@
             description: item.description || '',
             img: item.img || '',
             price: toNum(item.price),
-            available: String(item.available).trim().toLowerCase() === 'true'
+            available: parseAvailable(item.available)
           }));
         }
       } catch (err) {
         console.warn('Primary failed, trying fallback...', err);
+        debugLog('Ошибка основного API', err.message);
         try {
           const res2 = await fetch(SHEET_API_FALLBACK);
           const j2 = await res2.json();
           if (j2?.menu) {
-            menuData = j2.menu.map((item, idx) => {
-              const availableStr = String(item.available||'true').trim().toLowerCase();
-              return {
-                id: idx + 1,
-                name: item.name || `Блюдо ${idx+1}`,
-                description: item.description || '',
-                img: item.img || '',
-                price: toNum(item.price),
-                available: availableStr === 'true' || availableStr === '1' || availableStr === 'да'
-              };
-            });
+            menuData = j2.menu.map((item, idx) => ({
+              id: idx + 1,
+              name: item.name || `Блюдо ${idx+1}`,
+              description: item.description || '',
+              img: item.img || '',
+              price: toNum(item.price),
+              available: parseAvailable(item.available)
+            }));
+            debugLog('Загружено из fallback', menuData.length);
           }
         } catch (e) {
           console.error('Both APIs failed', e);
+          debugLog('Обе API не работают', e.message);
           document.getElementById('menu').innerHTML = '<div style="text-align:center;color:var(--brand-olive);margin:40px;">Ошибка загрузки меню</div>';
         }
       }
@@ -718,10 +789,11 @@
       menu.innerHTML = items.map(item => {
         const isAvailable = item.available;
         const isFav = favorites.includes(item.id);
+        
         return `
-        <div class="product ${!isAvailable ? 'unavailable' : ''}">
-          ${!isAvailable ? '<div class="prod-unavailable">Нет в наличии</div>' : ''}
-          <button class="favorite-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${item.id})" ${!isAvailable ? 'style="pointer-events:auto;"' : ''}>
+        <div class="product ${!isAvailable ? 'unavailable' : ''}" data-id="${item.id}">
+          ${!isAvailable ? '<div class="prod-unavailable">НЕТ В НАЛИЧИИ</div>' : ''}
+          <button class="favorite-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${item.id})">
             ${isFav ? '❤️' : '🤍'}
           </button>
           <img class="product-img" src="${item.img || 'https://via.placeholder.com/200x120?text=Фото'}" onclick="showImage('${item.img}')" ${!isAvailable ? 'style="cursor:default;"' : ''}>
@@ -729,9 +801,9 @@
           <div class="product-desc">${esc(item.description)}</div>
           <div class="product-price">${FMT.format(item.price)}</div>
           <div class="controls">
-            <button class="remove-btn" ${!isAvailable ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''} onclick="updateCart(${item.id},-1)">−</button>
+            <button class="remove-btn" ${!isAvailable ? 'disabled' : ''} onclick="updateCart(${item.id},-1)">−</button>
             <span id="qty-${item.id}">${cart[item.id]?.qty||0}</span>
-            <button class="add-btn" ${!isAvailable ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''} onclick="updateCart(${item.id},1)">+</button>
+            <button class="add-btn" ${!isAvailable ? 'disabled' : ''} onclick="updateCart(${item.id},1)">+</button>
           </div>
         </div>
       `}).join('');
@@ -757,11 +829,20 @@
 
     window.updateCart = function(id, delta) {
       const item = menuData.find(i=>i.id===id);
-      if (!item?.available) return;
+      
+      // Строгая проверка доступности
+      if (!item || !item.available) {
+        console.log('Блюдо недоступно:', item?.name, 'available:', item?.available);
+        return;
+      }
+      
       if (!cart[id]) cart[id] = { ...item, qty: 0 };
       cart[id].qty = Math.max(0, cart[id].qty + delta);
       if (cart[id].qty === 0) delete cart[id];
-      document.getElementById(`qty-${id}`).textContent = cart[id]?.qty || 0;
+      
+      const qtyEl = document.getElementById(`qty-${id}`);
+      if (qtyEl) qtyEl.textContent = cart[id]?.qty || 0;
+      
       save('cart', cart);
       updateCartFab();
       if (document.getElementById('cartModal').classList.contains('show')) showCartModal();
