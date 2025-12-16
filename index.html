@@ -1359,7 +1359,6 @@
         text += `• ${i.name} x${i.qty} — ${FMT.format((i.price||0)*i.qty)}\n`;
       });
       text += `\nИтого: ${FMT.format(total)}\n`;
-      text += `\nСпасибо`;
 
       savedUserData = { name, phone, payment, address, comment };
       save('userData', savedUserData);
