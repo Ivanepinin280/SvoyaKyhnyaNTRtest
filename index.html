@@ -922,7 +922,7 @@
         <img class="logo-img" src="logo.png" alt="СВОЯ КУХНЯ">
         <div>
           <div class="header-title">СВОЯ КУХНЯ</div>
-          <div class="header-desc">Доставка еды — вкусно, быстро, рядом</div>
+          <div class="header-desc">Свежая домашняя еда с доставкой по Нячангу</div>
         </div>
       </div>
       <div class="promo-banner">
@@ -1359,7 +1359,7 @@
         text += `• ${i.name} x${i.qty} — ${FMT.format((i.price||0)*i.qty)}\n`;
       });
       text += `\nИтого: ${FMT.format(total)}\n`;
-      text += `\n(Отправлено из веб-версии)`;
+      text += `\nСпасибо`;
 
       savedUserData = { name, phone, payment, address, comment };
       save('userData', savedUserData);
