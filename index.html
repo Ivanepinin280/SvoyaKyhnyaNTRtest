@@ -517,6 +517,23 @@
     }
     @keyframes spin { to{ transform:rotate(360deg); } }
 
+    .loader-overlay {
+      position:fixed;
+      inset:0;
+      background:rgba(247,239,224,0.95);
+      z-index:999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+    }
+    .loader-text {
+      margin-top:15px;
+      color:var(--brand-olive);
+      font-weight:700;
+      font-size:1.1em;
+    }
+
     .processing {
       text-align:center;
       padding:20px;
@@ -562,6 +579,11 @@
   </div>
 
   <div class="menu" id="menu"></div>
+
+  <div id="loader" class="loader-overlay">
+    <div class="spinner"></div>
+    <div class="loader-text">Загрузка меню...</div>
+  </div>
 
   <button id="cartFab" class="cart-fab" style="display:none;">
     <svg viewBox="0 0 48 48" width="56" height="56">
@@ -609,7 +631,7 @@
     function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
 
     async function loadMenu() {
-      document.getElementById('menu').innerHTML = '<div class="spinner"></div>';
+      document.getElementById('loader').style.display = 'flex';
       try {
         const res = await fetch(SHEET_API_URL);
         if (!res.ok) throw new Error('Primary failed');
@@ -621,44 +643,53 @@
           menuData = rows.slice(1).map((row, idx) => {
             const obj = {};
             headers.forEach((h, i) => obj[h] = row[i] || '');
+            const availableStr = String(obj.available || obj.доступно || 'true').trim().toLowerCase();
             return {
               id: idx + 1,
               name: obj.name || obj.title || `Блюдо ${idx+1}`,
               description: obj.description || obj.desc || '',
               img: obj.img || obj.image || '',
               price: toNum(obj.price || obj.cost),
-              available: String(obj.available||'true').trim().toLowerCase() === 'true'
+              available: availableStr === 'true' || availableStr === '1' || availableStr === 'да'
             };
           });
         } else if (json?.menu) {
-          menuData = json.menu.map((item, idx) => ({
-            id: idx + 1,
-            name: item.name || `Блюдо ${idx+1}`,
-            description: item.description || '',
-            img: item.img || '',
-            price: toNum(item.price),
-            available: String(item.available||'true').toLowerCase() === 'true'
-          }));
-        }
-      } catch (err) {
-        try {
-          const res2 = await fetch(SHEET_API_FALLBACK);
-          const j2 = await res2.json();
-          if (j2?.menu) {
-            menuData = j2.menu.map((item, idx) => ({
+          menuData = json.menu.map((item, idx) => {
+            const availableStr = String(item.available||'true').trim().toLowerCase();
+            return {
               id: idx + 1,
               name: item.name || `Блюдо ${idx+1}`,
               description: item.description || '',
               img: item.img || '',
               price: toNum(item.price),
-              available: String(item.available||'true').toLowerCase() === 'true'
-            }));
+              available: availableStr === 'true' || availableStr === '1' || availableStr === 'да'
+            };
+          });
+        }
+      } catch (err) {
+        console.warn('Primary failed, trying fallback...', err);
+        try {
+          const res2 = await fetch(SHEET_API_FALLBACK);
+          const j2 = await res2.json();
+          if (j2?.menu) {
+            menuData = j2.menu.map((item, idx) => {
+              const availableStr = String(item.available||'true').trim().toLowerCase();
+              return {
+                id: idx + 1,
+                name: item.name || `Блюдо ${idx+1}`,
+                description: item.description || '',
+                img: item.img || '',
+                price: toNum(item.price),
+                available: availableStr === 'true' || availableStr === '1' || availableStr === 'да'
+              };
+            });
           }
         } catch (e) {
+          console.error('Both APIs failed', e);
           document.getElementById('menu').innerHTML = '<div style="text-align:center;color:var(--brand-olive);margin:40px;">Ошибка загрузки меню</div>';
-          return;
         }
       }
+      document.getElementById('loader').style.display = 'none';
       renderMenu();
     }
 
