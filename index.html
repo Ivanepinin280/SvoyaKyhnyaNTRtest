@@ -977,6 +977,12 @@
       const str = String(value).trim().toLowerCase();
       return str === 'true' || str === '1' || str === 'да' || str === 'yes';
     }
+    
+    function parseDishOfDay(value) {
+      if (value === undefined || value === null) return false;
+      const str = String(value).trim().toLowerCase();
+      return str === 'true' || str === '1' || str === 'да' || str === 'yes';
+    }
 
     async function loadMenu() {
       document.getElementById('loader').style.display = 'flex';
@@ -1000,7 +1006,7 @@
               img: obj.img || obj.image || '',
               price: toNum(obj.price || obj.cost),
               available: parseAvailable(obj.available),
-              dishOfDay: parseAvailable(obj.dish_of_day || obj['блюдо дня'] || obj.dishofday)
+              dishOfDay: parseDishOfDay(obj.dish_of_day || obj['блюдо дня'] || obj.dishofday)
             };
           });
         } else if (json?.menu) {
@@ -1011,7 +1017,7 @@
             img: item.img || '',
             price: toNum(item.price),
             available: parseAvailable(item.available),
-            dishOfDay: parseAvailable(item.dish_of_day || item.dishOfDay)
+            dishOfDay: parseDishOfDay(item.dish_of_day || item.dishOfDay)
           }));
         }
       } catch (err) {
@@ -1027,7 +1033,7 @@
               img: item.img || '',
               price: toNum(item.price),
               available: parseAvailable(item.available),
-              dishOfDay: parseAvailable(item.dish_of_day || item.dishOfDay)
+              dishOfDay: parseDishOfDay(item.dish_of_day || item.dishOfDay)
             }));
           }
         } catch (e) {
@@ -1073,13 +1079,14 @@
       menu.innerHTML = items.map(item => {
         const isAvailable = item.available;
         const isFav = favorites.includes(item.id);
+        const isDishOfDay = item.dishOfDay === true; // Строгая проверка
         const imgSrc = item.img || 'https://via.placeholder.com/400x300/f5f5f5/999999?text=Фото';
 
         return `
         <div class="product ${!isAvailable ? 'unavailable' : ''}" data-id="${item.id}">
           <div class="product-img-wrap">
             ${!isAvailable ? '<div class="prod-unavailable">НЕТ В НАЛИЧИИ</div>' : ''}
-            ${item.dishOfDay && isAvailable ? '<div class="dish-of-day-badge">🔥 БЛЮДО ДНЯ</div>' : ''}
+            ${isDishOfDay && isAvailable ? '<div class="dish-of-day-badge">🔥 БЛЮДО ДНЯ</div>' : ''}
             <button class="favorite-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${item.id})">
               ${isFav ? '❤️' : '🤍'}
             </button>
@@ -1227,7 +1234,7 @@
           <div class="delivery-info-content">
             <strong>🔸 Доставка:</strong>
             <div style="font-size:0.9em;margin-bottom:8px;">(До входа в отель, апартаменты)</div>
-            <div class="delivery-time">⏱️ Заказ будет доставлен в течение 40-90 мин.</div>
+            <div class="delivery-time">⏱️ Заказ будет доставлен в течение 1-1,5 часа</div>
             <div style="margin-top:8px;">
               • Центр - Бесплатно от 150 VND<br>
               &nbsp;&nbsp;(До 150 VND - 20 VND)<br>
