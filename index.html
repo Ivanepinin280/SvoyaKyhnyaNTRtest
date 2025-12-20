@@ -1160,7 +1160,10 @@
       `;
     }
 
-    document.getElementById('cartFab').onclick = showCartModal;
+    document.getElementById('cartFab').addEventListener('click', function(e) {
+      e.stopPropagation();
+      showCartModal();
+    });
 
     function showCartModal() {
       const items = Object.values(cart).sort((a,b) => a.id - b.id);
@@ -1386,7 +1389,10 @@
     document.addEventListener('click', function(e){
       ['cartModal','deliveryModal','historyModal'].forEach(id => {
         const el = document.getElementById(id);
-        if (el?.classList.contains('show') && e.target === el) el.classList.remove('show');
+        if (el?.classList.contains('show') && e.target === el) {
+          e.stopPropagation();
+          el.classList.remove('show');
+        }
       });
     });
 
