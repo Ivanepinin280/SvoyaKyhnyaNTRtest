@@ -176,6 +176,39 @@
       overflow:hidden;
       background:linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%);
     }
+
+    /* --- Стили для Блюда Дня --- */
+    .dish-badge {
+      position: absolute;
+      top: 0;
+      left: 16px;
+      z-index: 20;
+      background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%);
+      color: #fff;
+      padding: 10px 10px 12px;
+      font-weight: 800;
+      font-size: 10px;
+      text-transform: uppercase;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 12px rgba(255, 140, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.2;
+      text-align: center;
+      animation: badgeSlideDown 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .dish-badge span {
+      font-size: 18px;
+      margin-bottom: 2px;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+    }
+
+    @keyframes badgeSlideDown {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(0); }
+    }
     
     .favorite-btn {
       position:absolute;
@@ -310,27 +343,36 @@
       color:var(--text);
     }
 
+    /* --- Новая красивая кнопка корзины --- */
     .cart-fab {
       position:fixed;
       bottom:24px;
       right:24px;
-      background:var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, #000000 100%);
       border:none;
-      width:68px;
-      height:68px;
+      width:72px;
+      height:72px;
       border-radius:50%;
       cursor:pointer;
       z-index:100;
       display:flex;
       align-items:center;
       justify-content:center;
-      box-shadow:0 8px 32px rgba(0,0,0,0.24);
+      box-shadow:0 10px 30px rgba(0,0,0,0.3);
       transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: pulse-cart 3s infinite;
+      border: 2px solid rgba(255,255,255,0.1);
     }
     
+    @keyframes pulse-cart {
+      0% { box-shadow: 0 0 0 0 rgba(26, 26, 26, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(26, 26, 26, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(26, 26, 26, 0); }
+    }
+
     .cart-fab:hover {
-      transform:scale(1.1);
-      box-shadow:0 12px 48px rgba(0,0,0,0.3);
+      transform:translateY(-4px) scale(1.05);
+      box-shadow:0 15px 40px rgba(0,0,0,0.4);
     }
     
     .cart-fab:hover .cart-preview {
@@ -338,33 +380,35 @@
     }
     
     .cart-fab svg {
-      width:32px;
-      height:32px;
+      width:34px;
+      height:34px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
     }
     
     .cart-fab-count {
       position:absolute;
-      right:-4px;
-      top:-4px;
+      right:-2px;
+      top:-2px;
       background:var(--accent);
       color:white;
-      font-weight:700;
+      font-weight:800;
       border-radius:50%;
-      min-width:28px;
-      height:28px;
+      min-width:30px;
+      height:30px;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:13px;
-      box-shadow:0 4px 12px rgba(255,107,53,0.4);
+      font-size:14px;
+      box-shadow:0 4px 12px rgba(255,107,53,0.5);
       border:3px solid var(--bg);
       pointer-events:none;
+      transition: transform 0.2s;
     }
 
     .cart-preview {
       display:none;
       position:absolute;
-      bottom:80px;
+      bottom:85px;
       right:0;
       background:white;
       border:1px solid var(--border);
@@ -744,17 +788,19 @@
       position:absolute;
       left:12px;
       right:12px;
-      top:12px;
-      background:var(--accent);
+      top:50%;
+      transform: translateY(-50%);
+      background:rgba(0,0,0,0.7);
       color:white;
-      font-size:12px;
+      font-size:14px;
       border-radius:8px;
-      padding:8px 12px;
+      padding:12px;
       text-align:center;
       z-index:6;
-      font-weight:600;
+      font-weight:700;
       letter-spacing:0.5px;
       box-shadow:var(--shadow-md);
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     .spinner {
@@ -891,8 +937,8 @@
       }
       
       .cart-fab {
-        width:60px;
-        height:60px;
+        width:64px;
+        height:64px;
         bottom:20px;
         right:20px;
       }
@@ -947,10 +993,10 @@
   <div id="debugPanel" class="debug-panel"></div>
 
   <button id="cartFab" class="cart-fab" style="display:none;">
-    <svg viewBox="0 0 48 48" fill="none">
-      <path d="M16 18h16l-2 13a3 3 0 0 1-3 2h-6a3 3 0 0 1-3-2l-2-13zm3 0v-4a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v4" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-      <circle cx="19" cy="36" r="2" fill="white"/>
-      <circle cx="29" cy="36" r="2" fill="white"/>
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <path d="M16 10a4 4 0 0 1-8 0"></path>
     </svg>
     <span id="cartFabCount" class="cart-fab-count"></span>
     <div class="cart-preview" id="cartPreview"></div>
@@ -966,7 +1012,7 @@
   <script>
     const SHEET_API_URL = 'https://sheets.googleapis.com/v4/spreadsheets/SPREADSHEET_ID/values/Sheet1?key=API_KEY';
     const SHEET_API_FALLBACK = 'https://script.google.com/macros/s/AKfycbyytR-HwA0y-TnHS_7nygs-_ZkPHDYzQQWFgV3GJSVuvdn93oX0kP92Ti9bQVqW7C_gFg/exec';
-    const TELEGRAM_BOT_TOKEN = '7637734194:AAGLXLycqKlHpi4183_4Jaaaz3bwm_SJXqw';
+    const TELEGRAM_BOT_TOKEN = '8321999143:AAGEygNYprDobvC7We2vlAMLphiWkd34p8Q';
     const TELEGRAM_CHAT_ID = '7567253745';
 
     let menuData = [];
@@ -990,6 +1036,13 @@
 
     function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e){ console.warn('Storage error', e); } }
 
+    function parseBoolean(value) {
+      if (value === undefined || value === null) return false;
+      const str = String(value).trim().toLowerCase();
+      const trueValues = ['true', 'да', 'yes', '1', 'д', 't', 'доступно', 'available'];
+      return trueValues.includes(str);
+    }
+    
     function parseAvailable(value) {
       if (value === undefined || value === null) return true;
       const str = String(value).trim().toLowerCase();
@@ -1027,18 +1080,28 @@
           const availableIndex = headers.findIndex(h =>
             h === 'available' || h === 'доступно' || h === 'availability' || h === 'в наличии'
           );
+          
+          // Поиск колонки dish_of_day
+          const dishDayIndex = headers.findIndex(h => 
+            h === 'dish_of_day' || h === 'dish_day' || h === 'блюдо дня'
+          );
 
           menuData = dataRows.map((row, idx) => {
             const obj = {};
             headers.forEach((h, i) => obj[h] = row[i] !== undefined ? row[i] : '');
+            
             const availableValue = obj.available || obj['доступно'] || obj.availability || obj['в наличии'] || (availableIndex >= 0 ? row[availableIndex] : undefined);
+            
+            const dishDayValue = obj['dish_of_day'] || obj['dish_day'] || obj['блюдо дня'] || (dishDayIndex >= 0 ? row[dishDayIndex] : undefined);
+
             return {
               id: idx + 1,
               name: obj.name || obj.title || `Блюдо ${idx+1}`,
               description: obj.description || obj.desc || '',
               img: obj.img || obj.image || '',
               price: toNum(obj.price || obj.cost || obj['цена']),
-              available: parseAvailable(availableValue)
+              available: parseAvailable(availableValue),
+              dishDay: parseBoolean(dishDayValue) // Флаг блюда дня
             };
           });
           debugLog('Загружено блюд', menuData.length);
@@ -1049,7 +1112,8 @@
             description: item.description || '',
             img: item.img || '',
             price: toNum(item.price),
-            available: parseAvailable(item.available)
+            available: parseAvailable(item.available),
+            dishDay: parseBoolean(item.dish_of_day)
           }));
         } else {
           throw new Error('Unexpected sheet response');
@@ -1068,7 +1132,8 @@
               description: item.description || '',
               img: item.img || '',
               price: toNum(item.price),
-              available: parseAvailable(item.available)
+              available: parseAvailable(item.available),
+              dishDay: parseBoolean(item.dish_of_day)
             }));
             debugLog('Загружено из fallback', menuData.length);
           } else {
@@ -1102,9 +1167,15 @@
         const isFav = favorites.includes(item.id);
         const imgSrc = item.img ? esc(item.img) : 'https://via.placeholder.com/400x300/f5f5f5/999999?text=Фото';
 
+        // HTML для баннера Блюдо дня
+        const dishDayBadge = (item.dishDay && isAvailable) 
+          ? `<div class="dish-badge"><span>★</span>БЛЮДО<br>ДНЯ</div>` 
+          : '';
+
         return `
         <div class="product ${!isAvailable ? 'unavailable' : ''}" data-id="${item.id}">
           <div class="product-img-wrap">
+            ${dishDayBadge}
             ${!isAvailable ? '<div class="prod-unavailable">НЕТ В НАЛИЧИИ</div>' : ''}
             <button class="favorite-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${item.id})">
               ${isFav ? '❤️' : '🤍'}
@@ -1388,7 +1459,8 @@
       save('cart', cart);
       updateCartFab();
       closeModal('cartModal');
-      alert('Заказ принят. Спасибо!');
+      // ИЗМЕНЕННЫЙ ТЕКСТ УВЕДОМЛЕНИЯ
+      alert('Ваш заказ направлен администратору. С вами свяжутся в ближайшее время.');
       renderMenu();
     };
 
