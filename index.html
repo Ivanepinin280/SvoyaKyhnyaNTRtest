@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>СВОЯ КУХНЯ — доставка еды</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -23,6 +23,8 @@
       --radius-sm: 12px;
       --radius-md: 16px;
       --radius-lg: 24px;
+      --gold: #FFD700;
+      --gold-dark: #FFA500;
     }
     
     * { box-sizing:border-box; margin:0; padding:0; }
@@ -34,7 +36,6 @@
       color:var(--text);
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
-      overflow-x: hidden;
     }
 
     .header {
@@ -157,40 +158,17 @@
       box-shadow:var(--shadow-lg);
       border-color:transparent;
     }
-
+    
     .product.unavailable {
-      opacity: 0.85;
+      opacity:0.6;
+      filter:grayscale(40%);
     }
     
     .product.unavailable .add-btn,
-    .product.unavailable .remove-btn,
-    .product.unavailable .controls {
-      display: none;
-    }
-
-    .product.unavailable .product-img {
-      filter: blur(1px);
-    }
-    
-    .prod-unavailable {
-      position:absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.4);
-      color: #333;
-      font-size:13px;
-      border-radius:12px;
-      padding: 10px 16px;
-      text-align:center;
-      z-index:6;
-      font-weight:700;
-      letter-spacing:0.5px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-      text-transform: uppercase;
-      width: 80%;
+    .product.unavailable .remove-btn {
+      opacity:0.4;
+      cursor:not-allowed;
+      pointer-events:none;
     }
     
     .product-img-wrap {
@@ -199,38 +177,6 @@
       height:200px;
       overflow:hidden;
       background:linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%);
-    }
-
-    .dish-badge {
-      position: absolute;
-      top: 0;
-      left: 16px;
-      z-index: 20;
-      background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%);
-      color: #fff;
-      padding: 10px 10px 12px;
-      font-weight: 800;
-      font-size: 10px;
-      text-transform: uppercase;
-      border-radius: 0 0 8px 8px;
-      box-shadow: 0 4px 12px rgba(255, 140, 0, 0.5);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      line-height: 1.2;
-      text-align: center;
-      animation: badgeSlideDown 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .dish-badge span {
-      font-size: 18px;
-      margin-bottom: 2px;
-      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
-    }
-
-    @keyframes badgeSlideDown {
-      from { transform: translateY(-100%); }
-      to { transform: translateY(0); }
     }
     
     .favorite-btn {
@@ -366,55 +312,131 @@
       color:var(--text);
     }
 
+    .dish-of-day-badge {
+      position:absolute;
+      left:12px;
+      top:12px;
+      z-index:11;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      background:linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color:#1a1a1a;
+      padding:8px 12px;
+      border-radius:20px;
+      font-size:12px;
+      font-weight:700;
+      box-shadow:0 4px 12px rgba(255,215,0,0.4);
+      animation:pulse 2s ease-in-out infinite;
+    }
+
+    .star-icon {
+      width:20px;
+      height:20px;
+      filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform:scale(1);
+      }
+      50% {
+        transform:scale(1.05);
+      }
+    }
+
     .cart-fab {
       position:fixed;
-      bottom: 24px;
-      right: 24px;
-      background: linear-gradient(135deg, var(--primary) 0%, #000000 100%);
+      bottom:24px;
+      right:24px;
+      background:linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       border:none;
-      width:72px;
-      height:72px;
+      width:68px;
+      height:68px;
       border-radius:50%;
       cursor:pointer;
-      z-index:900;
+      z-index:100;
       display:flex;
       align-items:center;
       justify-content:center;
-      box-shadow:0 10px 30px rgba(0,0,0,0.3);
-      transition: transform 0.1s;
-      border: 2px solid rgba(255,255,255,0.1);
-      user-select: none;
-      touch-action: none; 
+      box-shadow:0 8px 32px rgba(0,0,0,0.24);
+      transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
-    .cart-fab:active {
-      transform: scale(0.95);
+    .cart-fab:hover {
+      transform:scale(1.1);
+      box-shadow:0 12px 48px rgba(0,0,0,0.3);
     }
     
-    .cart-fab svg {
+    .cart-fab:hover .cart-preview {
+      display:block;
+    }
+    
+    .cart-icon {
       width:34px;
       height:34px;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-      pointer-events: none;
+      filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));
     }
     
     .cart-fab-count {
       position:absolute;
-      right:-2px;
-      top:-2px;
+      right:-4px;
+      top:-4px;
       background:var(--accent);
       color:white;
-      font-weight:800;
+      font-weight:700;
       border-radius:50%;
-      min-width:30px;
-      height:30px;
+      min-width:28px;
+      height:28px;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:14px;
-      box-shadow:0 4px 12px rgba(255,107,53,0.5);
+      font-size:13px;
+      box-shadow:0 4px 12px rgba(255,107,53,0.4);
       border:3px solid var(--bg);
       pointer-events:none;
+    }
+
+    .cart-preview {
+      display:none;
+      position:absolute;
+      bottom:80px;
+      right:0;
+      background:white;
+      border:1px solid var(--border);
+      border-radius:var(--radius-md);
+      padding:16px;
+      min-width:280px;
+      max-width:320px;
+      box-shadow:var(--shadow-lg);
+      pointer-events:none;
+    }
+    
+    .cart-preview-title {
+      font-weight:700;
+      color:var(--primary);
+      margin-bottom:12px;
+      padding-bottom:12px;
+      border-bottom:1px solid var(--border);
+      font-size:15px;
+    }
+    
+    .cart-preview-item {
+      display:flex;
+      justify-content:space-between;
+      margin:8px 0;
+      font-size:13px;
+      color:var(--text-light);
+    }
+    
+    .cart-preview-total {
+      margin-top:12px;
+      padding-top:12px;
+      border-top:1px solid var(--border);
+      font-weight:700;
+      text-align:right;
+      color:var(--primary);
+      font-size:15px;
     }
 
     .modal-bg {
@@ -423,7 +445,7 @@
       inset:0;
       background:rgba(0,0,0,0.5);
       backdrop-filter:blur(4px);
-      z-index:1000;
+      z-index:200;
       align-items:flex-start;
       justify-content:center;
       overflow-y:auto;
@@ -432,36 +454,6 @@
     
     .modal-bg.show {
       display:flex;
-    }
-    
-    .garnish-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .garnish-btn {
-      background: var(--bg);
-      border: 2px solid var(--border);
-      padding: 16px;
-      border-radius: var(--radius-sm);
-      font-family: 'Inter', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: left;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .garnish-btn:hover {
-      border-color: var(--accent);
-      background: white;
-      transform: translateX(4px);
     }
     
     .modal {
@@ -534,18 +526,6 @@
       padding:16px;
       background:var(--bg);
       border-radius:var(--radius-sm);
-    }
-
-    .cart-item-name {
-      font-weight: 600;
-      color: var(--primary);
-    }
-    
-    .cart-item-garnish {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-top: 2px;
-      font-weight: 500;
     }
     
     .cart-total {
@@ -796,6 +776,23 @@
       box-shadow:0 20px 80px rgba(0,0,0,0.8);
     }
 
+    .prod-unavailable {
+      position:absolute;
+      left:12px;
+      right:12px;
+      top:12px;
+      background:var(--accent);
+      color:white;
+      font-size:12px;
+      border-radius:8px;
+      padding:8px 12px;
+      text-align:center;
+      z-index:6;
+      font-weight:600;
+      letter-spacing:0.5px;
+      box-shadow:var(--shadow-md);
+    }
+
     .spinner {
       width:48px;
       height:48px;
@@ -829,6 +826,18 @@
       font-size:16px;
     }
 
+    .processing {
+      text-align:center;
+      padding:32px;
+      color:var(--primary);
+    }
+    
+    .processing-text {
+      font-size:16px;
+      font-weight:600;
+      margin:12px 0;
+    }
+
     .debug-panel {
       position:fixed;
       bottom:100px;
@@ -841,6 +850,116 @@
       max-width:320px;
       z-index:150;
       display:none;
+    }
+
+    .garnish-modal-content {
+      max-width:500px;
+    }
+
+    .garnish-title {
+      font-size:20px;
+      font-weight:700;
+      color:var(--primary);
+      margin-bottom:16px;
+      text-align:center;
+    }
+
+    .garnish-subtitle {
+      font-size:14px;
+      color:var(--text-light);
+      margin-bottom:20px;
+      text-align:center;
+    }
+
+    .garnish-list {
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-bottom:20px;
+    }
+
+    .garnish-option {
+      background:var(--bg);
+      border:2px solid var(--border);
+      border-radius:var(--radius-sm);
+      padding:16px;
+      cursor:pointer;
+      transition:all 0.2s;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .garnish-option:hover {
+      border-color:var(--accent);
+      background:white;
+      transform:translateX(4px);
+    }
+
+    .garnish-option.selected {
+      border-color:var(--accent);
+      background:rgba(255,107,53,0.05);
+    }
+
+    .garnish-option-name {
+      font-weight:600;
+      color:var(--primary);
+      font-size:15px;
+    }
+
+    .garnish-option-price {
+      font-weight:700;
+      color:var(--accent);
+      font-size:15px;
+    }
+
+    .garnish-actions {
+      display:flex;
+      gap:12px;
+    }
+
+    .btn-secondary {
+      background:var(--bg);
+      color:var(--text);
+      border:2px solid var(--border);
+      border-radius:var(--radius-sm);
+      padding:12px 24px;
+      font-size:15px;
+      font-weight:600;
+      cursor:pointer;
+      font-family:'Inter', sans-serif;
+      transition:all 0.2s;
+      flex:1;
+    }
+
+    .btn-secondary:hover {
+      border-color:var(--text);
+      background:white;
+    }
+
+    .btn-confirm {
+      background:var(--accent);
+      color:white;
+      border:none;
+      border-radius:var(--radius-sm);
+      padding:12px 24px;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+      font-family:'Inter', sans-serif;
+      transition:all 0.2s;
+      flex:1;
+    }
+
+    .btn-confirm:hover {
+      background:var(--accent-hover);
+      transform:translateY(-2px);
+    }
+
+    .btn-confirm:disabled {
+      opacity:0.5;
+      cursor:not-allowed;
+      transform:translateY(0);
     }
     
     @media (max-width:768px) {
@@ -906,6 +1025,18 @@
         top:8px;
         right:8px;
       }
+
+      .dish-of-day-badge {
+        left:8px;
+        top:8px;
+        font-size:11px;
+        padding:6px 10px;
+      }
+
+      .star-icon {
+        width:16px;
+        height:16px;
+      }
       
       .modal {
         width:100%;
@@ -918,10 +1049,20 @@
       }
       
       .cart-fab {
-        width:64px;
-        height:64px;
-        bottom: 24px;
-        right: 24px;
+        width:60px;
+        height:60px;
+        bottom:20px;
+        right:20px;
+      }
+
+      .cart-icon {
+        width:30px;
+        height:30px;
+      }
+      
+      .cart-preview {
+        bottom:75px;
+        max-width:280px;
       }
       
       .menu-controls {
@@ -932,7 +1073,7 @@
         font-size:13px;
         padding:8px 14px;
       }
-}
+    }
   </style>
 </head>
 <body>
@@ -967,12 +1108,15 @@
   <div id="debugPanel" class="debug-panel"></div>
 
   <button id="cartFab" class="cart-fab" style="display:none;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <path d="M16 10a4 4 0 0 1-8 0"></path>
+    <svg class="cart-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 24h24l-3 18c-0.5 2.5-2.5 4-5 4h-8c-2.5 0-4.5-1.5-5-4l-3-18z" fill="white" opacity="0.9"/>
+      <path d="M20 24h24l-3 18c-0.5 2.5-2.5 4-5 4h-8c-2.5 0-4.5-1.5-5-4l-3-18z" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M24 24v-6c0-2.2 1.8-4 4-4h8c2.2 0 4 1.8 4 4v6" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="26" cy="50" r="3" fill="white"/>
+      <circle cx="38" cy="50" r="3" fill="white"/>
     </svg>
     <span id="cartFabCount" class="cart-fab-count"></span>
+    <div class="cart-preview" id="cartPreview"></div>
   </button>
 
   <div id="cartModal" class="modal-bg"></div>
@@ -996,6 +1140,8 @@
     let savedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
     let orderCounter = parseInt(localStorage.getItem('orderCounter') || '0', 10) || 0;
     let currentFilter = 'all';
+    let garnishOptions = [];
+    let pendingHotDish = null;
 
     const FMT = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 });
 
@@ -1010,13 +1156,6 @@
 
     function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e){ console.warn('Storage error', e); } }
 
-    function parseBoolean(value) {
-      if (value === undefined || value === null) return false;
-      const str = String(value).trim().toLowerCase();
-      const trueValues = ['true', 'да', 'yes', '1', 'д', 't', 'доступно', 'available'];
-      return trueValues.includes(str);
-    }
-    
     function parseAvailable(value) {
       if (value === undefined || value === null) return true;
       const str = String(value).trim().toLowerCase();
@@ -1029,7 +1168,29 @@
       return true;
     }
 
+    function parseDishOfDay(value) {
+      if (value === undefined || value === null) return false;
+      const str = String(value).trim().toLowerCase();
+      const trueValues = ['true', 'да', 'yes', '1', 'д', 't'];
+      return trueValues.includes(str);
+    }
+
+    function parseIsHotDish(value) {
+      if (value === undefined || value === null) return false;
+      const str = String(value).trim().toLowerCase();
+      const trueValues = ['true', 'да', 'yes', '1', 'д', 't', 'горячее', 'hot'];
+      return trueValues.includes(str);
+    }
+
+    function parseIsGarnish(value) {
+      if (value === undefined || value === null) return false;
+      const str = String(value).trim().toLowerCase();
+      const trueValues = ['true', 'да', 'yes', '1', 'д', 't', 'гарнир', 'garnish'];
+      return trueValues.includes(str);
+    }
+
     function debugLog(message, data) {
+      if (false) console.log('[DEBUG]', message, data);
       const dp = document.getElementById('debugPanel');
       if (dp && false) {
         dp.style.display = 'block';
@@ -1040,6 +1201,7 @@
     async function loadMenu() {
       document.getElementById('loader').style.display = 'flex';
       try {
+        debugLog('Загрузка из основного API', SHEET_API_URL);
         const res = await fetch(SHEET_API_URL);
         if (!res.ok) throw new Error('Primary failed: ' + res.status);
         const json = await res.json();
@@ -1052,30 +1214,26 @@
           const availableIndex = headers.findIndex(h =>
             h === 'available' || h === 'доступно' || h === 'availability' || h === 'в наличии'
           );
-          
-          const dishDayIndex = headers.findIndex(h => 
-            h === 'dish_of_day' || h === 'dish_day' || h === 'блюдо дня'
+
+          const dishOfDayIndex = headers.findIndex(h =>
+            h === 'dish_of_day' || h === 'блюдо_дня' || h === 'dishofday'
           );
 
-          // Поиск колонки гарниров
-          const garnishIndex = headers.findIndex(h => 
-            h === 'garnish' || h === 'гарнир' || h === 'options'
+          const isHotDishIndex = headers.findIndex(h =>
+            h === 'is_hot_dish' || h === 'горячее' || h === 'hot_dish' || h === 'ishotdish'
+          );
+
+          const isGarnishIndex = headers.findIndex(h =>
+            h === 'is_garnish' || h === 'гарнир' || h === 'garnish' || h === 'isgarnish'
           );
 
           menuData = dataRows.map((row, idx) => {
             const obj = {};
             headers.forEach((h, i) => obj[h] = row[i] !== undefined ? row[i] : '');
-            
             const availableValue = obj.available || obj['доступно'] || obj.availability || obj['в наличии'] || (availableIndex >= 0 ? row[availableIndex] : undefined);
-            const dishDayValue = obj['dish_of_day'] || obj['dish_day'] || obj['блюдо дня'] || (dishDayIndex >= 0 ? row[dishDayIndex] : undefined);
-            
-            // Обработка гарниров (строка через запятую)
-            let garnishes = [];
-            const garnishRaw = obj['garnish'] || obj['гарнир'] || obj['options'] || (garnishIndex >= 0 ? row[garnishIndex] : '');
-            if(garnishRaw && String(garnishRaw).trim().length > 0) {
-                garnishes = String(garnishRaw).split(',').map(s => s.trim()).filter(s => s);
-            }
-
+            const dishOfDayValue = obj.dish_of_day || obj['блюдо_дня'] || obj.dishofday || (dishOfDayIndex >= 0 ? row[dishOfDayIndex] : undefined);
+            const isHotDishValue = obj.is_hot_dish || obj['горячее'] || obj.hot_dish || (isHotDishIndex >= 0 ? row[isHotDishIndex] : undefined);
+            const isGarnishValue = obj.is_garnish || obj['гарнир'] || obj.garnish || (isGarnishIndex >= 0 ? row[isGarnishIndex] : undefined);
             return {
               id: idx + 1,
               name: obj.name || obj.title || `Блюдо ${idx+1}`,
@@ -1083,12 +1241,15 @@
               img: obj.img || obj.image || '',
               price: toNum(obj.price || obj.cost || obj['цена']),
               available: parseAvailable(availableValue),
-              dishDay: parseBoolean(dishDayValue),
-              garnishes: garnishes
+              dishOfDay: parseDishOfDay(dishOfDayValue),
+              isHotDish: parseIsHotDish(isHotDishValue),
+              isGarnish: parseIsGarnish(isGarnishValue)
             };
           });
+          
+          garnishOptions = menuData.filter(item => item.isGarnish && item.available);
+          debugLog('Загружено блюд', menuData.length);
         } else if (json?.menu) {
-          // Fallback logic
           menuData = json.menu.map((item, idx) => ({
             id: idx + 1,
             name: item.name || `Блюдо ${idx+1}`,
@@ -1096,33 +1257,41 @@
             img: item.img || '',
             price: toNum(item.price),
             available: parseAvailable(item.available),
-            dishDay: parseBoolean(item.dish_of_day),
-            garnishes: item.garnishes || []
+            dishOfDay: parseDishOfDay(item.dish_of_day),
+            isHotDish: parseIsHotDish(item.is_hot_dish),
+            isGarnish: parseIsGarnish(item.is_garnish)
           }));
+          garnishOptions = menuData.filter(item => item.isGarnish && item.available);
         } else {
           throw new Error('Unexpected sheet response');
         }
       } catch (err) {
         console.warn('Primary failed, trying fallback...', err);
+        debugLog('Ошибка основного API', err.message);
         try {
           const res2 = await fetch(SHEET_API_FALLBACK);
           if (!res2.ok) throw new Error('Fallback failed: ' + res2.status);
           const j2 = await res2.json();
           if (j2?.menu) {
-             menuData = j2.menu.map((item, idx) => ({
+            menuData = j2.menu.map((item, idx) => ({
               id: idx + 1,
               name: item.name || `Блюдо ${idx+1}`,
               description: item.description || '',
               img: item.img || '',
               price: toNum(item.price),
               available: parseAvailable(item.available),
-              dishDay: parseBoolean(item.dish_of_day),
-              garnishes: item.garnishes || []
+              dishOfDay: parseDishOfDay(item.dish_of_day),
+              isHotDish: parseIsHotDish(item.is_hot_dish),
+              isGarnish: parseIsGarnish(item.is_garnish)
             }));
+            garnishOptions = menuData.filter(item => item.isGarnish && item.available);
+            debugLog('Загружено из fallback', menuData.length);
           } else {
             throw new Error('Fallback returned no menu');
           }
         } catch (e) {
+          console.error('Both APIs failed', e);
+          debugLog('Обе API не работают', e.message);
           document.getElementById('menu').innerHTML = '<div style="text-align:center;color:var(--text-light);margin:40px;">Ошибка загрузки меню</div>';
         }
       }
@@ -1130,18 +1299,11 @@
       renderMenu();
     }
 
-    // Подсчет общего количества конкретного ID во всех вариантах
-    function getItemTotalQty(id) {
-        let total = 0;
-        Object.values(cart).forEach(item => {
-            if (item.id === id) total += (item.qty || 0);
-        });
-        return total;
-    }
-
     function renderMenu() {
       const menu = document.getElementById('menu');
       let items = currentFilter === 'favorites' ? menuData.filter(i => favorites.includes(i.id)) : menuData.slice();
+      
+      items = items.filter(i => !i.isGarnish);
 
       if (!items || items.length === 0) {
         menu.innerHTML = '<div style="text-align:center;color:var(--text-muted);margin:40px;">' +
@@ -1155,18 +1317,22 @@
       menu.innerHTML = items.map(item => {
         const isAvailable = item.available;
         const isFav = favorites.includes(item.id);
+        const isDishOfDay = item.dishOfDay;
         const imgSrc = item.img ? esc(item.img) : 'https://via.placeholder.com/400x300/f5f5f5/999999?text=Фото';
-        const dishDayBadge = (item.dishDay && isAvailable) 
-          ? `<div class="dish-badge"><span>★</span>БЛЮДО<br>ДНЯ</div>` 
-          : '';
-          
-        const qty = getItemTotalQty(item.id);
 
         return `
         <div class="product ${!isAvailable ? 'unavailable' : ''}" data-id="${item.id}">
           <div class="product-img-wrap">
-            ${dishDayBadge}
             ${!isAvailable ? '<div class="prod-unavailable">НЕТ В НАЛИЧИИ</div>' : ''}
+            ${isDishOfDay ? `
+            <div class="dish-of-day-badge">
+              <svg class="star-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M12 6L13 10L17 11L13 12L12 16L11 12L7 11L11 10L12 6Z" fill="#FFD700"/>
+              </svg>
+              БЛЮДО ДНЯ
+            </div>
+            ` : ''}
             <button class="favorite-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${item.id})">
               ${isFav ? '❤️' : '🤍'}
             </button>
@@ -1178,9 +1344,9 @@
             <div class="product-footer">
               <div class="product-price">${FMT.format(item.price)}</div>
               <div class="controls">
-                <button class="remove-btn" onclick="removeLastVariant(${item.id})">−</button>
-                <span id="qty-${item.id}">${qty}</span>
-                <button class="add-btn" onclick="addToCartClick(${item.id})">+</button>
+                <button class="remove-btn" ${!isAvailable ? 'disabled' : ''} onclick="updateCart(${item.id},-1)">−</button>
+                <span id="qty-${item.id}">${cart[item.id]?.qty||0}</span>
+                <button class="add-btn" ${!isAvailable ? 'disabled' : ''} onclick="updateCart(${item.id},1)">+</button>
               </div>
             </div>
           </div>
@@ -1208,98 +1374,74 @@
       renderMenu();
     };
 
-    // Обработчик нажатия на ПЛЮС
-    window.addToCartClick = function(id) {
-        const item = menuData.find(i => i.id === id);
-        if (!item || !item.available) return;
-
-        // Если есть варианты гарнира, показываем модалку
-        if (item.garnishes && item.garnishes.length > 0) {
-            showGarnishModal(item);
-        } else {
-            // Если гарниров нет, добавляем как обычно
-            updateCart(id, 1);
-        }
+    window.updateCart = function(id, delta) {
+      const item = menuData.find(i => i.id === id);
+      if (!item) return;
+      if (!item.available) {
+        console.log('Блюдо недоступно:', item.name);
+        return;
+      }
+      
+      if (item.isHotDish && delta > 0) {
+        pendingHotDish = { item, delta };
+        showGarnishModal();
+        return;
+      }
+      
+      addToCart(id, delta);
     };
 
-    // Модалка выбора гарнира
-    function showGarnishModal(item) {
-        const modal = document.getElementById('garnishModal');
-        modal.innerHTML = `
-            <div class="modal">
-                <button class="modal-close" onclick="closeModal('garnishModal')">&times;</button>
-                <div class="modal-title">Выберите гарнир</div>
-                <div style="margin-bottom:16px;color:var(--text-light);">Для блюда: <strong>${esc(item.name)}</strong></div>
-                <div class="garnish-grid">
-                    ${item.garnishes.map(g => `
-                        <button class="garnish-btn" onclick="selectGarnish(${item.id}, '${esc(g)}')">
-                            <span>${esc(g)}</span>
-                            <span>+</span>
-                        </button>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-        modal.classList.add('show');
+    function addToCart(id, delta, garnishId = null) {
+      const item = menuData.find(i => i.id === id);
+      if (!item) return;
+      
+      let cartKey = id;
+      let itemName = item.name;
+      let itemPrice = item.price;
+      
+      if (garnishId) {
+        const garnish = menuData.find(i => i.id === garnishId);
+        if (garnish) {
+          cartKey = `${id}_${garnishId}`;
+          itemName = `${item.name} + ${garnish.name}`;
+          itemPrice = item.price + garnish.price;
+        }
+      }
+      
+      if (!cart[cartKey]) {
+        cart[cartKey] = { 
+          id: cartKey, 
+          mainId: id,
+          garnishId: garnishId,
+          name: itemName, 
+          price: itemPrice,
+          qty: 0,
+          available: true 
+        };
+      }
+      
+      cart[cartKey].qty = Math.max(0, (cart[cartKey].qty || 0) + delta);
+      if (cart[cartKey].qty === 0) delete cart[cartKey];
+      
+      updateQuantityDisplays();
+      save('cart', cart);
+      updateCartFab();
+      if (document.getElementById('cartModal').classList.contains('show')) showCartModal();
     }
 
-    window.selectGarnish = function(id, garnishName) {
-        updateCart(id, 1, garnishName);
-        closeModal('garnishModal');
-    };
-
-    // Удаление "последнего добавленного" варианта этого блюда (упрощенная логика для кнопки минус на карточке)
-    window.removeLastVariant = function(id) {
-        // Находим любой ключ в корзине, который относится к этому ID
-        const keys = Object.keys(cart).filter(k => cart[k].id === id);
-        if (keys.length > 0) {
-            // Берем последний найденный (или можно сортировать)
-            const lastKey = keys[keys.length - 1];
-            const item = cart[lastKey];
-            updateCartInternal(lastKey, -1);
+    function updateQuantityDisplays() {
+      menuData.forEach(item => {
+        const qtyEl = document.getElementById(`qty-${item.id}`);
+        if (qtyEl) {
+          let totalQty = 0;
+          Object.values(cart).forEach(cartItem => {
+            if (cartItem.mainId === item.id || cartItem.id === item.id) {
+              totalQty += cartItem.qty || 0;
+            }
+          });
+          qtyEl.textContent = totalQty;
         }
-    };
-
-    // Основная функция обновления корзины
-    window.updateCart = function(id, delta, variantName = null) {
-        const item = menuData.find(i => i.id === id);
-        if (!item) return;
-        if (!item.available) return;
-
-        // Формируем уникальный ключ: ID + Вариант
-        let cartKey = id.toString();
-        if (variantName) {
-            cartKey = `${id}_${variantName}`;
-        }
-        
-        updateCartInternal(cartKey, delta, item, variantName);
-    };
-
-    function updateCartInternal(cartKey, delta, itemData = null, variantName = null) {
-        if (!cart[cartKey]) {
-            if (delta <= 0) return; // Нельзя убавить то, чего нет
-            cart[cartKey] = { 
-                ...itemData, 
-                qty: 0, 
-                variant: variantName,
-                // Важно сохранить ID отдельно
-                id: itemData.id 
-            };
-        }
-
-        cart[cartKey].qty = Math.max(0, (cart[cartKey].qty || 0) + delta);
-        if (cart[cartKey].qty === 0) delete cart[cartKey];
-        
-        save('cart', cart);
-        
-        // Обновляем счетчик на карточке товара (суммируем все варианты этого ID)
-        // Для этого нам нужен исходный ID. Если мы удаляли, itemData может быть null, берем из ключа
-        let originalId = itemData ? itemData.id : parseInt(cartKey.split('_')[0]);
-        const qtyEl = document.getElementById(`qty-${originalId}`);
-        if (qtyEl) qtyEl.textContent = getItemTotalQty(originalId);
-
-        updateCartFab();
-        if (document.getElementById('cartModal').classList.contains('show')) showCartModal();
+      });
     }
 
     function updateCartFab() {
@@ -1307,88 +1449,24 @@
       const count = Object.values(cart).reduce((s,i)=>s + (i.qty || 0), 0);
       fab.style.display = count > 0 ? 'flex' : 'none';
       document.getElementById('cartFabCount').textContent = count || '';
+
+      const preview = document.getElementById('cartPreview');
+      const items = Object.values(cart);
+      if (!items.length) {
+        preview.innerHTML = '<div class="cart-preview-title">Корзина пуста</div>';
+        return;
+      }
+      const total = items.reduce((s,i)=>s + (i.price||0) * (i.qty||0), 0);
+      preview.innerHTML = `
+        <div class="cart-preview-title">Корзина</div>
+        ${items.map(i => `<div class="cart-preview-item"><span>${esc(i.name)} x${i.qty}</span><span>${FMT.format((i.price||0)*i.qty)}</span></div>`).join('')}
+        <div class="cart-preview-total">Итого: ${FMT.format(total)}</div>
+      `;
     }
 
-    // --- DRAG & DROP ---
-    const cartFab = document.getElementById('cartFab');
-    let isDragging = false;
-    let hasMoved = false;
-    let startX, startY, initialLeft, initialTop;
-
-    cartFab.addEventListener('touchstart', (e) => {
-      isDragging = true;
-      hasMoved = false;
-      const touch = e.touches[0];
-      startX = touch.clientX;
-      startY = touch.clientY;
-      const rect = cartFab.getBoundingClientRect();
-      initialLeft = rect.left;
-      initialTop = rect.top;
-      cartFab.style.bottom = 'auto';
-      cartFab.style.right = 'auto';
-      cartFab.style.left = `${initialLeft}px`;
-      cartFab.style.top = `${initialTop}px`;
-    }, {passive: false});
-
-    cartFab.addEventListener('touchmove', (e) => {
-      if (!isDragging) return;
-      e.preventDefault();
-      const touch = e.touches[0];
-      const dx = touch.clientX - startX;
-      const dy = touch.clientY - startY;
-      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) hasMoved = true;
-      let newLeft = initialLeft + dx;
-      let newTop = initialTop + dy;
-      const maxLeft = window.innerWidth - cartFab.offsetWidth;
-      const maxTop = window.innerHeight - cartFab.offsetHeight;
-      cartFab.style.left = `${Math.max(0, Math.min(newLeft, maxLeft))}px`;
-      cartFab.style.top = `${Math.max(0, Math.min(newTop, maxTop))}px`;
-    }, {passive: false});
-
-    cartFab.addEventListener('touchend', () => {
-      isDragging = false;
-      if (!hasMoved) showCartModal();
-    });
-
-    cartFab.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      hasMoved = false;
-      startX = e.clientX;
-      startY = e.clientY;
-      const rect = cartFab.getBoundingClientRect();
-      initialLeft = rect.left;
-      initialTop = rect.top;
-      cartFab.style.bottom = 'auto';
-      cartFab.style.right = 'auto';
-      cartFab.style.left = `${initialLeft}px`;
-      cartFab.style.top = `${initialTop}px`;
-      cartFab.style.cursor = 'grabbing';
-    });
-
-    window.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      e.preventDefault();
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      if (Math.abs(dx) > 5 || Math.abs(dy) > 5) hasMoved = true;
-      let newLeft = initialLeft + dx;
-      let newTop = initialTop + dy;
-      const maxLeft = window.innerWidth - cartFab.offsetWidth;
-      const maxTop = window.innerHeight - cartFab.offsetHeight;
-      cartFab.style.left = `${Math.max(0, Math.min(newLeft, maxLeft))}px`;
-      cartFab.style.top = `${Math.max(0, Math.min(newTop, maxTop))}px`;
-    });
-
-    window.addEventListener('mouseup', () => {
-      if (isDragging) {
-        isDragging = false;
-        cartFab.style.cursor = 'pointer';
-        if (!hasMoved) showCartModal();
-      }
-    });
+    document.getElementById('cartFab').addEventListener('click', showCartModal);
 
     function showCartModal() {
-      // Сортировка по ID, чтобы блюда были рядом
       const items = Object.values(cart).sort((a,b) => a.id - b.id);
       const total = items.reduce((s,i)=>s + (i.price||0) * (i.qty||0), 0);
 
@@ -1398,25 +1476,16 @@
           <div class="modal-title">Корзина</div>
           ${!items.length ? '<p style="text-align:center;color:var(--text-muted);">Корзина пуста</p>' : `
             <ul class="cart-list">
-              ${items.map(i => {
-                  // Генерируем ключ для удаления конкретного варианта из корзины
-                  const itemKey = i.variant ? `${i.id}_${i.variant}` : i.id;
-                  const displayName = i.variant ? `${esc(i.name)}` : esc(i.name);
-                  const displayVariant = i.variant ? `+ ${esc(i.variant)}` : '';
-                  
-                  return `
+              ${items.map(i => `
                 <li>
-                  <div>
-                      <div class="cart-item-name">${displayName} <span style="font-weight:400">x${i.qty}</span></div>
-                      ${displayVariant ? `<div class="cart-item-garnish">${displayVariant}</div>` : ''}
-                  </div>
-                  <span>
-                    <button class="remove-btn" onclick="updateCartInternal('${itemKey}',-1)">−</button>
-                    <span style="margin:0 8px;">${FMT.format((i.price||0)*i.qty)}</span>
-                    <button class="add-btn" onclick="addToCartClick(${i.id})">+</button>
+                  <span>${esc(i.name)} x${i.qty}</span>
+                  <span style="display:flex;align-items:center;gap:8px;">
+                    <button class="remove-btn" onclick="removeFromCart('${i.id}')">−</button>
+                    <span style="margin:0 8px;min-width:80px;text-align:right;">${FMT.format((i.price||0)*i.qty)}</span>
+                    <button class="add-btn" onclick="duplicateCartItem('${i.id}')">+</button>
                   </span>
                 </li>
-              `}).join('')}
+              `).join('')}
             </ul>
             <div class="cart-total">Итого: ${FMT.format(total)}</div>
             <form id="orderForm" onsubmit="sendOrder(event)">
@@ -1457,9 +1526,108 @@
       document.getElementById('cartModal').classList.add('show');
     }
 
+    window.removeFromCart = function(cartKey) {
+      if (cart[cartKey]) {
+        cart[cartKey].qty = Math.max(0, cart[cartKey].qty - 1);
+        if (cart[cartKey].qty === 0) delete cart[cartKey];
+        save('cart', cart);
+        updateCartFab();
+        updateQuantityDisplays();
+        showCartModal();
+      }
+    };
+
+    window.duplicateCartItem = function(cartKey) {
+      if (cart[cartKey]) {
+        const item = cart[cartKey];
+        if (item.mainId && item.garnishId) {
+          addToCart(item.mainId, 1, item.garnishId);
+        } else if (item.mainId) {
+          const mainItem = menuData.find(i => i.id === item.mainId);
+          if (mainItem && mainItem.isHotDish) {
+            pendingHotDish = { item: mainItem, delta: 1 };
+            showGarnishModal();
+          } else {
+            addToCart(item.mainId, 1);
+          }
+        } else {
+          addToCart(parseInt(cartKey), 1);
+        }
+      }
+    };
+
     window.closeModal = function(id) {
       const el = document.getElementById(id);
       if (el) el.classList.remove('show');
+      if (id === 'garnishModal') {
+        pendingHotDish = null;
+      }
+    };
+
+    function showGarnishModal() {
+      if (!pendingHotDish || !garnishOptions.length) {
+        if (pendingHotDish) {
+          addToCart(pendingHotDish.item.id, pendingHotDish.delta);
+          pendingHotDish = null;
+        }
+        return;
+      }
+
+      let selectedGarnishId = null;
+
+      document.getElementById('garnishModal').innerHTML = `
+        <div class="modal garnish-modal-content">
+          <button class="modal-close" onclick="closeModal('garnishModal')">&times;</button>
+          <div class="garnish-title">Выберите гарнир</div>
+          <div class="garnish-subtitle">К блюду: ${esc(pendingHotDish.item.name)}</div>
+          <div class="garnish-list">
+            ${garnishOptions.map(g => `
+              <div class="garnish-option" data-garnish-id="${g.id}" onclick="selectGarnish(${g.id})">
+                <span class="garnish-option-name">${esc(g.name)}</span>
+                <span class="garnish-option-price">+${FMT.format(g.price)}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="garnish-actions">
+            <button class="btn-secondary" onclick="skipGarnish()">Без гарнира</button>
+            <button class="btn-confirm" id="confirmGarnishBtn" onclick="confirmGarnish()" disabled>Добавить</button>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('garnishModal').classList.add('show');
+    }
+
+    window.selectGarnish = function(garnishId) {
+      document.querySelectorAll('.garnish-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      
+      const selected = document.querySelector(`[data-garnish-id="${garnishId}"]`);
+      if (selected) {
+        selected.classList.add('selected');
+        document.getElementById('confirmGarnishBtn').disabled = false;
+        document.getElementById('confirmGarnishBtn').setAttribute('data-selected-garnish', garnishId);
+      }
+    };
+
+    window.confirmGarnish = function() {
+      const btn = document.getElementById('confirmGarnishBtn');
+      const garnishId = parseInt(btn.getAttribute('data-selected-garnish'));
+      
+      if (pendingHotDish && garnishId) {
+        addToCart(pendingHotDish.item.id, pendingHotDish.delta, garnishId);
+        closeModal('garnishModal');
+        pendingHotDish = null;
+      }
+    };
+
+    window.skipGarnish = function() {
+      if (pendingHotDish) {
+        addToCart(pendingHotDish.item.id, pendingHotDish.delta);
+        closeModal('garnishModal');
+        pendingHotDish = null;
+      }
     };
 
     window.showDeliveryInfo = function() {
@@ -1509,12 +1677,15 @@
               if (data.address.house_number) parts.push(data.address.house_number);
               if (data.address.suburb || data.address.neighbourhood) parts.push(data.address.suburb || data.address.neighbourhood);
               if (data.address.city || data.address.town) parts.push(data.address.city || data.address.town);
+              
               address = parts.length > 0 ? parts.join(', ') : data.display_name;
             } else {
               address = data.display_name || '';
             }
+            
             const coords = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
             const finalAddress = `${address} (${coords})`;
+            
             const addrEl = document.getElementById('address');
             if (addrEl) addrEl.value = finalAddress;
           } catch (error) {
@@ -1563,8 +1734,7 @@
       if (comment) text += `Комментарий: ${comment}\n`;
       text += `\nЗаказ:\n`;
       items.forEach(i => {
-        const variantStr = i.variant ? ` (+ ${i.variant})` : '';
-        text += `• ${i.name}${variantStr} x${i.qty} — ${FMT.format((i.price||0)*i.qty)}\n`;
+        text += `• ${i.name} x${i.qty} — ${FMT.format((i.price||0)*i.qty)}\n`;
       });
       text += `\nИтого: ${FMT.format(total)}\n`;
 
@@ -1575,13 +1745,7 @@
         id: orderCounter,
         ts: new Date().toISOString(),
         name, phone, payment, address, comment,
-        items: items.map(i => ({ 
-            id: i.id, 
-            name: i.name, 
-            variant: i.variant, 
-            price: i.price, 
-            qty: i.qty 
-        })),
+        items: items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
         total
       };
       orderHistory = orderHistory || [];
@@ -1618,10 +1782,7 @@
               <div class="history-item">
                 <div class="history-header"><span>Заказ #${o.id}</span><span>${(new Date(o.ts)).toLocaleString()}</span></div>
                 <div class="history-products">
-                  ${o.items.map(it => {
-                      const v = it.variant ? ` + ${esc(it.variant)}` : '';
-                      return `${esc(it.name)}${v} x${it.qty} (${FMT.format(it.price*it.qty)})`;
-                  }).join('<br>')}
+                  ${o.items.map(it => `${esc(it.name)} x${it.qty} (${FMT.format(it.price*it.qty)})`).join('<br>')}
                 </div>
                 <div class="history-footer">
                   <strong>${FMT.format(o.total)}</strong>
@@ -1639,20 +1800,7 @@
       const order = (orderHistory || []).find(o => o.id === orderId);
       if (!order) return alert('Заказ не найден');
       cart = {};
-      
-      // Восстанавливаем корзину, учитывая варианты
-      order.items.forEach(i => {
-          const key = i.variant ? `${i.id}_${i.variant}` : i.id;
-          cart[key] = { 
-              id: i.id, 
-              name: i.name, 
-              variant: i.variant, 
-              price: i.price, 
-              qty: i.qty, 
-              available: true 
-          };
-      });
-      
+      order.items.forEach(i => cart[i.id] = { id: i.id, name: i.name, price: i.price, qty: i.qty, available: true });
       save('cart', cart);
       closeModal('historyModal');
       renderMenu();
@@ -1679,7 +1827,10 @@
         const el = document.getElementById(id);
         if (!el) return;
         if (!el.classList.contains('show')) return;
-        if (e.target === el) el.classList.remove('show');
+        if (e.target === el) {
+          el.classList.remove('show');
+          if (id === 'garnishModal') pendingHotDish = null;
+        }
       });
     });
 
