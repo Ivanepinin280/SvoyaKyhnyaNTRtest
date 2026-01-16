@@ -34,7 +34,7 @@
       color:var(--text);
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
-      overflow-x: hidden; /* Чтобы перетаскивание не расширяло экран */
+      overflow-x: hidden;
     }
 
     .header {
@@ -158,28 +158,26 @@
       border-color:transparent;
     }
 
-    /* --- Новый стиль для отсутствующих товаров --- */
     .product.unavailable {
-      opacity: 0.85; /* Легкая прозрачность, но цвета сохранены */
+      opacity: 0.85;
     }
     
     .product.unavailable .add-btn,
     .product.unavailable .remove-btn,
     .product.unavailable .controls {
-      display: none; /* Скрываем кнопки, раз купить нельзя */
+      display: none;
     }
 
     .product.unavailable .product-img {
-      filter: blur(1px); /* Очень легкое размытие */
+      filter: blur(1px);
     }
     
-    /* Бейдж "Нет в наличии" */
     .prod-unavailable {
       position:absolute;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.2); /* Стекло */
+      background: rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(8px);
       border: 1px solid rgba(255,255,255,0.4);
       color: #333;
@@ -203,7 +201,6 @@
       background:linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%);
     }
 
-    /* --- Стили для Блюда Дня --- */
     .dish-badge {
       position: absolute;
       top: 0;
@@ -369,10 +366,8 @@
       color:var(--text);
     }
 
-    /* --- Плавающая перетаскиваемая корзина --- */
     .cart-fab {
       position:fixed;
-      /* Начальное положение задается в JS для перетаскивания, но оставим дефолт */
       bottom: 24px;
       right: 24px;
       background: linear-gradient(135deg, var(--primary) 0%, #000000 100%);
@@ -381,15 +376,13 @@
       height:72px;
       border-radius:50%;
       cursor:pointer;
-      z-index:900; /* Очень высокий Z-index, чтобы быть поверх всего */
+      z-index:900;
       display:flex;
       align-items:center;
       justify-content:center;
       box-shadow:0 10px 30px rgba(0,0,0,0.3);
-      transition: transform 0.1s; /* Быстрая анимация для клика, позиция через top/left */
+      transition: transform 0.1s;
       border: 2px solid rgba(255,255,255,0.1);
-      
-      /* Важно для перетаскивания: запрет на выделение и стандартные действия тача */
       user-select: none;
       touch-action: none; 
     }
@@ -402,7 +395,7 @@
       width:34px;
       height:34px;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-      pointer-events: none; /* Чтобы клик проходил сквозь иконку на кнопку */
+      pointer-events: none;
     }
     
     .cart-fab-count {
@@ -424,11 +417,6 @@
       pointer-events:none;
     }
 
-    .cart-preview {
-      display:none;
-      /* Превью скрыто при перетаскивании для удобства */
-    }
-
     .modal-bg {
       display:none;
       position:fixed;
@@ -444,6 +432,37 @@
     
     .modal-bg.show {
       display:flex;
+    }
+    
+    /* Стили для модалки выбора гарнира */
+    .garnish-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .garnish-btn {
+      background: var(--bg);
+      border: 2px solid var(--border);
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .garnish-btn:hover {
+      border-color: var(--accent);
+      background: white;
+      transform: translateX(4px);
     }
     
     .modal {
@@ -516,6 +535,18 @@
       padding:16px;
       background:var(--bg);
       border-radius:var(--radius-sm);
+    }
+
+    .cart-item-name {
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .cart-item-garnish {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 2px;
+      font-weight: 500;
     }
     
     .cart-total {
@@ -887,11 +918,9 @@
         font-size:22px;
       }
       
-      /* Адаптив для кнопки корзины */
       .cart-fab {
         width:64px;
         height:64px;
-        /* Позиция управляется JS, но дефолт для CSS */
         bottom: 24px;
         right: 24px;
       }
@@ -945,12 +974,12 @@
       <path d="M16 10a4 4 0 0 1-8 0"></path>
     </svg>
     <span id="cartFabCount" class="cart-fab-count"></span>
-    <div class="cart-preview" id="cartPreview"></div>
   </button>
 
   <div id="cartModal" class="modal-bg"></div>
   <div id="deliveryModal" class="modal-bg"></div>
   <div id="historyModal" class="modal-bg"></div>
+  <div id="garnishModal" class="modal-bg"></div>
   <div id="imageModal" class="image-modal" onclick="closeImageModal()">
     <img id="imageModalImg" src="" alt="">
   </div>
@@ -964,7 +993,6 @@
     let menuData = [];
     let cart = JSON.parse(localStorage.getItem('cart') || '{}');
     let favorites = (JSON.parse(localStorage.getItem('favorites') || '[]') || []).map(n => Number(n)).filter(n => !isNaN(n));
-    // История заказов уже хранится локально
     let orderHistory = JSON.parse(localStorage.getItem('orderHistory') || '[]');
     let savedUserData = JSON.parse(localStorage.getItem('userData') || '{}');
     let orderCounter = parseInt(localStorage.getItem('orderCounter') || '0', 10) || 0;
@@ -1030,12 +1058,24 @@
             h === 'dish_of_day' || h === 'dish_day' || h === 'блюдо дня'
           );
 
+          // Поиск колонки гарниров
+          const garnishIndex = headers.findIndex(h => 
+            h === 'garnish' || h === 'гарнир' || h === 'options'
+          );
+
           menuData = dataRows.map((row, idx) => {
             const obj = {};
             headers.forEach((h, i) => obj[h] = row[i] !== undefined ? row[i] : '');
             
             const availableValue = obj.available || obj['доступно'] || obj.availability || obj['в наличии'] || (availableIndex >= 0 ? row[availableIndex] : undefined);
             const dishDayValue = obj['dish_of_day'] || obj['dish_day'] || obj['блюдо дня'] || (dishDayIndex >= 0 ? row[dishDayIndex] : undefined);
+            
+            // Обработка гарниров (строка через запятую)
+            let garnishes = [];
+            const garnishRaw = obj['garnish'] || obj['гарнир'] || obj['options'] || (garnishIndex >= 0 ? row[garnishIndex] : '');
+            if(garnishRaw && String(garnishRaw).trim().length > 0) {
+                garnishes = String(garnishRaw).split(',').map(s => s.trim()).filter(s => s);
+            }
 
             return {
               id: idx + 1,
@@ -1044,10 +1084,12 @@
               img: obj.img || obj.image || '',
               price: toNum(obj.price || obj.cost || obj['цена']),
               available: parseAvailable(availableValue),
-              dishDay: parseBoolean(dishDayValue)
+              dishDay: parseBoolean(dishDayValue),
+              garnishes: garnishes
             };
           });
         } else if (json?.menu) {
+          // Fallback logic
           menuData = json.menu.map((item, idx) => ({
             id: idx + 1,
             name: item.name || `Блюдо ${idx+1}`,
@@ -1055,7 +1097,8 @@
             img: item.img || '',
             price: toNum(item.price),
             available: parseAvailable(item.available),
-            dishDay: parseBoolean(item.dish_of_day)
+            dishDay: parseBoolean(item.dish_of_day),
+            garnishes: item.garnishes || []
           }));
         } else {
           throw new Error('Unexpected sheet response');
@@ -1067,14 +1110,15 @@
           if (!res2.ok) throw new Error('Fallback failed: ' + res2.status);
           const j2 = await res2.json();
           if (j2?.menu) {
-            menuData = j2.menu.map((item, idx) => ({
+             menuData = j2.menu.map((item, idx) => ({
               id: idx + 1,
               name: item.name || `Блюдо ${idx+1}`,
               description: item.description || '',
               img: item.img || '',
               price: toNum(item.price),
               available: parseAvailable(item.available),
-              dishDay: parseBoolean(item.dish_of_day)
+              dishDay: parseBoolean(item.dish_of_day),
+              garnishes: item.garnishes || []
             }));
           } else {
             throw new Error('Fallback returned no menu');
@@ -1085,6 +1129,15 @@
       }
       document.getElementById('loader').style.display = 'none';
       renderMenu();
+    }
+
+    // Подсчет общего количества конкретного ID во всех вариантах
+    function getItemTotalQty(id) {
+        let total = 0;
+        Object.values(cart).forEach(item => {
+            if (item.id === id) total += (item.qty || 0);
+        });
+        return total;
     }
 
     function renderMenu() {
@@ -1104,11 +1157,11 @@
         const isAvailable = item.available;
         const isFav = favorites.includes(item.id);
         const imgSrc = item.img ? esc(item.img) : 'https://via.placeholder.com/400x300/f5f5f5/999999?text=Фото';
-
-        // Баннер "Блюдо дня"
         const dishDayBadge = (item.dishDay && isAvailable) 
           ? `<div class="dish-badge"><span>★</span>БЛЮДО<br>ДНЯ</div>` 
           : '';
+          
+        const qty = getItemTotalQty(item.id);
 
         return `
         <div class="product ${!isAvailable ? 'unavailable' : ''}" data-id="${item.id}">
@@ -1126,9 +1179,9 @@
             <div class="product-footer">
               <div class="product-price">${FMT.format(item.price)}</div>
               <div class="controls">
-                <button class="remove-btn" onclick="updateCart(${item.id},-1)">−</button>
-                <span id="qty-${item.id}">${cart[item.id]?.qty||0}</span>
-                <button class="add-btn" onclick="updateCart(${item.id},1)">+</button>
+                <button class="remove-btn" onclick="removeLastVariant(${item.id})">−</button>
+                <span id="qty-${item.id}">${qty}</span>
+                <button class="add-btn" onclick="addToCartClick(${item.id})">+</button>
               </div>
             </div>
           </div>
@@ -1156,20 +1209,99 @@
       renderMenu();
     };
 
-    window.updateCart = function(id, delta) {
-      const item = menuData.find(i => i.id === id);
-      if (!item) return;
-      if (!item.available) return;
-      
-      if (!cart[id]) cart[id] = { ...item, qty: 0 };
-      cart[id].qty = Math.max(0, (cart[id].qty || 0) + delta);
-      if (cart[id].qty === 0) delete cart[id];
-      const qtyEl = document.getElementById(`qty-${id}`);
-      if (qtyEl) qtyEl.textContent = cart[id]?.qty || 0;
-      save('cart', cart);
-      updateCartFab();
-      if (document.getElementById('cartModal').classList.contains('show')) showCartModal();
+    // Обработчик нажатия на ПЛЮС
+    window.addToCartClick = function(id) {
+        const item = menuData.find(i => i.id === id);
+        if (!item || !item.available) return;
+
+        // Если есть варианты гарнира, показываем модалку
+        if (item.garnishes && item.garnishes.length > 0) {
+            showGarnishModal(item);
+        } else {
+            // Если гарниров нет, добавляем как обычно
+            updateCart(id, 1);
+        }
     };
+
+    // Модалка выбора гарнира
+    function showGarnishModal(item) {
+        const modal = document.getElementById('garnishModal');
+        modal.innerHTML = `
+            <div class="modal">
+                <button class="modal-close" onclick="closeModal('garnishModal')">&times;</button>
+                <div class="modal-title">Выберите гарнир</div>
+                <div style="margin-bottom:16px;color:var(--text-light);">Для блюда: <strong>${esc(item.name)}</strong></div>
+                <div class="garnish-grid">
+                    ${item.garnishes.map(g => `
+                        <button class="garnish-btn" onclick="selectGarnish(${item.id}, '${esc(g)}')">
+                            <span>${esc(g)}</span>
+                            <span>+</span>
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        modal.classList.add('show');
+    }
+
+    window.selectGarnish = function(id, garnishName) {
+        updateCart(id, 1, garnishName);
+        closeModal('garnishModal');
+    };
+
+    // Удаление "последнего добавленного" варианта этого блюда (упрощенная логика для кнопки минус на карточке)
+    window.removeLastVariant = function(id) {
+        // Находим любой ключ в корзине, который относится к этому ID
+        const keys = Object.keys(cart).filter(k => cart[k].id === id);
+        if (keys.length > 0) {
+            // Берем последний найденный (или можно сортировать)
+            const lastKey = keys[keys.length - 1];
+            const item = cart[lastKey];
+            updateCartInternal(lastKey, -1);
+        }
+    };
+
+    // Основная функция обновления корзины
+    window.updateCart = function(id, delta, variantName = null) {
+        const item = menuData.find(i => i.id === id);
+        if (!item) return;
+        if (!item.available) return;
+
+        // Формируем уникальный ключ: ID + Вариант
+        let cartKey = id.toString();
+        if (variantName) {
+            cartKey = `${id}_${variantName}`;
+        }
+        
+        updateCartInternal(cartKey, delta, item, variantName);
+    };
+
+    function updateCartInternal(cartKey, delta, itemData = null, variantName = null) {
+        if (!cart[cartKey]) {
+            if (delta <= 0) return; // Нельзя убавить то, чего нет
+            cart[cartKey] = { 
+                ...itemData, 
+                qty: 0, 
+                variant: variantName,
+                // Важно сохранить ID отдельно
+                id: itemData.id 
+            };
+        }
+
+        cart[cartKey].qty = Math.max(0, (cart[cartKey].qty || 0) + delta);
+        if (cart[cartKey].qty === 0) delete cart[cartKey];
+        
+        save('cart', cart);
+        
+        // Обновляем счетчик на карточке товара (суммируем все варианты этого ID)
+        // Для этого нам нужен исходный ID. Если мы удаляли, itemData может быть null, берем из ключа
+        let originalId = itemData ? itemData.id : parseInt(cartKey.split('_')[0]);
+        const qtyEl = document.getElementById(`qty-${originalId}`);
+        if (qtyEl) qtyEl.textContent = getItemTotalQty(originalId);
+
+        updateCartFab();
+        if (document.getElementById('cartModal').classList.contains('show')) showCartModal();
+    }
 
     function updateCartFab() {
       const fab = document.getElementById('cartFab');
@@ -1178,13 +1310,12 @@
       document.getElementById('cartFabCount').textContent = count || '';
     }
 
-    // --- ЛОГИКА ПЕРЕТАСКИВАНИЯ КОРЗИНЫ (Drag & Drop) ---
+    // --- DRAG & DROP ---
     const cartFab = document.getElementById('cartFab');
     let isDragging = false;
-    let hasMoved = false; // Чтобы отличать клик от драга
+    let hasMoved = false;
     let startX, startY, initialLeft, initialTop;
 
-    // Поддержка Touch (мобильные)
     cartFab.addEventListener('touchstart', (e) => {
       isDragging = true;
       hasMoved = false;
@@ -1194,7 +1325,6 @@
       const rect = cartFab.getBoundingClientRect();
       initialLeft = rect.left;
       initialTop = rect.top;
-      // Убираем позиционирование bottom/right, переходим на left/top
       cartFab.style.bottom = 'auto';
       cartFab.style.right = 'auto';
       cartFab.style.left = `${initialLeft}px`;
@@ -1203,24 +1333,17 @@
 
     cartFab.addEventListener('touchmove', (e) => {
       if (!isDragging) return;
-      e.preventDefault(); // Запрет скролла страницы при перетаскивании кнопки
+      e.preventDefault();
       const touch = e.touches[0];
       const dx = touch.clientX - startX;
       const dy = touch.clientY - startY;
-      
       if (Math.abs(dx) > 5 || Math.abs(dy) > 5) hasMoved = true;
-
-      // Ограничение границами экрана
       let newLeft = initialLeft + dx;
       let newTop = initialTop + dy;
       const maxLeft = window.innerWidth - cartFab.offsetWidth;
       const maxTop = window.innerHeight - cartFab.offsetHeight;
-
-      newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-      newTop = Math.max(0, Math.min(newTop, maxTop));
-
-      cartFab.style.left = `${newLeft}px`;
-      cartFab.style.top = `${newTop}px`;
+      cartFab.style.left = `${Math.max(0, Math.min(newLeft, maxLeft))}px`;
+      cartFab.style.top = `${Math.max(0, Math.min(newTop, maxTop))}px`;
     }, {passive: false});
 
     cartFab.addEventListener('touchend', () => {
@@ -1228,7 +1351,6 @@
       if (!hasMoved) showCartModal();
     });
 
-    // Поддержка Mouse (десктоп)
     cartFab.addEventListener('mousedown', (e) => {
       isDragging = true;
       hasMoved = false;
@@ -1249,19 +1371,13 @@
       e.preventDefault();
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
-
       if (Math.abs(dx) > 5 || Math.abs(dy) > 5) hasMoved = true;
-
       let newLeft = initialLeft + dx;
       let newTop = initialTop + dy;
       const maxLeft = window.innerWidth - cartFab.offsetWidth;
       const maxTop = window.innerHeight - cartFab.offsetHeight;
-
-      newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-      newTop = Math.max(0, Math.min(newTop, maxTop));
-
-      cartFab.style.left = `${newLeft}px`;
-      cartFab.style.top = `${newTop}px`;
+      cartFab.style.left = `${Math.max(0, Math.min(newLeft, maxLeft))}px`;
+      cartFab.style.top = `${Math.max(0, Math.min(newTop, maxTop))}px`;
     });
 
     window.addEventListener('mouseup', () => {
@@ -1271,9 +1387,9 @@
         if (!hasMoved) showCartModal();
       }
     });
-    // --- КОНЕЦ ЛОГИКИ ПЕРЕТАСКИВАНИЯ ---
 
     function showCartModal() {
+      // Сортировка по ID, чтобы блюда были рядом
       const items = Object.values(cart).sort((a,b) => a.id - b.id);
       const total = items.reduce((s,i)=>s + (i.price||0) * (i.qty||0), 0);
 
@@ -1283,16 +1399,25 @@
           <div class="modal-title">Корзина</div>
           ${!items.length ? '<p style="text-align:center;color:var(--text-muted);">Корзина пуста</p>' : `
             <ul class="cart-list">
-              ${items.map(i => `
+              ${items.map(i => {
+                  // Генерируем ключ для удаления конкретного варианта из корзины
+                  const itemKey = i.variant ? `${i.id}_${i.variant}` : i.id;
+                  const displayName = i.variant ? `${esc(i.name)}` : esc(i.name);
+                  const displayVariant = i.variant ? `+ ${esc(i.variant)}` : '';
+                  
+                  return `
                 <li>
-                  <span>${esc(i.name)} x${i.qty}</span>
+                  <div>
+                      <div class="cart-item-name">${displayName} <span style="font-weight:400">x${i.qty}</span></div>
+                      ${displayVariant ? `<div class="cart-item-garnish">${displayVariant}</div>` : ''}
+                  </div>
                   <span>
-                    <button class="remove-btn" onclick="updateCart(${i.id},-1)">−</button>
+                    <button class="remove-btn" onclick="updateCartInternal('${itemKey}',-1)">−</button>
                     <span style="margin:0 8px;">${FMT.format((i.price||0)*i.qty)}</span>
-                    <button class="add-btn" onclick="updateCart(${i.id},1)">+</button>
+                    <button class="add-btn" onclick="addToCartClick(${i.id})">+</button>
                   </span>
                 </li>
-              `).join('')}
+              `}).join('')}
             </ul>
             <div class="cart-total">Итого: ${FMT.format(total)}</div>
             <form id="orderForm" onsubmit="sendOrder(event)">
@@ -1385,15 +1510,12 @@
               if (data.address.house_number) parts.push(data.address.house_number);
               if (data.address.suburb || data.address.neighbourhood) parts.push(data.address.suburb || data.address.neighbourhood);
               if (data.address.city || data.address.town) parts.push(data.address.city || data.address.town);
-              
               address = parts.length > 0 ? parts.join(', ') : data.display_name;
             } else {
               address = data.display_name || '';
             }
-            
             const coords = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
             const finalAddress = `${address} (${coords})`;
-            
             const addrEl = document.getElementById('address');
             if (addrEl) addrEl.value = finalAddress;
           } catch (error) {
@@ -1442,7 +1564,8 @@
       if (comment) text += `Комментарий: ${comment}\n`;
       text += `\nЗаказ:\n`;
       items.forEach(i => {
-        text += `• ${i.name} x${i.qty} — ${FMT.format((i.price||0)*i.qty)}\n`;
+        const variantStr = i.variant ? ` (+ ${i.variant})` : '';
+        text += `• ${i.name}${variantStr} x${i.qty} — ${FMT.format((i.price||0)*i.qty)}\n`;
       });
       text += `\nИтого: ${FMT.format(total)}\n`;
 
@@ -1453,7 +1576,13 @@
         id: orderCounter,
         ts: new Date().toISOString(),
         name, phone, payment, address, comment,
-        items: items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+        items: items.map(i => ({ 
+            id: i.id, 
+            name: i.name, 
+            variant: i.variant, 
+            price: i.price, 
+            qty: i.qty 
+        })),
         total
       };
       orderHistory = orderHistory || [];
@@ -1490,7 +1619,10 @@
               <div class="history-item">
                 <div class="history-header"><span>Заказ #${o.id}</span><span>${(new Date(o.ts)).toLocaleString()}</span></div>
                 <div class="history-products">
-                  ${o.items.map(it => `${esc(it.name)} x${it.qty} (${FMT.format(it.price*it.qty)})`).join('<br>')}
+                  ${o.items.map(it => {
+                      const v = it.variant ? ` + ${esc(it.variant)}` : '';
+                      return `${esc(it.name)}${v} x${it.qty} (${FMT.format(it.price*it.qty)})`;
+                  }).join('<br>')}
                 </div>
                 <div class="history-footer">
                   <strong>${FMT.format(o.total)}</strong>
@@ -1508,7 +1640,20 @@
       const order = (orderHistory || []).find(o => o.id === orderId);
       if (!order) return alert('Заказ не найден');
       cart = {};
-      order.items.forEach(i => cart[i.id] = { id: i.id, name: i.name, price: i.price, qty: i.qty, available: true });
+      
+      // Восстанавливаем корзину, учитывая варианты
+      order.items.forEach(i => {
+          const key = i.variant ? `${i.id}_${i.variant}` : i.id;
+          cart[key] = { 
+              id: i.id, 
+              name: i.name, 
+              variant: i.variant, 
+              price: i.price, 
+              qty: i.qty, 
+              available: true 
+          };
+      });
+      
       save('cart', cart);
       closeModal('historyModal');
       renderMenu();
@@ -1530,7 +1675,7 @@
     };
 
     document.addEventListener('click', function(e){
-      const modals = ['cartModal','deliveryModal','historyModal'];
+      const modals = ['cartModal','deliveryModal','historyModal','garnishModal'];
       modals.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
