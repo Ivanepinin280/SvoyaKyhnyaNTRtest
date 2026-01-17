@@ -1097,6 +1097,7 @@
       border-top-color:var(--accent);
       border-radius:50%;
       animation:spin 1s linear infinite;
+      display:none;
     }
     
     @keyframes spin {
@@ -1108,19 +1109,260 @@
     .loader-overlay {
       position:fixed;
       inset:0;
-      background:rgba(255,255,255,0.98);
+      background:linear-gradient(135deg, #fff5f0 0%, #ffe8dc 100%);
       z-index:999;
       display:flex;
       align-items:center;
       justify-content:center;
       flex-direction:column;
+      gap:40px;
     }
-    
+
+    .cooking-scene {
+      position:relative;
+      width:280px;
+      height:280px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .pan {
+      position:absolute;
+      width:200px;
+      height:80px;
+      background:linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+      border-radius:0 0 100px 100px;
+      bottom:40px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.3),
+                 inset 0 -4px 8px rgba(255,255,255,0.1);
+      animation:panFloat 3s ease-in-out infinite;
+    }
+
+    .pan::before {
+      content:'';
+      position:absolute;
+      left:-60px;
+      top:50%;
+      transform:translateY(-50%);
+      width:80px;
+      height:12px;
+      background:linear-gradient(90deg, #3a3a3a 0%, #2a2a2a 100%);
+      border-radius:20px;
+      box-shadow:0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .pan::after {
+      content:'';
+      position:absolute;
+      inset:8px;
+      background:linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);
+      border-radius:0 0 90px 90px;
+    }
+
+    @keyframes panFloat {
+      0%, 100% { transform:translateY(0); }
+      50% { transform:translateY(-5px); }
+    }
+
+    .fire {
+      position:absolute;
+      bottom:0;
+      left:50%;
+      transform:translateX(-50%);
+      width:140px;
+      height:40px;
+      display:flex;
+      justify-content:center;
+      gap:8px;
+    }
+
+    .flame {
+      width:20px;
+      height:30px;
+      background:linear-gradient(to top, #ff6b35 0%, #ffaa00 50%, #ffdd00 100%);
+      border-radius:50% 50% 0 0;
+      animation:flicker 0.5s ease-in-out infinite alternate;
+      filter:blur(2px);
+      opacity:0.9;
+    }
+
+    .flame:nth-child(1) { animation-delay:0s; height:25px; }
+    .flame:nth-child(2) { animation-delay:0.1s; height:32px; }
+    .flame:nth-child(3) { animation-delay:0.2s; height:28px; }
+
+    @keyframes flicker {
+      0% { transform:scaleY(1) scaleX(1); opacity:0.9; }
+      100% { transform:scaleY(1.3) scaleX(0.9); opacity:1; }
+    }
+
+    .vegetable {
+      position:absolute;
+      border-radius:50%;
+      animation:cookVegetable 4s ease-in-out infinite;
+    }
+
+    .tomato {
+      width:40px;
+      height:40px;
+      background:radial-gradient(circle at 30% 30%, #ff6b6b, #d63031);
+      top:30%;
+      left:25%;
+      box-shadow:inset -4px -4px 8px rgba(0,0,0,0.2),
+                 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .tomato::before {
+      content:'';
+      position:absolute;
+      top:-8px;
+      left:50%;
+      transform:translateX(-50%);
+      width:0;
+      height:0;
+      border-left:8px solid transparent;
+      border-right:8px solid transparent;
+      border-bottom:12px solid #27ae60;
+    }
+
+    .carrot {
+      width:35px;
+      height:35px;
+      background:radial-gradient(circle at 30% 30%, #ff9f43, #ee5a24);
+      top:35%;
+      right:25%;
+      box-shadow:inset -4px -4px 8px rgba(0,0,0,0.2),
+                 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .pepper {
+      width:38px;
+      height:38px;
+      background:radial-gradient(circle at 30% 30%, #26de81, #20bf6b);
+      bottom:50%;
+      left:35%;
+      box-shadow:inset -4px -4px 8px rgba(0,0,0,0.2),
+                 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    @keyframes cookVegetable {
+      0%, 100% { transform:translate(0, 0) rotate(0deg); }
+      25% { transform:translate(10px, -5px) rotate(90deg); }
+      50% { transform:translate(-5px, 5px) rotate(180deg); }
+      75% { transform:translate(5px, -10px) rotate(270deg); }
+    }
+
+    .steam {
+      position:absolute;
+      top:20%;
+      left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      gap:15px;
+    }
+
+    .steam-puff {
+      width:30px;
+      height:30px;
+      background:radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 70%);
+      border-radius:50%;
+      animation:steamRise 2s ease-out infinite;
+    }
+
+    .steam-puff:nth-child(1) { animation-delay:0s; }
+    .steam-puff:nth-child(2) { animation-delay:0.4s; }
+    .steam-puff:nth-child(3) { animation-delay:0.8s; }
+
+    @keyframes steamRise {
+      0% {
+        transform:translateY(0) scale(0.8);
+        opacity:0;
+      }
+      50% {
+        opacity:0.8;
+      }
+      100% {
+        transform:translateY(-60px) scale(1.2);
+        opacity:0;
+      }
+    }
+
+    .progress-container {
+      width:280px;
+      height:8px;
+      background:rgba(255,255,255,0.3);
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow:inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .progress-bar {
+      height:100%;
+      background:linear-gradient(90deg, var(--accent) 0%, var(--gold) 100%);
+      border-radius:20px;
+      width:0%;
+      animation:fillProgress 2.5s ease-out forwards;
+      box-shadow:0 0 10px rgba(255,107,53,0.5);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .progress-bar::after {
+      content:'';
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.4) 50%, 
+        transparent 100%);
+      animation:progressShine 1.5s ease-in-out infinite;
+    }
+
+    @keyframes fillProgress {
+      0% { width:0%; }
+      100% { width:100%; }
+    }
+
+    @keyframes progressShine {
+      0% { transform:translateX(-100%); }
+      100% { transform:translateX(200%); }
+    }
+
     .loader-text {
-      margin-top:20px;
       color:var(--primary);
-      font-weight:600;
-      font-size:16px;
+      font-weight:700;
+      font-size:18px;
+      letter-spacing:0.5px;
+      animation:textPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes textPulse {
+      0%, 100% { opacity:1; }
+      50% { opacity:0.6; }
+    }
+
+    .percentage-text {
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%, -50%);
+      color:var(--primary);
+      font-weight:800;
+      font-size:48px;
+      opacity:0;
+      animation:showPercentage 0.5s 2s ease-out forwards;
+      text-shadow:0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    @keyframes showPercentage {
+      0% {
+        opacity:0;
+        transform:translate(-50%, -50%) scale(0.5);
+      }
+      100% {
+        opacity:1;
+        transform:translate(-50%, -50%) scale(1);
+      }
     }
 
     .processing {
@@ -1398,8 +1640,27 @@
   <div class="menu" id="menu"></div>
 
   <div id="loader" class="loader-overlay">
-    <div class="spinner"></div>
-    <div class="loader-text">Загрузка меню...</div>
+    <div class="cooking-scene">
+      <div class="steam">
+        <div class="steam-puff"></div>
+        <div class="steam-puff"></div>
+        <div class="steam-puff"></div>
+      </div>
+      <div class="vegetable tomato"></div>
+      <div class="vegetable carrot"></div>
+      <div class="vegetable pepper"></div>
+      <div class="pan"></div>
+      <div class="fire">
+        <div class="flame"></div>
+        <div class="flame"></div>
+        <div class="flame"></div>
+      </div>
+      <div class="percentage-text">100%</div>
+    </div>
+    <div class="progress-container">
+      <div class="progress-bar"></div>
+    </div>
+    <div class="loader-text">Готовим меню...</div>
   </div>
 
   <div id="debugPanel" class="debug-panel"></div>
@@ -1830,7 +2091,7 @@
     }
 
     document.getElementById('cartFab').addEventListener('click', function(e) {
-      // Обработка клика теперь в dragEnd функции
+      // Клик обрабатывается в handleClick функции драггера
     });
 
     function showCartModal() {
@@ -2321,11 +2582,21 @@
       let isDragging = false;
       let hasMoved = false;
       let currentX, currentY, initialX, initialY;
+      let startTime = 0;
 
       fab.addEventListener('mousedown', dragStart);
       fab.addEventListener('touchstart', dragStart, { passive: false });
+      fab.addEventListener('click', handleClick);
+
+      function handleClick(e) {
+        if (!hasMoved && (Date.now() - startTime) < 200) {
+          showCartModal();
+        }
+      }
 
       function dragStart(e) {
+        e.stopPropagation();
+        startTime = Date.now();
         const touch = e.type === 'touchstart' ? e.touches[0] : e;
         initialX = touch.clientX;
         initialY = touch.clientY;
@@ -2348,11 +2619,15 @@
         if (!isDragging) return;
         
         e.preventDefault();
-        hasMoved = true;
+        e.stopPropagation();
 
         const touch = e.type === 'touchmove' ? e.touches[0] : e;
         const deltaX = touch.clientX - initialX;
         const deltaY = touch.clientY - initialY;
+
+        if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
+          hasMoved = true;
+        }
 
         let newX = currentX + deltaX;
         let newY = currentY + deltaY;
@@ -2372,6 +2647,7 @@
       function dragEnd(e) {
         if (!isDragging) return;
 
+        e.stopPropagation();
         isDragging = false;
         fab.classList.remove('dragging');
 
@@ -2379,10 +2655,6 @@
         document.removeEventListener('touchmove', drag);
         document.removeEventListener('mouseup', dragEnd);
         document.removeEventListener('touchend', dragEnd);
-
-        if (!hasMoved) {
-          showCartModal();
-        }
       }
     })();
 
