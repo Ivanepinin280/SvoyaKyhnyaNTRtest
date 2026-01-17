@@ -702,274 +702,12 @@
       width:100%;
       font-family:'Inter', sans-serif;
       transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position:relative;
-      overflow:hidden;
-      min-height:56px;
     }
     
-    .btn-primary:hover:not(:disabled) {
+    .btn-primary:hover {
       background:var(--accent-hover);
       transform:translateY(-2px);
       box-shadow:0 8px 24px rgba(255,107,53,0.3);
-    }
-
-    .btn-primary:disabled {
-      opacity:1;
-      cursor:not-allowed;
-      transform:none;
-    }
-
-    .btn-primary .btn-text {
-      display:inline-block;
-      transition:all 0.3s;
-    }
-
-    .btn-primary.loading .btn-text {
-      opacity:0;
-      transform:translateY(-10px);
-    }
-
-    .btn-primary .btn-loader {
-      position:absolute;
-      top:50%;
-      left:50%;
-      transform:translate(-50%, -50%);
-      opacity:0;
-      transition:opacity 0.3s;
-      pointer-events:none;
-    }
-
-    .btn-primary.loading .btn-loader {
-      opacity:1;
-    }
-
-    .btn-loader {
-      display:flex;
-      gap:6px;
-      align-items:center;
-    }
-
-    .btn-loader-dot {
-      width:8px;
-      height:8px;
-      background:white;
-      border-radius:50%;
-      animation:dotPulse 1.4s infinite ease-in-out;
-    }
-
-    .btn-loader-dot:nth-child(1) {
-      animation-delay:0s;
-    }
-
-    .btn-loader-dot:nth-child(2) {
-      animation-delay:0.2s;
-    }
-
-    .btn-loader-dot:nth-child(3) {
-      animation-delay:0.4s;
-    }
-
-    @keyframes dotPulse {
-      0%, 80%, 100% {
-        transform:scale(0.8);
-        opacity:0.5;
-      }
-      40% {
-        transform:scale(1.2);
-        opacity:1;
-      }
-    }
-
-    .btn-loader-text {
-      color:white;
-      font-size:14px;
-      font-weight:600;
-      margin-left:8px;
-      letter-spacing:0.5px;
-    }
-
-    .order-success-animation {
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.85);
-      backdrop-filter:blur(10px);
-      -webkit-backdrop-filter:blur(10px);
-      z-index:999;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      flex-direction:column;
-      gap:24px;
-      animation:fadeIn 0.3s;
-    }
-
-    .order-success-animation.show {
-      display:flex;
-    }
-
-    @keyframes fadeIn {
-      from { opacity:0; }
-      to { opacity:1; }
-    }
-
-    .success-icon-wrapper {
-      position:relative;
-      width:100px;
-      height:100px;
-    }
-
-    .success-checkmark {
-      width:100px;
-      height:100px;
-      border-radius:50%;
-      background:linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      animation:successBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      box-shadow:0 10px 40px rgba(76,175,80,0.5);
-      position:relative;
-    }
-
-    .success-checkmark::before {
-      content:'';
-      position:absolute;
-      inset:-5px;
-      border-radius:50%;
-      background:linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
-      opacity:0.3;
-      animation:successPulse 2s infinite;
-    }
-
-    @keyframes successBounce {
-      0% { 
-        transform:scale(0) rotate(-180deg);
-        opacity:0;
-      }
-      50% { 
-        transform:scale(1.15) rotate(180deg);
-      }
-      70% { 
-        transform:scale(0.95) rotate(360deg);
-      }
-      100% { 
-        transform:scale(1) rotate(360deg);
-        opacity:1;
-      }
-    }
-
-    @keyframes successPulse {
-      0%, 100% {
-        transform:scale(1);
-        opacity:0.3;
-      }
-      50% {
-        transform:scale(1.2);
-        opacity:0;
-      }
-    }
-
-    .success-checkmark svg {
-      width:50px;
-      height:50px;
-      stroke:white;
-      stroke-width:4;
-      stroke-linecap:round;
-      stroke-linejoin:round;
-      fill:none;
-      animation:drawCheck 0.6s 0.4s ease-out forwards;
-      stroke-dasharray:60;
-      stroke-dashoffset:60;
-      filter:drop-shadow(0 2px 8px rgba(0,0,0,0.2));
-    }
-
-    @keyframes drawCheck {
-      to { stroke-dashoffset:0; }
-    }
-
-    .success-confetti {
-      position:absolute;
-      width:8px;
-      height:8px;
-      background:white;
-      border-radius:50%;
-      opacity:0;
-    }
-
-    .success-confetti:nth-child(1) {
-      top:10%;
-      left:10%;
-      animation:confetti1 1s 0.6s ease-out;
-    }
-
-    .success-confetti:nth-child(2) {
-      top:10%;
-      right:10%;
-      animation:confetti2 1s 0.65s ease-out;
-    }
-
-    .success-confetti:nth-child(3) {
-      bottom:10%;
-      left:10%;
-      animation:confetti3 1s 0.7s ease-out;
-    }
-
-    .success-confetti:nth-child(4) {
-      bottom:10%;
-      right:10%;
-      animation:confetti4 1s 0.75s ease-out;
-    }
-
-    @keyframes confetti1 {
-      0% { transform:translate(0, 0) scale(0); opacity:1; }
-      100% { transform:translate(-30px, -30px) scale(1); opacity:0; }
-    }
-
-    @keyframes confetti2 {
-      0% { transform:translate(0, 0) scale(0); opacity:1; }
-      100% { transform:translate(30px, -30px) scale(1); opacity:0; }
-    }
-
-    @keyframes confetti3 {
-      0% { transform:translate(0, 0) scale(0); opacity:1; }
-      100% { transform:translate(-30px, 30px) scale(1); opacity:0; }
-    }
-
-    @keyframes confetti4 {
-      0% { transform:translate(0, 0) scale(0); opacity:1; }
-      100% { transform:translate(30px, 30px) scale(1); opacity:0; }
-    }
-
-    .success-message {
-      color:white;
-      font-size:28px;
-      font-weight:800;
-      text-align:center;
-      animation:fadeInUp 0.6s 0.8s ease-out forwards;
-      opacity:0;
-      text-shadow:0 4px 12px rgba(0,0,0,0.3);
-    }
-
-    .success-submessage {
-      color:rgba(255,255,255,0.9);
-      font-size:16px;
-      text-align:center;
-      animation:fadeInUp 0.6s 1s ease-out forwards;
-      opacity:0;
-      max-width:400px;
-      padding:0 20px;
-      line-height:1.5;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity:0;
-        transform:translateY(20px);
-      }
-      to {
-        opacity:1;
-        transform:translateY(0);
-      }
     }
 
     .history-item {
@@ -1090,279 +828,208 @@
       }
     }
 
-    .spinner {
-      width:48px;
-      height:48px;
-      border:4px solid rgba(0,0,0,0.1);
-      border-top-color:var(--accent);
-      border-radius:50%;
-      animation:spin 1s linear infinite;
-      display:none;
-    }
-    
-    @keyframes spin {
-      to {
-        transform:rotate(360deg);
-      }
-    }
-
+    /* НОВЫЕ СТИЛИ ЗАГРУЗЧИКА */
     .loader-overlay {
       position:fixed;
       inset:0;
-      background:linear-gradient(135deg, #fff5f0 0%, #ffe8dc 100%);
+      background:linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
       z-index:999;
       display:flex;
       align-items:center;
       justify-content:center;
-      flex-direction:column;
-      gap:40px;
-    }
-
-    .cooking-scene {
-      position:relative;
-      width:280px;
-      height:280px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .pan {
-      position:absolute;
-      width:200px;
-      height:80px;
-      background:linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
-      border-radius:0 0 100px 100px;
-      bottom:40px;
-      box-shadow:0 8px 24px rgba(0,0,0,0.3),
-                 inset 0 -4px 8px rgba(255,255,255,0.1);
-      animation:panFloat 3s ease-in-out infinite;
-    }
-
-    .pan::before {
-      content:'';
-      position:absolute;
-      left:-60px;
-      top:50%;
-      transform:translateY(-50%);
-      width:80px;
-      height:12px;
-      background:linear-gradient(90deg, #3a3a3a 0%, #2a2a2a 100%);
-      border-radius:20px;
-      box-shadow:0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    .pan::after {
-      content:'';
-      position:absolute;
-      inset:8px;
-      background:linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);
-      border-radius:0 0 90px 90px;
-    }
-
-    @keyframes panFloat {
-      0%, 100% { transform:translateY(0); }
-      50% { transform:translateY(-5px); }
-    }
-
-    .fire {
-      position:absolute;
-      bottom:0;
-      left:50%;
-      transform:translateX(-50%);
-      width:140px;
-      height:40px;
-      display:flex;
-      justify-content:center;
-      gap:8px;
-    }
-
-    .flame {
-      width:20px;
-      height:30px;
-      background:linear-gradient(to top, #ff6b35 0%, #ffaa00 50%, #ffdd00 100%);
-      border-radius:50% 50% 0 0;
-      animation:flicker 0.5s ease-in-out infinite alternate;
-      filter:blur(2px);
-      opacity:0.9;
-    }
-
-    .flame:nth-child(1) { animation-delay:0s; height:25px; }
-    .flame:nth-child(2) { animation-delay:0.1s; height:32px; }
-    .flame:nth-child(3) { animation-delay:0.2s; height:28px; }
-
-    @keyframes flicker {
-      0% { transform:scaleY(1) scaleX(1); opacity:0.9; }
-      100% { transform:scaleY(1.3) scaleX(0.9); opacity:1; }
-    }
-
-    .vegetable {
-      position:absolute;
-      border-radius:50%;
-      animation:cookVegetable 4s ease-in-out infinite;
-    }
-
-    .tomato {
-      width:40px;
-      height:40px;
-      background:radial-gradient(circle at 30% 30%, #ff6b6b, #d63031);
-      top:30%;
-      left:25%;
-      box-shadow:inset -4px -4px 8px rgba(0,0,0,0.2),
-                 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    .tomato::before {
-      content:'';
-      position:absolute;
-      top:-8px;
-      left:50%;
-      transform:translateX(-50%);
-      width:0;
-      height:0;
-      border-left:8px solid transparent;
-      border-right:8px solid transparent;
-      border-bottom:12px solid #27ae60;
-    }
-
-    .carrot {
-      width:35px;
-      height:35px;
-      background:radial-gradient(circle at 30% 30%, #ff9f43, #ee5a24);
-      top:35%;
-      right:25%;
-      box-shadow:inset -4px -4px 8px rgba(0,0,0,0.2),
-                 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    .pepper {
-      width:38px;
-      height:38px;
-      background:radial-gradient(circle at 30% 30%, #26de81, #20bf6b);
-      bottom:50%;
-      left:35%;
-      box-shadow:inset -4px -4px 8px rgba(0,0,0,0.2),
-                 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    @keyframes cookVegetable {
-      0%, 100% { transform:translate(0, 0) rotate(0deg); }
-      25% { transform:translate(10px, -5px) rotate(90deg); }
-      50% { transform:translate(-5px, 5px) rotate(180deg); }
-      75% { transform:translate(5px, -10px) rotate(270deg); }
-    }
-
-    .steam {
-      position:absolute;
-      top:20%;
-      left:50%;
-      transform:translateX(-50%);
-      display:flex;
-      gap:15px;
-    }
-
-    .steam-puff {
-      width:30px;
-      height:30px;
-      background:radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 70%);
-      border-radius:50%;
-      animation:steamRise 2s ease-out infinite;
-    }
-
-    .steam-puff:nth-child(1) { animation-delay:0s; }
-    .steam-puff:nth-child(2) { animation-delay:0.4s; }
-    .steam-puff:nth-child(3) { animation-delay:0.8s; }
-
-    @keyframes steamRise {
-      0% {
-        transform:translateY(0) scale(0.8);
-        opacity:0;
-      }
-      50% {
-        opacity:0.8;
-      }
-      100% {
-        transform:translateY(-60px) scale(1.2);
-        opacity:0;
-      }
-    }
-
-    .progress-container {
-      width:280px;
-      height:8px;
-      background:rgba(255,255,255,0.3);
-      border-radius:20px;
-      overflow:hidden;
-      box-shadow:inset 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .progress-bar {
-      height:100%;
-      background:linear-gradient(90deg, var(--accent) 0%, var(--gold) 100%);
-      border-radius:20px;
-      width:0%;
-      animation:fillProgress 2.5s ease-out forwards;
-      box-shadow:0 0 10px rgba(255,107,53,0.5);
-      position:relative;
+      padding:20px;
       overflow:hidden;
     }
 
-    .progress-bar::after {
+    .loader-overlay::before {
       content:'';
       position:absolute;
       inset:0;
-      background:linear-gradient(90deg, 
-        transparent 0%, 
-        rgba(255,255,255,0.4) 50%, 
-        transparent 100%);
-      animation:progressShine 1.5s ease-in-out infinite;
+      background-image: 
+        linear-gradient(rgba(26,26,26,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(26,26,26,0.02) 1px, transparent 1px);
+      background-size:50px 50px;
+      opacity:0.3;
     }
 
-    @keyframes fillProgress {
-      0% { width:0%; }
-      100% { width:100%; }
+    .loader-card {
+      background:var(--card-bg);
+      border-radius:var(--radius-lg);
+      padding:48px 40px;
+      max-width:420px;
+      width:100%;
+      box-shadow:var(--shadow-lg);
+      border:1px solid var(--border);
+      position:relative;
+      z-index:10;
     }
 
-    @keyframes progressShine {
-      0% { transform:translateX(-100%); }
-      100% { transform:translateX(200%); }
+    .logo-section {
+      text-align:center;
+      margin-bottom:32px;
     }
 
-    .loader-text {
-      color:var(--primary);
-      font-weight:700;
-      font-size:18px;
-      letter-spacing:0.5px;
-      animation:textPulse 1.5s ease-in-out infinite;
+    .loader-logo-img {
+      width:80px;
+      height:80px;
+      border-radius:var(--radius-md);
+      object-fit:cover;
+      box-shadow:var(--shadow-md);
+      margin-bottom:16px;
     }
 
-    @keyframes textPulse {
-      0%, 100% { opacity:1; }
-      50% { opacity:0.6; }
-    }
-
-    .percentage-text {
-      position:absolute;
-      top:50%;
-      left:50%;
-      transform:translate(-50%, -50%);
-      color:var(--primary);
+    .brand-title {
+      font-size:24px;
       font-weight:800;
-      font-size:48px;
-      opacity:0;
-      animation:showPercentage 0.5s 2s ease-out forwards;
-      text-shadow:0 2px 8px rgba(0,0,0,0.1);
+      color:var(--primary);
+      letter-spacing:-0.5px;
+      margin-bottom:6px;
     }
 
-    @keyframes showPercentage {
+    .brand-subtitle {
+      font-size:13px;
+      color:var(--text-light);
+      font-weight:500;
+    }
+
+    .loading-dots {
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-bottom:32px;
+    }
+
+    .dot {
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      background:linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      animation:bounce 1.4s ease-in-out infinite;
+    }
+
+    .dot:nth-child(2) {
+      animation-delay:0.16s;
+    }
+
+    .dot:nth-child(3) {
+      animation-delay:0.32s;
+    }
+
+    @keyframes bounce {
+      0%, 80%, 100% {
+        transform:translateY(0);
+        opacity:0.6;
+      }
+      40% {
+        transform:translateY(-16px);
+        opacity:1;
+      }
+    }
+
+    .status-text {
+      text-align:center;
+      margin-bottom:28px;
+      min-height:32px;
+    }
+
+    .status-text h2 {
+      font-size:18px;
+      font-weight:600;
+      background:linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      transition:all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .progress-container {
+      margin-bottom:16px;
+    }
+
+    .progress-bar {
+      position:relative;
+      height:6px;
+      background:var(--bg);
+      border-radius:10px;
+      overflow:hidden;
+      border:1px solid var(--border);
+    }
+
+    .progress-fill {
+      position:absolute;
+      inset-y:0;
+      left:0;
+      background:linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
+      border-radius:10px;
+      transition:width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow:0 0 20px rgba(255, 107, 53, 0.3);
+      width:0;
+    }
+
+    .progress-fill::after {
+      content:'';
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      animation:shimmer 2s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
       0% {
-        opacity:0;
-        transform:translate(-50%, -50%) scale(0.5);
+        transform:translateX(-100%);
       }
       100% {
-        opacity:1;
-        transform:translate(-50%, -50%) scale(1);
+        transform:translateX(200%);
       }
+    }
+
+    .progress-info {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:12px;
+      font-size:13px;
+    }
+
+    .progress-percent {
+      color:var(--text-light);
+      font-weight:600;
+    }
+
+    .progress-label {
+      color:var(--text-muted);
+      font-weight:500;
+    }
+
+    .status-indicators {
+      display:flex;
+      justify-content:center;
+      gap:6px;
+      margin-bottom:24px;
+    }
+
+    .indicator {
+      height:4px;
+      border-radius:4px;
+      transition:all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      background:var(--border);
+    }
+
+    .indicator.active {
+      width:32px;
+      background:linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
+    }
+
+    .indicator:not(.active) {
+      width:4px;
+    }
+
+    .loading-message {
+      text-align:center;
+      color:var(--text-muted);
+      font-size:12px;
+      font-weight:500;
+      letter-spacing:0.3px;
     }
 
     .processing {
@@ -1612,6 +1279,19 @@
         font-size:13px;
         padding:8px 14px;
       }
+
+      .loader-card {
+        padding:36px 28px;
+      }
+
+      .brand-title {
+        font-size:20px;
+      }
+
+      .loader-logo-img {
+        width:64px;
+        height:64px;
+      }
     }
   </style>
 </head>
@@ -1639,28 +1319,47 @@
 
   <div class="menu" id="menu"></div>
 
+  <!-- НОВЫЙ БЛОК ЗАГРУЗЧИКА -->
   <div id="loader" class="loader-overlay">
-    <div class="cooking-scene">
-      <div class="steam">
-        <div class="steam-puff"></div>
-        <div class="steam-puff"></div>
-        <div class="steam-puff"></div>
+    <div class="loader-card">
+      <div class="logo-section">
+        <img class="loader-logo-img" src="logo.png" alt="СВОЯ КУХНЯ">
+        <div class="brand-title">СВОЯ КУХНЯ</div>
+        <div class="brand-subtitle">Домашняя еда с доставкой</div>
       </div>
-      <div class="vegetable tomato"></div>
-      <div class="vegetable carrot"></div>
-      <div class="vegetable pepper"></div>
-      <div class="pan"></div>
-      <div class="fire">
-        <div class="flame"></div>
-        <div class="flame"></div>
-        <div class="flame"></div>
+
+      <div class="loading-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
       </div>
-      <div class="percentage-text">100%</div>
+
+      <div class="status-text">
+        <h2 id="statusText">Готовим меню</h2>
+      </div>
+
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-info">
+          <span class="progress-percent" id="progressPercent">0%</span>
+          <span class="progress-label">Загрузка...</span>
+        </div>
+      </div>
+
+      <div class="status-indicators" id="indicators">
+        <div class="indicator active"></div>
+        <div class="indicator"></div>
+        <div class="indicator"></div>
+        <div class="indicator"></div>
+        <div class="indicator"></div>
+      </div>
+
+      <div class="loading-message">
+        Пожалуйста, подождите
+      </div>
     </div>
-    <div class="progress-container">
-      <div class="progress-bar"></div>
-    </div>
-    <div class="loader-text">Готовим меню...</div>
   </div>
 
   <div id="debugPanel" class="debug-panel"></div>
@@ -1684,22 +1383,6 @@
   <div id="dressingModal" class="modal-bg"></div>
   <div id="imageModal" class="image-modal" onclick="closeImageModal()">
     <img id="imageModalImg" src="" alt="">
-  </div>
-  
-  <div id="orderSuccessAnimation" class="order-success-animation">
-    <div class="success-icon-wrapper">
-      <div class="success-confetti"></div>
-      <div class="success-confetti"></div>
-      <div class="success-confetti"></div>
-      <div class="success-confetti"></div>
-      <div class="success-checkmark">
-        <svg viewBox="0 0 52 52">
-          <path d="M14 27l8 8 16-16"/>
-        </svg>
-      </div>
-    </div>
-    <div class="success-message">Заказ отправлен!</div>
-    <div class="success-submessage">Ваш заказ направлен администратору. С вами свяжутся в ближайшее время.</div>
   </div>
 
   <script>
@@ -1789,8 +1472,64 @@
       }
     }
 
+    // ФУНКЦИЯ АНИМАЦИИ ЗАГРУЗЧИКА
+    function startLoaderAnimation() {
+      const statuses = [
+        { text: 'Готовим меню' },
+        { text: 'Загружаем фото' },
+        { text: 'Обновляем позиции' },
+        { text: 'Проверяем цены' },
+        { text: 'Финальные штрихи' }
+      ];
+
+      let progress = 0;
+      let currentStatusIndex = 0;
+
+      const progressFill = document.getElementById('progressFill');
+      const progressPercent = document.getElementById('progressPercent');
+      const statusText = document.getElementById('statusText');
+      const indicators = document.getElementById('indicators')?.children;
+
+      // Обновление прогресса
+      const progressInterval = setInterval(() => {
+        progress += 2;
+        if (progress > 100) {
+          progress = 100;
+          clearInterval(progressInterval);
+        }
+
+        if (progressFill) progressFill.style.width = progress + '%';
+        if (progressPercent) progressPercent.textContent = Math.round(progress) + '%';
+      }, 30);
+
+      // Смена статусов
+      const statusInterval = setInterval(() => {
+        currentStatusIndex = (currentStatusIndex + 1) % statuses.length;
+        if (statusText) statusText.textContent = statuses[currentStatusIndex].text;
+
+        // Обновление индикаторов
+        if (indicators) {
+          Array.from(indicators).forEach((indicator, index) => {
+            if (index === currentStatusIndex) {
+              indicator.classList.add('active');
+            } else {
+              indicator.classList.remove('active');
+            }
+          });
+        }
+      }, 2000);
+
+      // Сохраняем интервалы для очистки
+      window.loaderIntervals = { progressInterval, statusInterval };
+    }
+
     async function loadMenu() {
-      document.getElementById('loader').style.display = 'flex';
+      const loaderEl = document.getElementById('loader');
+      loaderEl.style.display = 'flex';
+      
+      // Запуск анимации загрузки
+      startLoaderAnimation();
+      
       try {
         debugLog('Загрузка из основного API', SHEET_API_URL);
         const res = await fetch(SHEET_API_URL);
@@ -1905,10 +1644,16 @@
           document.getElementById('menu').innerHTML = '<div style="text-align:center;color:var(--text-light);margin:40px;">Ошибка загрузки меню</div>';
         }
       }
-      document.getElementById('loader').style.display = 'none';
+      loaderEl.style.display = 'none';
+      
+      // Очистка интервалов анимации
+      if (window.loaderIntervals) {
+        clearInterval(window.loaderIntervals.progressInterval);
+        clearInterval(window.loaderIntervals.statusInterval);
+      }
+      
       renderMenu();
     }
-
     function renderMenu() {
       const menu = document.getElementById('menu');
       let items = currentFilter === 'favorites' ? menuData.filter(i => favorites.includes(i.id)) : menuData.slice();
@@ -2090,10 +1835,6 @@
       `;
     }
 
-    document.getElementById('cartFab').addEventListener('click', function(e) {
-      // Клик обрабатывается в handleClick функции драггера
-    });
-
     function showCartModal() {
       const items = Object.values(cart).sort((a,b) => a.id - b.id);
       const total = items.reduce((s,i)=>s + (i.price||0) * (i.qty||0), 0);
@@ -2146,15 +1887,7 @@
                 <label>Комментарий (необязательно)</label>
                 <textarea id="comment" placeholder="Дополнительная информация">${esc(savedUserData.comment||'')}</textarea>
               </div>
-              <button type="submit" class="btn-primary" id="submitOrderBtn">
-                <span class="btn-text">Оформить заказ</span>
-                <div class="btn-loader">
-                  <div class="btn-loader-dot"></div>
-                  <div class="btn-loader-dot"></div>
-                  <div class="btn-loader-dot"></div>
-                  <span class="btn-loader-text">Отправка...</span>
-                </div>
-              </button>
+              <button type="submit" class="btn-primary">Оформить заказ</button>
             </form>
           `}
         </div>
@@ -2216,8 +1949,6 @@
         }
         return;
       }
-
-      let selectedGarnishId = null;
 
       document.getElementById('garnishModal').innerHTML = `
         <div class="modal garnish-modal-content">
@@ -2413,12 +2144,6 @@
 
     window.sendOrder = async function(e) {
       e.preventDefault();
-      
-      const submitBtn = document.getElementById('submitOrderBtn');
-      
-      // Предотвращаем повторную отправку
-      if (submitBtn.disabled) return;
-      
       const name = document.getElementById('name').value.trim();
       const phone = document.getElementById('phone').value.trim();
       const payment = document.getElementById('payment').value;
@@ -2436,81 +2161,54 @@
         return;
       }
 
-      // Блокируем кнопку и показываем загрузку
-      submitBtn.disabled = true;
-      submitBtn.classList.add('loading');
+      orderCounter += 1;
+      save('orderCounter', orderCounter);
+
+      const total = items.reduce((s,i)=>s + (i.price||0) * (i.qty||0), 0);
+      let text = `Новый заказ #${orderCounter}\n`;
+      text += `Клиент: ${name}\n`;
+      text += `Телефон: ${phone}\n`;
+      text += `Оплата: ${payment}\n`;
+      text += `Адрес: ${address}\n`;
+      if (comment) text += `Комментарий: ${comment}\n`;
+      text += `\nЗаказ:\n`;
+      items.forEach(i => {
+        text += `• ${i.name} x${i.qty} — ${FMT.format((i.price||0)*i.qty)}\n`;
+      });
+      text += `\nИтого: ${FMT.format(total)}\n`;
+
+      savedUserData = { name, phone, payment, address, comment };
+      save('userData', savedUserData);
+
+      const orderRecord = {
+        id: orderCounter,
+        ts: new Date().toISOString(),
+        name, phone, payment, address, comment,
+        items: items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+        total
+      };
+      orderHistory = orderHistory || [];
+      orderHistory.unshift(orderRecord);
+      save('orderHistory', orderHistory);
 
       try {
-        orderCounter += 1;
-        save('orderCounter', orderCounter);
-
-        const total = items.reduce((s,i)=>s + (i.price||0) * (i.qty||0), 0);
-        let text = `Новый заказ #${orderCounter}\n`;
-        text += `Клиент: ${name}\n`;
-        text += `Телефон: ${phone}\n`;
-        text += `Оплата: ${payment}\n`;
-        text += `Адрес: ${address}\n`;
-        if (comment) text += `Комментарий: ${comment}\n`;
-        text += `\nЗаказ:\n`;
-        items.forEach(i => {
-          text += `• ${i.name} x${i.qty} — ${FMT.format((i.price||0)*i.qty)}\n`;
-        });
-        text += `\nИтого: ${FMT.format(total)}\n`;
-
-        savedUserData = { name, phone, payment, address, comment };
-        save('userData', savedUserData);
-
-        const orderRecord = {
-          id: orderCounter,
-          ts: new Date().toISOString(),
-          name, phone, payment, address, comment,
-          items: items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
-          total
-        };
-        orderHistory = orderHistory || [];
-        orderHistory.unshift(orderRecord);
-        save('orderHistory', orderHistory);
-
-        // Отправка в Telegram
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
         await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text })
         });
-
-        // Очищаем корзину
-        cart = {};
-        save('cart', cart);
-        updateCartFab();
-        
-        // Закрываем модалку корзины
-        closeModal('cartModal');
-        
-        // Показываем анимацию успеха
-        showOrderSuccess();
-        
-        // Обновляем меню
-        renderMenu();
-
       } catch (err) {
-        console.error('Order send failed', err);
-        alert('Произошла ошибка при отправке заказа. Пожалуйста, попробуйте еще раз.');
-        
-        // Разблокируем кнопку при ошибке
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('loading');
+        console.warn('Telegram send failed', err);
       }
-    };
 
-    function showOrderSuccess() {
-      const successAnimation = document.getElementById('orderSuccessAnimation');
-      successAnimation.classList.add('show');
-      
-      setTimeout(() => {
-        successAnimation.classList.remove('show');
-      }, 3500);
-    }
+      cart = {};
+      save('cart', cart);
+      updateCartFab();
+      closeModal('cartModal');
+      alert('Ваш заказ направлен администратору. С вами свяжутся в ближайшее время.');
+      renderMenu();
+    };
 
     window.showOrderHistory = function() {
       const list = (orderHistory || []);
@@ -2582,21 +2280,11 @@
       let isDragging = false;
       let hasMoved = false;
       let currentX, currentY, initialX, initialY;
-      let startTime = 0;
 
       fab.addEventListener('mousedown', dragStart);
       fab.addEventListener('touchstart', dragStart, { passive: false });
-      fab.addEventListener('click', handleClick);
-
-      function handleClick(e) {
-        if (!hasMoved && (Date.now() - startTime) < 200) {
-          showCartModal();
-        }
-      }
 
       function dragStart(e) {
-        e.stopPropagation();
-        startTime = Date.now();
         const touch = e.type === 'touchstart' ? e.touches[0] : e;
         initialX = touch.clientX;
         initialY = touch.clientY;
@@ -2619,15 +2307,11 @@
         if (!isDragging) return;
         
         e.preventDefault();
-        e.stopPropagation();
+        hasMoved = true;
 
         const touch = e.type === 'touchmove' ? e.touches[0] : e;
         const deltaX = touch.clientX - initialX;
         const deltaY = touch.clientY - initialY;
-
-        if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
-          hasMoved = true;
-        }
 
         let newX = currentX + deltaX;
         let newY = currentY + deltaY;
@@ -2647,7 +2331,6 @@
       function dragEnd(e) {
         if (!isDragging) return;
 
-        e.stopPropagation();
         isDragging = false;
         fab.classList.remove('dragging');
 
@@ -2655,6 +2338,10 @@
         document.removeEventListener('touchmove', drag);
         document.removeEventListener('mouseup', dragEnd);
         document.removeEventListener('touchend', dragEnd);
+
+        if (!hasMoved) {
+          showCartModal();
+        }
       }
     })();
 
@@ -2666,3 +2353,4 @@
   </script>
 </body>
 </html>
+```
