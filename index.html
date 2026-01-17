@@ -704,6 +704,7 @@
       transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position:relative;
       overflow:hidden;
+      min-height:56px;
     }
     
     .btn-primary:hover:not(:disabled) {
@@ -713,18 +714,19 @@
     }
 
     .btn-primary:disabled {
-      opacity:0.7;
+      opacity:1;
       cursor:not-allowed;
       transform:none;
     }
 
     .btn-primary .btn-text {
       display:inline-block;
-      transition:opacity 0.3s;
+      transition:all 0.3s;
     }
 
     .btn-primary.loading .btn-text {
       opacity:0;
+      transform:translateY(-10px);
     }
 
     .btn-primary .btn-loader {
@@ -732,27 +734,66 @@
       top:50%;
       left:50%;
       transform:translate(-50%, -50%);
-      display:none;
+      opacity:0;
+      transition:opacity 0.3s;
+      pointer-events:none;
     }
 
     .btn-primary.loading .btn-loader {
-      display:block;
+      opacity:1;
     }
 
     .btn-loader {
-      width:24px;
-      height:24px;
-      border:3px solid rgba(255,255,255,0.3);
-      border-top-color:white;
+      display:flex;
+      gap:6px;
+      align-items:center;
+    }
+
+    .btn-loader-dot {
+      width:8px;
+      height:8px;
+      background:white;
       border-radius:50%;
-      animation:spin 0.8s linear infinite;
+      animation:dotPulse 1.4s infinite ease-in-out;
+    }
+
+    .btn-loader-dot:nth-child(1) {
+      animation-delay:0s;
+    }
+
+    .btn-loader-dot:nth-child(2) {
+      animation-delay:0.2s;
+    }
+
+    .btn-loader-dot:nth-child(3) {
+      animation-delay:0.4s;
+    }
+
+    @keyframes dotPulse {
+      0%, 80%, 100% {
+        transform:scale(0.8);
+        opacity:0.5;
+      }
+      40% {
+        transform:scale(1.2);
+        opacity:1;
+      }
+    }
+
+    .btn-loader-text {
+      color:white;
+      font-size:14px;
+      font-weight:600;
+      margin-left:8px;
+      letter-spacing:0.5px;
     }
 
     .order-success-animation {
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,0.8);
+      background:rgba(0,0,0,0.85);
       backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
       z-index:999;
       display:none;
       align-items:center;
@@ -771,58 +812,153 @@
       to { opacity:1; }
     }
 
+    .success-icon-wrapper {
+      position:relative;
+      width:100px;
+      height:100px;
+    }
+
     .success-checkmark {
-      width:80px;
-      height:80px;
+      width:100px;
+      height:100px;
       border-radius:50%;
       background:linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
       display:flex;
       align-items:center;
       justify-content:center;
-      animation:scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      box-shadow:0 10px 40px rgba(76,175,80,0.4);
+      animation:successBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      box-shadow:0 10px 40px rgba(76,175,80,0.5);
+      position:relative;
     }
 
-    @keyframes scaleIn {
-      0% { transform:scale(0) rotate(0deg); }
-      50% { transform:scale(1.1) rotate(180deg); }
-      100% { transform:scale(1) rotate(360deg); }
+    .success-checkmark::before {
+      content:'';
+      position:absolute;
+      inset:-5px;
+      border-radius:50%;
+      background:linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+      opacity:0.3;
+      animation:successPulse 2s infinite;
+    }
+
+    @keyframes successBounce {
+      0% { 
+        transform:scale(0) rotate(-180deg);
+        opacity:0;
+      }
+      50% { 
+        transform:scale(1.15) rotate(180deg);
+      }
+      70% { 
+        transform:scale(0.95) rotate(360deg);
+      }
+      100% { 
+        transform:scale(1) rotate(360deg);
+        opacity:1;
+      }
+    }
+
+    @keyframes successPulse {
+      0%, 100% {
+        transform:scale(1);
+        opacity:0.3;
+      }
+      50% {
+        transform:scale(1.2);
+        opacity:0;
+      }
     }
 
     .success-checkmark svg {
-      width:48px;
-      height:48px;
+      width:50px;
+      height:50px;
       stroke:white;
-      stroke-width:3;
+      stroke-width:4;
       stroke-linecap:round;
       stroke-linejoin:round;
       fill:none;
-      animation:drawCheck 0.5s 0.3s ease-out forwards;
-      stroke-dasharray:50;
-      stroke-dashoffset:50;
+      animation:drawCheck 0.6s 0.4s ease-out forwards;
+      stroke-dasharray:60;
+      stroke-dashoffset:60;
+      filter:drop-shadow(0 2px 8px rgba(0,0,0,0.2));
     }
 
     @keyframes drawCheck {
       to { stroke-dashoffset:0; }
     }
 
-    .success-message {
-      color:white;
-      font-size:24px;
-      font-weight:700;
-      text-align:center;
-      animation:fadeInUp 0.5s 0.5s ease-out forwards;
+    .success-confetti {
+      position:absolute;
+      width:8px;
+      height:8px;
+      background:white;
+      border-radius:50%;
       opacity:0;
     }
 
+    .success-confetti:nth-child(1) {
+      top:10%;
+      left:10%;
+      animation:confetti1 1s 0.6s ease-out;
+    }
+
+    .success-confetti:nth-child(2) {
+      top:10%;
+      right:10%;
+      animation:confetti2 1s 0.65s ease-out;
+    }
+
+    .success-confetti:nth-child(3) {
+      bottom:10%;
+      left:10%;
+      animation:confetti3 1s 0.7s ease-out;
+    }
+
+    .success-confetti:nth-child(4) {
+      bottom:10%;
+      right:10%;
+      animation:confetti4 1s 0.75s ease-out;
+    }
+
+    @keyframes confetti1 {
+      0% { transform:translate(0, 0) scale(0); opacity:1; }
+      100% { transform:translate(-30px, -30px) scale(1); opacity:0; }
+    }
+
+    @keyframes confetti2 {
+      0% { transform:translate(0, 0) scale(0); opacity:1; }
+      100% { transform:translate(30px, -30px) scale(1); opacity:0; }
+    }
+
+    @keyframes confetti3 {
+      0% { transform:translate(0, 0) scale(0); opacity:1; }
+      100% { transform:translate(-30px, 30px) scale(1); opacity:0; }
+    }
+
+    @keyframes confetti4 {
+      0% { transform:translate(0, 0) scale(0); opacity:1; }
+      100% { transform:translate(30px, 30px) scale(1); opacity:0; }
+    }
+
+    .success-message {
+      color:white;
+      font-size:28px;
+      font-weight:800;
+      text-align:center;
+      animation:fadeInUp 0.6s 0.8s ease-out forwards;
+      opacity:0;
+      text-shadow:0 4px 12px rgba(0,0,0,0.3);
+    }
+
     .success-submessage {
-      color:rgba(255,255,255,0.8);
+      color:rgba(255,255,255,0.9);
       font-size:16px;
       text-align:center;
-      animation:fadeInUp 0.5s 0.7s ease-out forwards;
+      animation:fadeInUp 0.6s 1s ease-out forwards;
       opacity:0;
       max-width:400px;
       padding:0 20px;
+      line-height:1.5;
     }
 
     @keyframes fadeInUp {
@@ -1290,10 +1426,16 @@
   </div>
   
   <div id="orderSuccessAnimation" class="order-success-animation">
-    <div class="success-checkmark">
-      <svg viewBox="0 0 52 52">
-        <path d="M14 27l8 8 16-16"/>
-      </svg>
+    <div class="success-icon-wrapper">
+      <div class="success-confetti"></div>
+      <div class="success-confetti"></div>
+      <div class="success-confetti"></div>
+      <div class="success-confetti"></div>
+      <div class="success-checkmark">
+        <svg viewBox="0 0 52 52">
+          <path d="M14 27l8 8 16-16"/>
+        </svg>
+      </div>
     </div>
     <div class="success-message">Заказ отправлен!</div>
     <div class="success-submessage">Ваш заказ направлен администратору. С вами свяжутся в ближайшее время.</div>
@@ -1745,7 +1887,12 @@
               </div>
               <button type="submit" class="btn-primary" id="submitOrderBtn">
                 <span class="btn-text">Оформить заказ</span>
-                <div class="btn-loader"></div>
+                <div class="btn-loader">
+                  <div class="btn-loader-dot"></div>
+                  <div class="btn-loader-dot"></div>
+                  <div class="btn-loader-dot"></div>
+                  <span class="btn-loader-text">Отправка...</span>
+                </div>
               </button>
             </form>
           `}
