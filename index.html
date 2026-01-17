@@ -354,21 +354,32 @@
       width:68px;
       height:68px;
       border-radius:50%;
-      cursor:pointer;
+      cursor:grab;
       z-index:100;
       display:flex;
       align-items:center;
       justify-content:center;
       box-shadow:0 8px 32px rgba(0,0,0,0.24);
-      transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition:box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      touch-action:none;
+      user-select:none;
+    }
+    
+    .cart-fab:active {
+      cursor:grabbing;
     }
     
     .cart-fab:hover {
-      transform:scale(1.1);
       box-shadow:0 12px 48px rgba(0,0,0,0.3);
     }
     
-    .cart-fab:hover .cart-preview {
+    .cart-fab.dragging {
+      cursor:grabbing;
+      box-shadow:0 16px 64px rgba(0,0,0,0.4);
+      transition:none;
+    }
+    
+    .cart-fab:not(.dragging):hover .cart-preview {
       display:block;
     }
     
@@ -781,16 +792,40 @@
       left:12px;
       right:12px;
       top:12px;
-      background:var(--accent);
+      background:linear-gradient(135deg, 
+        rgba(255,87,34,0.25) 0%, 
+        rgba(255,107,53,0.35) 50%,
+        rgba(255,87,34,0.25) 100%);
+      backdrop-filter:blur(20px) saturate(180%);
+      -webkit-backdrop-filter:blur(20px) saturate(180%);
       color:white;
-      font-size:12px;
-      border-radius:8px;
-      padding:8px 12px;
+      font-size:13px;
+      border-radius:12px;
+      padding:10px 16px;
       text-align:center;
       z-index:6;
-      font-weight:600;
-      letter-spacing:0.5px;
-      box-shadow:var(--shadow-md);
+      font-weight:700;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      box-shadow:0 8px 32px rgba(255,87,34,0.3),
+                 inset 0 1px 0 rgba(255,255,255,0.3),
+                 inset 0 -1px 0 rgba(0,0,0,0.1);
+      border:1px solid rgba(255,255,255,0.18);
+      text-shadow:0 2px 4px rgba(0,0,0,0.3);
+      animation:glassShine 3s ease-in-out infinite;
+    }
+
+    @keyframes glassShine {
+      0%, 100% {
+        box-shadow:0 8px 32px rgba(255,87,34,0.3),
+                   inset 0 1px 0 rgba(255,255,255,0.3),
+                   inset 0 -1px 0 rgba(0,0,0,0.1);
+      }
+      50% {
+        box-shadow:0 8px 32px rgba(255,87,34,0.5),
+                   inset 0 1px 0 rgba(255,255,255,0.5),
+                   inset 0 -1px 0 rgba(0,0,0,0.1);
+      }
     }
 
     .spinner {
@@ -1123,6 +1158,7 @@
   <div id="deliveryModal" class="modal-bg"></div>
   <div id="historyModal" class="modal-bg"></div>
   <div id="garnishModal" class="modal-bg"></div>
+  <div id="dressingModal" class="modal-bg"></div>
   <div id="imageModal" class="image-modal" onclick="closeImageModal()">
     <img id="imageModalImg" src="" alt="">
   </div>
@@ -1141,7 +1177,9 @@
     let orderCounter = parseInt(localStorage.getItem('orderCounter') || '0', 10) || 0;
     let currentFilter = 'all';
     let garnishOptions = [];
+    let dressingOptions = [];
     let pendingHotDish = null;
+    let pendingSalad = null;
 
     const FMT = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 });
 
@@ -1189,6 +1227,20 @@
       return trueValues.includes(str);
     }
 
+    function parseIsSalad(value) {
+      if (value === undefined || value === null) return false;
+      const str = String(value).trim().toLowerCase();
+      const trueValues = ['true', 'да', 'yes', '1', 'д', 't', 'салат', 'salad'];
+      return trueValues.includes(str);
+    }
+
+    function parseIsDressing(value) {
+      if (value === undefined || value === null) return false;
+      const str = String(value).trim().toLowerCase();
+      const trueValues = ['true', 'да', 'yes', '1', 'д', 't', 'заправка', 'dressing'];
+      return trueValues.includes(str);
+    }
+
     function debugLog(message, data) {
       if (false) console.log('[DEBUG]', message, data);
       const dp = document.getElementById('debugPanel');
@@ -1227,6 +1279,14 @@
             h === 'is_garnish' || h === 'гарнир' || h === 'garnish' || h === 'isgarnish'
           );
 
+          const isSaladIndex = headers.findIndex(h =>
+            h === 'is_salad' || h === 'салат' || h === 'salad' || h === 'issalad'
+          );
+
+          const isDressingIndex = headers.findIndex(h =>
+            h === 'is_dressing' || h === 'заправка' || h === 'dressing' || h === 'isdressing'
+          );
+
           menuData = dataRows.map((row, idx) => {
             const obj = {};
             headers.forEach((h, i) => obj[h] = row[i] !== undefined ? row[i] : '');
@@ -1234,6 +1294,8 @@
             const dishOfDayValue = obj.dish_of_day || obj['блюдо_дня'] || obj.dishofday || (dishOfDayIndex >= 0 ? row[dishOfDayIndex] : undefined);
             const isHotDishValue = obj.is_hot_dish || obj['горячее'] || obj.hot_dish || (isHotDishIndex >= 0 ? row[isHotDishIndex] : undefined);
             const isGarnishValue = obj.is_garnish || obj['гарнир'] || obj.garnish || (isGarnishIndex >= 0 ? row[isGarnishIndex] : undefined);
+            const isSaladValue = obj.is_salad || obj['салат'] || obj.salad || (isSaladIndex >= 0 ? row[isSaladIndex] : undefined);
+            const isDressingValue = obj.is_dressing || obj['заправка'] || obj.dressing || (isDressingIndex >= 0 ? row[isDressingIndex] : undefined);
             return {
               id: idx + 1,
               name: obj.name || obj.title || `Блюдо ${idx+1}`,
@@ -1243,11 +1305,14 @@
               available: parseAvailable(availableValue),
               dishOfDay: parseDishOfDay(dishOfDayValue),
               isHotDish: parseIsHotDish(isHotDishValue),
-              isGarnish: parseIsGarnish(isGarnishValue)
+              isGarnish: parseIsGarnish(isGarnishValue),
+              isSalad: parseIsSalad(isSaladValue),
+              isDressing: parseIsDressing(isDressingValue)
             };
           });
           
           garnishOptions = menuData.filter(item => item.isGarnish && item.available);
+          dressingOptions = menuData.filter(item => item.isDressing && item.available);
           debugLog('Загружено блюд', menuData.length);
         } else if (json?.menu) {
           menuData = json.menu.map((item, idx) => ({
@@ -1259,9 +1324,12 @@
             available: parseAvailable(item.available),
             dishOfDay: parseDishOfDay(item.dish_of_day),
             isHotDish: parseIsHotDish(item.is_hot_dish),
-            isGarnish: parseIsGarnish(item.is_garnish)
+            isGarnish: parseIsGarnish(item.is_garnish),
+            isSalad: parseIsSalad(item.is_salad),
+            isDressing: parseIsDressing(item.is_dressing)
           }));
           garnishOptions = menuData.filter(item => item.isGarnish && item.available);
+          dressingOptions = menuData.filter(item => item.isDressing && item.available);
         } else {
           throw new Error('Unexpected sheet response');
         }
@@ -1282,9 +1350,12 @@
               available: parseAvailable(item.available),
               dishOfDay: parseDishOfDay(item.dish_of_day),
               isHotDish: parseIsHotDish(item.is_hot_dish),
-              isGarnish: parseIsGarnish(item.is_garnish)
+              isGarnish: parseIsGarnish(item.is_garnish),
+              isSalad: parseIsSalad(item.is_salad),
+              isDressing: parseIsDressing(item.is_dressing)
             }));
             garnishOptions = menuData.filter(item => item.isGarnish && item.available);
+            dressingOptions = menuData.filter(item => item.isDressing && item.available);
             debugLog('Загружено из fallback', menuData.length);
           } else {
             throw new Error('Fallback returned no menu');
@@ -1303,7 +1374,7 @@
       const menu = document.getElementById('menu');
       let items = currentFilter === 'favorites' ? menuData.filter(i => favorites.includes(i.id)) : menuData.slice();
       
-      items = items.filter(i => !i.isGarnish);
+      items = items.filter(i => !i.isGarnish && !i.isDressing);
 
       if (!items || items.length === 0) {
         menu.innerHTML = '<div style="text-align:center;color:var(--text-muted);margin:40px;">' +
@@ -1388,10 +1459,16 @@
         return;
       }
       
+      if (item.isSalad && delta > 0) {
+        pendingSalad = { item, delta };
+        showDressingModal();
+        return;
+      }
+      
       addToCart(id, delta);
     };
 
-    function addToCart(id, delta, garnishId = null) {
+    function addToCart(id, delta, garnishId = null, dressingId = null) {
       const item = menuData.find(i => i.id === id);
       if (!item) return;
       
@@ -1402,9 +1479,18 @@
       if (garnishId) {
         const garnish = menuData.find(i => i.id === garnishId);
         if (garnish) {
-          cartKey = `${id}_${garnishId}`;
+          cartKey = `${id}_g${garnishId}`;
           itemName = `${item.name} + ${garnish.name}`;
           itemPrice = item.price + garnish.price;
+        }
+      }
+      
+      if (dressingId) {
+        const dressing = menuData.find(i => i.id === dressingId);
+        if (dressing) {
+          cartKey = `${id}_d${dressingId}`;
+          itemName = `${item.name} + ${dressing.name}`;
+          itemPrice = item.price + dressing.price;
         }
       }
       
@@ -1413,6 +1499,7 @@
           id: cartKey, 
           mainId: id,
           garnishId: garnishId,
+          dressingId: dressingId,
           name: itemName, 
           price: itemPrice,
           qty: 0,
@@ -1464,7 +1551,9 @@
       `;
     }
 
-    document.getElementById('cartFab').addEventListener('click', showCartModal);
+    document.getElementById('cartFab').addEventListener('click', function(e) {
+      // Обработка клика теперь в dragEnd функции
+    });
 
     function showCartModal() {
       const items = Object.values(cart).sort((a,b) => a.id - b.id);
@@ -1542,11 +1631,16 @@
         const item = cart[cartKey];
         if (item.mainId && item.garnishId) {
           addToCart(item.mainId, 1, item.garnishId);
+        } else if (item.mainId && item.dressingId) {
+          addToCart(item.mainId, 1, null, item.dressingId);
         } else if (item.mainId) {
           const mainItem = menuData.find(i => i.id === item.mainId);
           if (mainItem && mainItem.isHotDish) {
             pendingHotDish = { item: mainItem, delta: 1 };
             showGarnishModal();
+          } else if (mainItem && mainItem.isSalad) {
+            pendingSalad = { item: mainItem, delta: 1 };
+            showDressingModal();
           } else {
             addToCart(item.mainId, 1);
           }
@@ -1561,6 +1655,9 @@
       if (el) el.classList.remove('show');
       if (id === 'garnishModal') {
         pendingHotDish = null;
+      }
+      if (id === 'dressingModal') {
+        pendingSalad = null;
       }
     };
 
@@ -1627,6 +1724,70 @@
         addToCart(pendingHotDish.item.id, pendingHotDish.delta);
         closeModal('garnishModal');
         pendingHotDish = null;
+      }
+    };
+
+    function showDressingModal() {
+      if (!pendingSalad || !dressingOptions.length) {
+        if (pendingSalad) {
+          addToCart(pendingSalad.item.id, pendingSalad.delta);
+          pendingSalad = null;
+        }
+        return;
+      }
+
+      document.getElementById('dressingModal').innerHTML = `
+        <div class="modal garnish-modal-content">
+          <button class="modal-close" onclick="closeModal('dressingModal')">&times;</button>
+          <div class="garnish-title">Выберите заправку</div>
+          <div class="garnish-subtitle">К салату: ${esc(pendingSalad.item.name)}</div>
+          <div class="garnish-list">
+            ${dressingOptions.map(d => `
+              <div class="garnish-option" data-dressing-id="${d.id}" onclick="selectDressing(${d.id})">
+                <span class="garnish-option-name">${esc(d.name)}</span>
+                <span class="garnish-option-price">+${FMT.format(d.price)}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="garnish-actions">
+            <button class="btn-secondary" onclick="skipDressing()">Без заправки</button>
+            <button class="btn-confirm" id="confirmDressingBtn" onclick="confirmDressing()" disabled>Добавить</button>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('dressingModal').classList.add('show');
+    }
+
+    window.selectDressing = function(dressingId) {
+      document.querySelectorAll('.garnish-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      
+      const selected = document.querySelector(`[data-dressing-id="${dressingId}"]`);
+      if (selected) {
+        selected.classList.add('selected');
+        document.getElementById('confirmDressingBtn').disabled = false;
+        document.getElementById('confirmDressingBtn').setAttribute('data-selected-dressing', dressingId);
+      }
+    };
+
+    window.confirmDressing = function() {
+      const btn = document.getElementById('confirmDressingBtn');
+      const dressingId = parseInt(btn.getAttribute('data-selected-dressing'));
+      
+      if (pendingSalad && dressingId) {
+        addToCart(pendingSalad.item.id, pendingSalad.delta, null, dressingId);
+        closeModal('dressingModal');
+        pendingSalad = null;
+      }
+    };
+
+    window.skipDressing = function() {
+      if (pendingSalad) {
+        addToCart(pendingSalad.item.id, pendingSalad.delta);
+        closeModal('dressingModal');
+        pendingSalad = null;
       }
     };
 
@@ -1822,7 +1983,7 @@
     };
 
     document.addEventListener('click', function(e){
-      const modals = ['cartModal','deliveryModal','historyModal','garnishModal'];
+      const modals = ['cartModal','deliveryModal','historyModal','garnishModal','dressingModal'];
       modals.forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
@@ -1830,9 +1991,81 @@
         if (e.target === el) {
           el.classList.remove('show');
           if (id === 'garnishModal') pendingHotDish = null;
+          if (id === 'dressingModal') pendingSalad = null;
         }
       });
     });
+
+    // Draggable cart FAB
+    (function initDraggableCart() {
+      const fab = document.getElementById('cartFab');
+      let isDragging = false;
+      let hasMoved = false;
+      let currentX, currentY, initialX, initialY;
+
+      fab.addEventListener('mousedown', dragStart);
+      fab.addEventListener('touchstart', dragStart, { passive: false });
+
+      function dragStart(e) {
+        const touch = e.type === 'touchstart' ? e.touches[0] : e;
+        initialX = touch.clientX;
+        initialY = touch.clientY;
+        
+        const rect = fab.getBoundingClientRect();
+        currentX = rect.left;
+        currentY = rect.top;
+        
+        hasMoved = false;
+        isDragging = true;
+        fab.classList.add('dragging');
+
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('mouseup', dragEnd);
+        document.addEventListener('touchend', dragEnd);
+      }
+
+      function drag(e) {
+        if (!isDragging) return;
+        
+        e.preventDefault();
+        hasMoved = true;
+
+        const touch = e.type === 'touchmove' ? e.touches[0] : e;
+        const deltaX = touch.clientX - initialX;
+        const deltaY = touch.clientY - initialY;
+
+        let newX = currentX + deltaX;
+        let newY = currentY + deltaY;
+
+        const maxX = window.innerWidth - fab.offsetWidth;
+        const maxY = window.innerHeight - fab.offsetHeight;
+
+        newX = Math.max(0, Math.min(newX, maxX));
+        newY = Math.max(0, Math.min(newY, maxY));
+
+        fab.style.left = newX + 'px';
+        fab.style.top = newY + 'px';
+        fab.style.right = 'auto';
+        fab.style.bottom = 'auto';
+      }
+
+      function dragEnd(e) {
+        if (!isDragging) return;
+
+        isDragging = false;
+        fab.classList.remove('dragging');
+
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('touchmove', drag);
+        document.removeEventListener('mouseup', dragEnd);
+        document.removeEventListener('touchend', dragEnd);
+
+        if (!hasMoved) {
+          showCartModal();
+        }
+      }
+    })();
 
     updateCartFab();
     document.getElementById('favCount').textContent = favorites.length;
