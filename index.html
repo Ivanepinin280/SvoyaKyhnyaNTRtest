@@ -702,12 +702,138 @@
       width:100%;
       font-family:'Inter', sans-serif;
       transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position:relative;
+      overflow:hidden;
     }
     
-    .btn-primary:hover {
+    .btn-primary:hover:not(:disabled) {
       background:var(--accent-hover);
       transform:translateY(-2px);
       box-shadow:0 8px 24px rgba(255,107,53,0.3);
+    }
+
+    .btn-primary:disabled {
+      opacity:0.7;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    .btn-primary .btn-text {
+      display:inline-block;
+      transition:opacity 0.3s;
+    }
+
+    .btn-primary.loading .btn-text {
+      opacity:0;
+    }
+
+    .btn-primary .btn-loader {
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%, -50%);
+      display:none;
+    }
+
+    .btn-primary.loading .btn-loader {
+      display:block;
+    }
+
+    .btn-loader {
+      width:24px;
+      height:24px;
+      border:3px solid rgba(255,255,255,0.3);
+      border-top-color:white;
+      border-radius:50%;
+      animation:spin 0.8s linear infinite;
+    }
+
+    .order-success-animation {
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.8);
+      backdrop-filter:blur(10px);
+      z-index:999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:24px;
+      animation:fadeIn 0.3s;
+    }
+
+    .order-success-animation.show {
+      display:flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity:0; }
+      to { opacity:1; }
+    }
+
+    .success-checkmark {
+      width:80px;
+      height:80px;
+      border-radius:50%;
+      background:linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      animation:scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      box-shadow:0 10px 40px rgba(76,175,80,0.4);
+    }
+
+    @keyframes scaleIn {
+      0% { transform:scale(0) rotate(0deg); }
+      50% { transform:scale(1.1) rotate(180deg); }
+      100% { transform:scale(1) rotate(360deg); }
+    }
+
+    .success-checkmark svg {
+      width:48px;
+      height:48px;
+      stroke:white;
+      stroke-width:3;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+      fill:none;
+      animation:drawCheck 0.5s 0.3s ease-out forwards;
+      stroke-dasharray:50;
+      stroke-dashoffset:50;
+    }
+
+    @keyframes drawCheck {
+      to { stroke-dashoffset:0; }
+    }
+
+    .success-message {
+      color:white;
+      font-size:24px;
+      font-weight:700;
+      text-align:center;
+      animation:fadeInUp 0.5s 0.5s ease-out forwards;
+      opacity:0;
+    }
+
+    .success-submessage {
+      color:rgba(255,255,255,0.8);
+      font-size:16px;
+      text-align:center;
+      animation:fadeInUp 0.5s 0.7s ease-out forwards;
+      opacity:0;
+      max-width:400px;
+      padding:0 20px;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity:0;
+        transform:translateY(20px);
+      }
+      to {
+        opacity:1;
+        transform:translateY(0);
+      }
     }
 
     .history-item {
@@ -1162,6 +1288,16 @@
   <div id="imageModal" class="image-modal" onclick="closeImageModal()">
     <img id="imageModalImg" src="" alt="">
   </div>
+  
+  <div id="orderSuccessAnimation" class="order-success-animation">
+    <div class="success-checkmark">
+      <svg viewBox="0 0 52 52">
+        <path d="M14 27l8 8 16-16"/>
+      </svg>
+    </div>
+    <div class="success-message">Заказ отправлен!</div>
+    <div class="success-submessage">Ваш заказ направлен администратору. С вами свяжутся в ближайшее время.</div>
+  </div>
 
   <script>
     const SHEET_API_URL = 'https://sheets.googleapis.com/v4/spreadsheets/SPREADSHEET_ID/values/Sheet1?key=API_KEY';
@@ -1607,7 +1743,10 @@
                 <label>Комментарий (необязательно)</label>
                 <textarea id="comment" placeholder="Дополнительная информация">${esc(savedUserData.comment||'')}</textarea>
               </div>
-              <button type="submit" class="btn-primary">Оформить заказ</button>
+              <button type="submit" class="btn-primary" id="submitOrderBtn">
+                <span class="btn-text">Оформить заказ</span>
+                <div class="btn-loader"></div>
+              </button>
             </form>
           `}
         </div>
@@ -1866,6 +2005,12 @@
 
     window.sendOrder = async function(e) {
       e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitOrderBtn');
+      
+      // Предотвращаем повторную отправку
+      if (submitBtn.disabled) return;
+      
       const name = document.getElementById('name').value.trim();
       const phone = document.getElementById('phone').value.trim();
       const payment = document.getElementById('payment').value;
@@ -1883,54 +2028,81 @@
         return;
       }
 
-      orderCounter += 1;
-      save('orderCounter', orderCounter);
-
-      const total = items.reduce((s,i)=>s + (i.price||0) * (i.qty||0), 0);
-      let text = `Новый заказ #${orderCounter}\n`;
-      text += `Клиент: ${name}\n`;
-      text += `Телефон: ${phone}\n`;
-      text += `Оплата: ${payment}\n`;
-      text += `Адрес: ${address}\n`;
-      if (comment) text += `Комментарий: ${comment}\n`;
-      text += `\nЗаказ:\n`;
-      items.forEach(i => {
-        text += `• ${i.name} x${i.qty} — ${FMT.format((i.price||0)*i.qty)}\n`;
-      });
-      text += `\nИтого: ${FMT.format(total)}\n`;
-
-      savedUserData = { name, phone, payment, address, comment };
-      save('userData', savedUserData);
-
-      const orderRecord = {
-        id: orderCounter,
-        ts: new Date().toISOString(),
-        name, phone, payment, address, comment,
-        items: items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
-        total
-      };
-      orderHistory = orderHistory || [];
-      orderHistory.unshift(orderRecord);
-      save('orderHistory', orderHistory);
+      // Блокируем кнопку и показываем загрузку
+      submitBtn.disabled = true;
+      submitBtn.classList.add('loading');
 
       try {
+        orderCounter += 1;
+        save('orderCounter', orderCounter);
+
+        const total = items.reduce((s,i)=>s + (i.price||0) * (i.qty||0), 0);
+        let text = `Новый заказ #${orderCounter}\n`;
+        text += `Клиент: ${name}\n`;
+        text += `Телефон: ${phone}\n`;
+        text += `Оплата: ${payment}\n`;
+        text += `Адрес: ${address}\n`;
+        if (comment) text += `Комментарий: ${comment}\n`;
+        text += `\nЗаказ:\n`;
+        items.forEach(i => {
+          text += `• ${i.name} x${i.qty} — ${FMT.format((i.price||0)*i.qty)}\n`;
+        });
+        text += `\nИтого: ${FMT.format(total)}\n`;
+
+        savedUserData = { name, phone, payment, address, comment };
+        save('userData', savedUserData);
+
+        const orderRecord = {
+          id: orderCounter,
+          ts: new Date().toISOString(),
+          name, phone, payment, address, comment,
+          items: items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+          total
+        };
+        orderHistory = orderHistory || [];
+        orderHistory.unshift(orderRecord);
+        save('orderHistory', orderHistory);
+
+        // Отправка в Telegram
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
         await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text })
         });
-      } catch (err) {
-        console.warn('Telegram send failed', err);
-      }
 
-      cart = {};
-      save('cart', cart);
-      updateCartFab();
-      closeModal('cartModal');
-      alert('Ваш заказ направлен администратору. С вами свяжутся в ближайшее время.');
-      renderMenu();
+        // Очищаем корзину
+        cart = {};
+        save('cart', cart);
+        updateCartFab();
+        
+        // Закрываем модалку корзины
+        closeModal('cartModal');
+        
+        // Показываем анимацию успеха
+        showOrderSuccess();
+        
+        // Обновляем меню
+        renderMenu();
+
+      } catch (err) {
+        console.error('Order send failed', err);
+        alert('Произошла ошибка при отправке заказа. Пожалуйста, попробуйте еще раз.');
+        
+        // Разблокируем кнопку при ошибке
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+      }
     };
+
+    function showOrderSuccess() {
+      const successAnimation = document.getElementById('orderSuccessAnimation');
+      successAnimation.classList.add('show');
+      
+      setTimeout(() => {
+        successAnimation.classList.remove('show');
+      }, 3500);
+    }
 
     window.showOrderHistory = function() {
       const list = (orderHistory || []);
