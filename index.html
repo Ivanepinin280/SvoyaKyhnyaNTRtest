@@ -1292,154 +1292,6 @@
         width:64px;
         height:64px;
       }
-      /* СТИЛИ ДЛЯ МОДАЛЬНОГО ОКНА УСПЕШНОГО ЗАКАЗА */
-.success-modal-content {
-  max-width: 450px;
-  text-align: center;
-  padding: 40px 32px;
-}
-
-.success-icon-wrap {
-  margin-bottom: 24px;
-  display: flex;
-  justify-content: center;
-}
-
-.success-checkmark {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  display: block;
-  stroke-width: 3;
-  stroke: #4CAF50;
-  stroke-miterlimit: 10;
-  box-shadow: inset 0 0 0 #4CAF50;
-  animation: fill-success 0.4s ease-in-out 0.4s forwards, scale-success 0.3s ease-in-out 0.9s both;
-}
-
-.success-checkmark-circle {
-  stroke-dasharray: 166;
-  stroke-dashoffset: 166;
-  stroke-width: 3;
-  stroke-miterlimit: 10;
-  stroke: #4CAF50;
-  fill: none;
-  animation: stroke-success 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-}
-
-.success-checkmark-check {
-  transform-origin: 50% 50%;
-  stroke-dasharray: 48;
-  stroke-dashoffset: 48;
-  stroke: #4CAF50;
-  stroke-width: 3;
-  animation: stroke-success 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
-}
-
-@keyframes stroke-success {
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes scale-success {
-  0%, 100% {
-    transform: none;
-  }
-  50% {
-    transform: scale3d(1.1, 1.1, 1);
-  }
-}
-
-@keyframes fill-success {
-  100% {
-    box-shadow: inset 0 0 0 30px #4CAF50;
-  }
-}
-
-.success-title {
-  font-size: 26px;
-  font-weight: 800;
-  color: #2E7D32;
-  margin-bottom: 12px;
-  letter-spacing: -0.5px;
-}
-
-.success-order-number {
-  font-size: 16px;
-  font-weight: 700;
-  color: #4CAF50;
-  margin-bottom: 20px;
-  padding: 8px 16px;
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
-  border-radius: var(--radius-sm);
-  display: inline-block;
-}
-
-.success-message {
-  font-size: 15px;
-  color: var(--text-light);
-  line-height: 1.6;
-  margin-bottom: 24px;
-}
-
-.success-time-info {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background: linear-gradient(135deg, #F1F8E9 0%, #DCEDC8 100%);
-  padding: 14px 20px;
-  border-radius: var(--radius-sm);
-  margin-bottom: 28px;
-  color: #558B2F;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.success-time-info svg {
-  flex-shrink: 0;
-}
-
-.btn-success-close {
-  background: linear-gradient(135deg, #4CAF50 0%, #45A049 100%);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 16px 40px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  width: 100%;
-  font-family: 'Inter', sans-serif;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-}
-
-.btn-success-close:hover {
-  background: linear-gradient(135deg, #45A049 0%, #388E3C 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-}
-
-@media (max-width: 480px) {
-  .success-modal-content {
-    padding: 32px 24px;
-  }
-  
-  .success-checkmark {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .success-title {
-    font-size: 22px;
-  }
-  
-  .success-message {
-    font-size: 14px;
-  }
-}
     }
   </style>
 </head>
@@ -2290,109 +2142,72 @@
       );
     };
 
-   // Найдите функцию window.sendOrder и замените часть с alert на вызов новой функции:
+    window.sendOrder = async function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const payment = document.getElementById('payment').value;
+      const address = document.getElementById('address').value.trim();
+      const comment = document.getElementById('comment').value.trim();
 
-window.sendOrder = async function(e) {
-  e.preventDefault();
-  const name = document.getElementById('name').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const payment = document.getElementById('payment').value;
-  const address = document.getElementById('address').value.trim();
-  const comment = document.getElementById('comment').value.trim();
+      if (!name || !phone || !payment || !address) {
+        alert('Пожалуйста, заполните обязательные поля.');
+        return;
+      }
 
-  if (!name || !phone || !payment || !address) {
-    alert('Пожалуйста, заполните обязательные поля.');
-    return;
-  }
+      const items = Object.values(cart);
+      if (!items.length) {
+        alert('Корзина пуста.');
+        return;
+      }
 
-  const items = Object.values(cart);
-  if (!items.length) {
-    alert('Корзина пуста.');
-    return;
-  }
+      orderCounter += 1;
+      save('orderCounter', orderCounter);
 
-  orderCounter += 1;
-  save('orderCounter', orderCounter);
+      const total = items.reduce((s,i)=>s + (i.price||0) * (i.qty||0), 0);
+      let text = `Новый заказ #${orderCounter}\n`;
+      text += `Клиент: ${name}\n`;
+      text += `Телефон: ${phone}\n`;
+      text += `Оплата: ${payment}\n`;
+      text += `Адрес: ${address}\n`;
+      if (comment) text += `Комментарий: ${comment}\n`;
+      text += `\nЗаказ:\n`;
+      items.forEach(i => {
+        text += `• ${i.name} x${i.qty} — ${FMT.format((i.price||0)*i.qty)}\n`;
+      });
+      text += `\nИтого: ${FMT.format(total)}\n`;
 
-  const total = items.reduce((s,i)=>s + (i.price||0) * (i.qty||0), 0);
-  let text = `Новый заказ #${orderCounter}\n`;
-  text += `Клиент: ${name}\n`;
-  text += `Телефон: ${phone}\n`;
-  text += `Оплата: ${payment}\n`;
-  text += `Адрес: ${address}\n`;
-  if (comment) text += `Комментарий: ${comment}\n`;
-  text += `\nЗаказ:\n`;
-  items.forEach(i => {
-    text += `• ${i.name} x${i.qty} — ${FMT.format((i.price||0)*i.qty)}\n`;
-  });
-  text += `\nИтого: ${FMT.format(total)}\n`;
+      savedUserData = { name, phone, payment, address, comment };
+      save('userData', savedUserData);
 
-  savedUserData = { name, phone, payment, address, comment };
-  save('userData', savedUserData);
+      const orderRecord = {
+        id: orderCounter,
+        ts: new Date().toISOString(),
+        name, phone, payment, address, comment,
+        items: items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+        total
+      };
+      orderHistory = orderHistory || [];
+      orderHistory.unshift(orderRecord);
+      save('orderHistory', orderHistory);
 
-  const orderRecord = {
-    id: orderCounter,
-    ts: new Date().toISOString(),
-    name, phone, payment, address, comment,
-    items: items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
-    total
-  };
-  orderHistory = orderHistory || [];
-  orderHistory.unshift(orderRecord);
-  save('orderHistory', orderHistory);
+      try {
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text })
+        });
+      } catch (err) {
+        console.warn('Telegram send failed', err);
+      }
 
-  try {
-    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text })
-    });
-  } catch (err) {
-    console.warn('Telegram send failed', err);
-  }
-
-  cart = {};
-  save('cart', cart);
-  updateCartFab();
-  closeModal('cartModal');
-  
-  // ЗАМЕНЯЕМ СТАРЫЙ alert НА КРАСИВОЕ МОДАЛЬНОЕ ОКНО
-  showSuccessModal(orderCounter);
-  
-  renderMenu();
-};
-
-// ДОБАВЬТЕ ЭТУ НОВУЮ ФУНКЦИЮ В КОНЕЦ СКРИПТА (перед loadMenu()):
-
-function showSuccessModal(orderNumber) {
-  const successModal = document.getElementById('successModal');
-  successModal.innerHTML = `
-    <div class="modal success-modal-content">
-      <div class="success-icon-wrap">
-        <svg class="success-checkmark" viewBox="0 0 52 52">
-          <circle class="success-checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-          <path class="success-checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-        </svg>
-      </div>
-      <div class="success-title">Заказ успешно оформлен!</div>
-      <div class="success-order-number">Заказ #${orderNumber}</div>
-      <div class="success-message">
-        Время приготовления от 40 до 90 минут.<br>
-        С вами свяжется курьер перед доставкой.
-      </div>
-      <div class="success-time-info">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <polyline points="12 6 12 12 16 14"/>
-        </svg>
-        <span>Ожидайте доставку: 40-90 минут</span>
-      </div>
-      <button class="btn-success-close" onclick="closeModal('successModal')">Отлично!</button>
-    </div>
-  `;
-  successModal.classList.add('show');
-}
+      cart = {};
+      save('cart', cart);
+      updateCartFab();
+      closeModal('cartModal');
+      alert('Ваш заказ направлен администратору. С вами свяжутся в ближайшее время.');
+      renderMenu();
     };
 
     window.showOrderHistory = function() {
@@ -2536,7 +2351,6 @@ function showSuccessModal(orderNumber) {
 
     loadMenu();
   </script>
-  <div id="successModal" class="modal-bg"></div>
 </body>
 </html>
 ```
