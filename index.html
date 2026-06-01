@@ -738,6 +738,16 @@
       margin-bottom:12px;
       line-height:1.6;
     }
+
+    .history-unavailable {
+      font-size:12px;
+      color:#e53935;
+      background:#ffebee;
+      border-radius:8px;
+      padding:8px 12px;
+      margin-bottom:12px;
+      line-height:1.6;
+    }
     
     .history-footer {
       display:flex;
@@ -762,6 +772,13 @@
     .btn-repeat:hover {
       background:var(--accent-hover);
       transform:translateY(-2px);
+    }
+
+    .btn-repeat:disabled {
+      opacity:0.4;
+      cursor:not-allowed;
+      transform:none;
+      background:var(--text-muted);
     }
 
     .image-modal {
@@ -1490,7 +1507,6 @@
       const statusText = document.getElementById('statusText');
       const indicators = document.getElementById('indicators')?.children;
 
-      // Обновление прогресса
       const progressInterval = setInterval(() => {
         progress += 2;
         if (progress > 100) {
@@ -1502,12 +1518,10 @@
         if (progressPercent) progressPercent.textContent = Math.round(progress) + '%';
       }, 30);
 
-      // Смена статусов
       const statusInterval = setInterval(() => {
         currentStatusIndex = (currentStatusIndex + 1) % statuses.length;
         if (statusText) statusText.textContent = statuses[currentStatusIndex].text;
 
-        // Обновление индикаторов
         if (indicators) {
           Array.from(indicators).forEach((indicator, index) => {
             if (index === currentStatusIndex) {
@@ -1519,7 +1533,6 @@
         }
       }, 2000);
 
-      // Сохраняем интервалы для очистки
       window.loaderIntervals = { progressInterval, statusInterval };
     }
 
@@ -1527,7 +1540,6 @@
       const loaderEl = document.getElementById('loader');
       loaderEl.style.display = 'flex';
       
-      // Запуск анимации загрузки
       startLoaderAnimation();
       
       try {
@@ -1646,7 +1658,6 @@
       }
       loaderEl.style.display = 'none';
       
-      // Очистка интервалов анимации
       if (window.loaderIntervals) {
         clearInterval(window.loaderIntervals.progressInterval);
         clearInterval(window.loaderIntervals.statusInterval);
@@ -1654,6 +1665,7 @@
       
       renderMenu();
     }
+
     function renderMenu() {
       const menu = document.getElementById('menu');
       let items = currentFilter === 'favorites' ? menuData.filter(i => favorites.includes(i.id)) : menuData.slice();
@@ -2217,18 +2229,42 @@
           <button class="modal-close" onclick="closeModal('historyModal')">&times;</button>
           <div class="modal-title">История заказов</div>
           ${!list.length ? '<p style="text-align:center;color:var(--text-muted);">История пуста</p>' : `
-            ${list.map(o => `
+            ${list.map(o => {
+              // Проверяем каждый товар на доступность в текущем меню
+              const unavailableItems = o.items.filter(it => {
+                const mainId = typeof it.id === 'string'
+                  ? parseInt(it.id.split('_')[0])
+                  : it.id;
+                const menuItem = menuData.find(m => m.id === mainId);
+                return menuItem && !menuItem.available;
+              });
+              const allUnavailable = o.items.length > 0 && unavailableItems.length === o.items.length;
+              const someUnavailable = unavailableItems.length > 0 && !allUnavailable;
+
+              return `
               <div class="history-item">
                 <div class="history-header"><span>Заказ #${o.id}</span><span>${(new Date(o.ts)).toLocaleString()}</span></div>
                 <div class="history-products">
-                  ${o.items.map(it => `${esc(it.name)} x${it.qty} (${FMT.format(it.price*it.qty)})`).join('<br>')}
+                  ${o.items.map(it => {
+                    const mainId = typeof it.id === 'string' ? parseInt(it.id.split('_')[0]) : it.id;
+                    const menuItem = menuData.find(m => m.id === mainId);
+                    const isUnavail = menuItem && !menuItem.available;
+                    return `<span style="${isUnavail ? 'color:#e53935;text-decoration:line-through;' : ''}">${esc(it.name)} x${it.qty} (${FMT.format(it.price*it.qty)})</span>`;
+                  }).join('<br>')}
                 </div>
+                ${unavailableItems.length > 0 ? `
+                  <div class="history-unavailable">
+                    ⚠️ Нет в наличии: ${unavailableItems.map(it => esc(it.name)).join(', ')}
+                  </div>
+                ` : ''}
                 <div class="history-footer">
                   <strong>${FMT.format(o.total)}</strong>
-                  <button class="btn-repeat" onclick='repeatOrder(${o.id})'>Повторить</button>
+                  <button class="btn-repeat" ${allUnavailable ? 'disabled title="Все блюда недоступны"' : ''} onclick="repeatOrder(${o.id})">
+                    ${allUnavailable ? '❌ Недоступно' : someUnavailable ? '⚠️ Повторить' : 'Повторить'}
+                  </button>
                 </div>
               </div>
-            `).join('')}
+            `}).join('')}
           `}
         </div>
       `;
@@ -2238,12 +2274,52 @@
     window.repeatOrder = function(orderId) {
       const order = (orderHistory || []).find(o => o.id === orderId);
       if (!order) return alert('Заказ не найден');
+
+      // Фильтруем только доступные товары
+      const availableItems = order.items.filter(it => {
+        const mainId = typeof it.id === 'string'
+          ? parseInt(it.id.split('_')[0])
+          : it.id;
+        const menuItem = menuData.find(m => m.id === mainId);
+        // Если меню ещё не загружено — пропускаем проверку (добавляем всё)
+        if (!menuItem) return true;
+        return menuItem.available;
+      });
+
+      const skippedCount = order.items.length - availableItems.length;
+
+      if (availableItems.length === 0) {
+        alert('Все блюда из этого заказа сейчас недоступны.');
+        return;
+      }
+
       cart = {};
-      order.items.forEach(i => cart[i.id] = { id: i.id, name: i.name, price: i.price, qty: i.qty, available: true });
+      availableItems.forEach(i => {
+        cart[i.id] = { id: i.id, name: i.name, price: i.price, qty: i.qty, available: true };
+      });
       save('cart', cart);
       closeModal('historyModal');
       renderMenu();
-      showCartModal();
+
+      if (skippedCount > 0) {
+        // Небольшая задержка чтобы модал закрылся, потом показываем корзину с предупреждением
+        setTimeout(() => {
+          showCartModal();
+          // Вставляем баннер предупреждения внутрь модала корзины
+          const modal = document.querySelector('#cartModal .modal');
+          if (modal) {
+            const warning = document.createElement('div');
+            warning.className = 'info-box';
+            warning.style.background = 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)';
+            warning.style.borderColor = '#e53935';
+            warning.style.color = '#b71c1c';
+            warning.innerHTML = `⚠️ ${skippedCount} блюд${skippedCount > 1 ? 'а' : 'о'} из заказа сейчас нет в наличии и не добавлено в корзину.`;
+            modal.insertBefore(warning, modal.children[1]);
+          }
+        }, 100);
+      } else {
+        showCartModal();
+      }
     };
 
     window.showImage = function(src) {
@@ -2353,4 +2429,3 @@
   </script>
 </body>
 </html>
-```
