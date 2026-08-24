@@ -648,6 +648,20 @@ async function renderTab(){
   list.forEach((item, idx) => grid.appendChild(renderCard(item, idx)));
 }
 
+const CYRILLIC_LOOKALIKE_MAP_ = { a:'а', b:'в', c:'с', e:'е', h:'н', k:'к', m:'м', o:'о', p:'р', t:'т', x:'х', y:'у' };
+function normalizeCatKey_(s){
+  return (s || '').toString()
+    .replace(/\u00A0/g, ' ')            // non-breaking space -> regular space
+    .replace(/[\u200B-\u200D\uFEFF]/g, '') // zero-width chars some sheets/dropdowns insert
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toLowerCase()
+    // fix stray Latin letters that look identical to Cyrillic ones (a common
+    // invisible typo from autocomplete/keyboard switching) so "Cупы" (Latin C)
+    // still matches "Супы"
+    .replace(/[a-z]/g, ch => CYRILLIC_LOOKALIKE_MAP_[ch] || ch);
+}
+
 function renderCatalog(){
   const grid = document.getElementById('menuGrid');
   const empty = document.getElementById('emptyState');
@@ -660,9 +674,16 @@ function renderCatalog(){
   empty.style.display = 'none';
   grid.style.display = 'block';
 
+  // Map each known category to its normalized form, so a sheet value that only
+  // differs by spacing/case/hidden characters still lands in the right section.
+  const knownByNorm = {};
+  CATEGORY_ORDER.forEach(c => { knownByNorm[normalizeCatKey_(c)] = c; });
+
   const groups = {};
   state.items.forEach(item => {
-    const cat = (item.category || '').toString().trim() || 'Другое';
+    const raw = (item.category || '').toString().trim();
+    const norm = normalizeCatKey_(raw);
+    const cat = raw ? (knownByNorm[norm] || raw) : 'Другое';
     if (!groups[cat]) groups[cat] = [];
     groups[cat].push(item);
   });
